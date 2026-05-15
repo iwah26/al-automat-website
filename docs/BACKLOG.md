@@ -1,0 +1,7 @@
+- Add real WhatsApp number to NEXT_PUBLIC_WHATSAPP_NUMBER env var and wire it in Contact
+- ~~Add testimonials section with 3-4 client quotes~~ ✓ done
+- Add OG image (1200×630) for social sharing
+- Add sitemap.xml + robots.txt
+- Connect contact form to a real backend (Resend / Formspree) instead of mailto fallback
+- Add loading skeleton or page transition animation
+- SEO: add JSON-LD structured data for LocalBusiness
