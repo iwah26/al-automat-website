@@ -18,10 +18,12 @@ export async function POST(req: NextRequest) {
     }
 
     const supabase = getSupabase();
-    const { error } = await supabase.from("navcheret_contacts").insert([body]);
+    const { error } = await supabase
+      .from("navcheret_contacts")
+      .upsert([body], { onConflict: "phone1_prefix,phone1_number" });
 
     if (error) {
-      console.error("Supabase insert error:", error);
+      console.error("Supabase upsert error:", error);
       return NextResponse.json({ error: "DB error" }, { status: 500 });
     }
 
