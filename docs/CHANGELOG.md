@@ -7,3 +7,4 @@
 2026-05-13 — Deploy to Vercel prod: https://13-05-26-al-automat-website.vercel.app — build clean, all routes static.
 - 2026-05-15 — site deployed to https://al-automat-website.vercel.app/ via Vercel + GitHub integration
 - 2026-05-15 — custom domain al-automat.co.il connected via Vercel + SiteGround DNS
+- Added רהיטים category with subcategories to navcheret form
