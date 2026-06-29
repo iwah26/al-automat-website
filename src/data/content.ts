@@ -129,7 +129,7 @@ export const content = {
     subtitle: "יש לך רעיון, בעיה, או סתם שאלה — שלח הודעה ונחזור אליך תוך 24 שעות.",
     whatsappLabel: "שלח הודעה בוואטסאפ",
     whatsappNumber: "97226233170",
-    phone: "02-623-3170",
+    phone: "052-626-6419",
     address: "סלמן מוצפי 8, ירושלים",
     form: {
       namePlaceholder: "שם מלא",

@@ -30,8 +30,8 @@ export default function TermsPage() {
             <p>כתובת: סלמן מוצפי 8, ירושלים</p>
             <p>
               טלפון:{" "}
-              <a href="tel:026233170" className="text-brand-accent hover:underline">
-                02-623-3170
+              <a href="tel:0526266419" className="text-brand-accent hover:underline">
+                052-626-6419
               </a>
             </p>
             <p>
