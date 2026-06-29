@@ -129,6 +129,8 @@ export const content = {
     subtitle: "יש לך רעיון, בעיה, או סתם שאלה — שלח הודעה ונחזור אליך תוך 24 שעות.",
     whatsappLabel: "שלח הודעה בוואטסאפ",
     whatsappNumber: "97226233170",
+    phone: "02-623-3170",
+    address: "סלמן מוצפי 8, ירושלים",
     form: {
       namePlaceholder: "שם מלא",
       emailPlaceholder: "אימייל",
@@ -174,5 +176,7 @@ export const content = {
   footer: {
     copy: "על אוטומט",
     tagline: "בונים תהליכים חכמים.",
+    termsLabel: "תקנון וביטולים",
+    termsHref: "/terms",
   },
 } as const;

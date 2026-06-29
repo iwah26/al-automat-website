@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { content } from "@/data/content";
 
 export function Footer() {
@@ -12,7 +13,15 @@ export function Footer() {
           className="h-6 w-auto opacity-80"
         />
         <span className="text-slate-500 text-sm">{content.footer.tagline}</span>
-        <span className="text-slate-600 text-sm">© {new Date().getFullYear()}</span>
+        <div className="flex items-center gap-4">
+          <Link
+            href={content.footer.termsHref}
+            className="text-slate-500 text-sm hover:text-slate-300 transition-colors"
+          >
+            {content.footer.termsLabel}
+          </Link>
+          <span className="text-slate-600 text-sm">© {new Date().getFullYear()}</span>
+        </div>
       </div>
     </footer>
   );

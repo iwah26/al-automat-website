@@ -8,3 +8,4 @@
 - 2026-05-15 — site deployed to https://al-automat-website.vercel.app/ via Vercel + GitHub integration
 - 2026-05-15 — custom domain al-automat.co.il connected via Vercel + SiteGround DNS
 - Added רהיטים category with subcategories to navcheret form
+- הוספת פרטי קשר בית העסק (טלפון, כתובת) ל-Contact + דף /terms עם תקנון ביטולים לפי חוק הגנת הצרכן
