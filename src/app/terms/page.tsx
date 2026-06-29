@@ -36,8 +36,8 @@ export default function TermsPage() {
             </p>
             <p>
               דוא&quot;ל:{" "}
-              <a href="mailto:hello@al-automat.co.il" className="text-brand-accent hover:underline">
-                hello@al-automat.co.il
+              <a href="mailto:director@al-automat.co.il" className="text-brand-accent hover:underline">
+                director@al-automat.co.il
               </a>
             </p>
           </section>
@@ -73,8 +73,8 @@ export default function TermsPage() {
             <ul className="list-disc list-inside space-y-2 mr-2">
               <li>
                 בדוא&quot;ל:{" "}
-                <a href="mailto:hello@al-automat.co.il" className="text-brand-accent hover:underline">
-                  hello@al-automat.co.il
+                <a href="mailto:director@al-automat.co.il" className="text-brand-accent hover:underline">
+                  director@al-automat.co.il
                 </a>
               </li>
               <li>
