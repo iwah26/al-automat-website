@@ -13,6 +13,7 @@ async function getToken(): Promise<string> {
     }),
   });
   const data = await res.json();
+  if (!data.token) throw new Error(`token failed: ${JSON.stringify(data)}`);
   return data.token;
 }
 
@@ -31,6 +32,7 @@ async function createClient(
     body: JSON.stringify({ name, emails: [email], phone }),
   });
   const data = await res.json();
+  if (!data.id) throw new Error(`client failed: ${JSON.stringify(data)}`);
   return data.id;
 }
 
@@ -55,7 +57,9 @@ async function createPaymentLink(
     }),
   });
   const data = await res.json();
-  return data.shortUrl ?? data.url;
+  const url = data.shortUrl ?? data.url;
+  if (!url) throw new Error(`payment link failed: ${JSON.stringify(data)}`);
+  return url;
 }
 
 export async function POST(req: NextRequest) {
@@ -72,7 +76,8 @@ export async function POST(req: NextRequest) {
     const paymentUrl = await createPaymentLink(token, clientId);
 
     return NextResponse.json({ url: paymentUrl });
-  } catch {
-    return NextResponse.json({ error: "server error" }, { status: 500 });
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : "unknown";
+    return NextResponse.json({ error: msg }, { status: 500 });
   }
 }
