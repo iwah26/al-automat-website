@@ -1,0 +1,385 @@
+"use client";
+
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const WEBHOOK_URL =
+  "https://hook.integrator.boost.space/otgpr8yi5mzx38k4n76s3d97wzq3wjp0";
+
+interface FormData {
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  role: string;
+  location: string;
+  usesAI: string;
+  aiTool: string;
+  paysForAI: string;
+  aiLevel: string;
+  usesCodeAI: string;
+  communityChallenge: string;
+  communicationChallenge: string;
+  expectations: string;
+}
+
+const inputClass =
+  "w-full px-4 py-3 rounded-xl bg-brand-card border border-brand-accent/30 text-white placeholder-slate-400 focus:outline-none focus:border-brand-accent transition-colors text-right";
+
+function RadioGroup({
+  name,
+  options,
+  value,
+  onChange,
+}: {
+  name: string;
+  options: string[];
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      {options.map((opt) => (
+        <label
+          key={opt}
+          className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-colors ${
+            value === opt
+              ? "border-brand-accent bg-brand-dark"
+              : "border-brand-accent/30 bg-brand-card hover:border-brand-accent/60"
+          }`}
+        >
+          <input
+            type="radio"
+            name={name}
+            value={opt}
+            checked={value === opt}
+            onChange={() => onChange(opt)}
+            className="accent-brand-accent"
+          />
+          <span className="text-white">{opt}</span>
+        </label>
+      ))}
+    </div>
+  );
+}
+
+export function RegistrationWizard() {
+  const [step, setStep] = useState(1);
+  const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [data, setData] = useState<FormData>({
+    firstName: "",
+    lastName: "",
+    phone: "",
+    email: "",
+    role: "",
+    location: "",
+    usesAI: "",
+    aiTool: "",
+    paysForAI: "",
+    aiLevel: "",
+    usesCodeAI: "",
+    communityChallenge: "",
+    communicationChallenge: "",
+    expectations: "",
+  });
+
+  function set(key: keyof FormData, value: string) {
+    setData((prev) => ({ ...prev, [key]: value }));
+  }
+
+  const step1Valid =
+    data.firstName && data.lastName && data.phone && data.email && data.role && data.location;
+
+  const step2Valid =
+    data.usesAI && data.paysForAI && data.aiLevel && data.usesCodeAI;
+
+  const step3Valid =
+    data.communityChallenge && data.communicationChallenge && data.expectations;
+
+  async function handleSubmit() {
+    setStatus("loading");
+    try {
+      const res = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify([
+          {
+            source: "rabanim-registration",
+            ...data,
+            timestamp: new Date().toISOString(),
+          },
+        ]),
+      });
+      if (!res.ok) throw new Error("bad response");
+      window.location.href = "/tashlum";
+    } catch {
+      setStatus("error");
+    }
+  }
+
+  return (
+    <div className="max-w-xl mx-auto">
+      {/* Progress */}
+      <div className="flex gap-2 mb-10">
+        {[1, 2, 3].map((n) => (
+          <div
+            key={n}
+            className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${
+              n <= step ? "bg-brand-accent" : "bg-brand-card"
+            }`}
+          />
+        ))}
+      </div>
+
+      <AnimatePresence mode="wait">
+        {step === 1 && (
+          <motion.div
+            key="step1"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.3 }}
+          >
+            <h1 className="text-3xl font-black text-white mb-1">
+              הרשמה לסדנת הרבנים
+            </h1>
+            <p className="text-slate-400 mb-8">שלב 1 מתוך 3 — פרטים אישיים</p>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <input
+                  placeholder="שם פרטי"
+                  value={data.firstName}
+                  onChange={(e) => set("firstName", e.target.value)}
+                  className={inputClass}
+                />
+                <input
+                  placeholder="שם משפחה"
+                  value={data.lastName}
+                  onChange={(e) => set("lastName", e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <input
+                type="tel"
+                placeholder="טלפון"
+                value={data.phone}
+                onChange={(e) => set("phone", e.target.value)}
+                className={inputClass}
+              />
+              <input
+                type="email"
+                placeholder="מייל"
+                value={data.email}
+                onChange={(e) => set("email", e.target.value)}
+                className={inputClass}
+              />
+              <select
+                value={data.role}
+                onChange={(e) => set("role", e.target.value)}
+                className={inputClass}
+              >
+                <option value="">תפקיד</option>
+                <option value="avreich">אברך</option>
+                <option value="rav-kehila">רב קהילה</option>
+                <option value="rav-rashi">רב ראשי</option>
+                <option value="menahel">מנהל מוסד</option>
+                <option value="other">אחר</option>
+              </select>
+              <input
+                placeholder="מיקום (עיר + ארץ)"
+                value={data.location}
+                onChange={(e) => set("location", e.target.value)}
+                className={inputClass}
+              />
+            </div>
+
+            <button
+              onClick={() => setStep(2)}
+              disabled={!step1Valid}
+              className="mt-8 w-full py-4 rounded-xl bg-gradient-to-l from-brand-accent-2 to-brand-accent text-white font-bold text-lg hover:opacity-90 transition-opacity disabled:opacity-40"
+            >
+              המשך ←
+            </button>
+          </motion.div>
+        )}
+
+        {step === 2 && (
+          <motion.div
+            key="step2"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.3 }}
+          >
+            <h2 className="text-3xl font-black text-white mb-1">רמת AI</h2>
+            <p className="text-slate-400 mb-8">שלב 2 מתוך 3 — כמה שאלות על הניסיון שלך</p>
+
+            <div className="space-y-7">
+              <div>
+                <p className="text-white font-semibold mb-3">
+                  האם אתה משתמש בכלי AI כיום?
+                </p>
+                <RadioGroup
+                  name="usesAI"
+                  options={["כן", "לא"]}
+                  value={data.usesAI}
+                  onChange={(v) => set("usesAI", v)}
+                />
+              </div>
+
+              {data.usesAI === "כן" && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                >
+                  <p className="text-white font-semibold mb-3">באיזה כלי?</p>
+                  <RadioGroup
+                    name="aiTool"
+                    options={["ChatGPT", "Claude", "Gemini", "כמה כלים", "אחר"]}
+                    value={data.aiTool}
+                    onChange={(v) => set("aiTool", v)}
+                  />
+                </motion.div>
+              )}
+
+              <div>
+                <p className="text-white font-semibold mb-3">
+                  האם אתה משלם על כלי AI?
+                </p>
+                <RadioGroup
+                  name="paysForAI"
+                  options={["כן, משלם", "לא, רק גרסה חינמית", "לא משתמש בכלל"]}
+                  value={data.paysForAI}
+                  onChange={(v) => set("paysForAI", v)}
+                />
+              </div>
+
+              <div>
+                <p className="text-white font-semibold mb-3">
+                  איך תתאר את רמתך עם AI?
+                </p>
+                <RadioGroup
+                  name="aiLevel"
+                  options={[
+                    "מתחיל — ניסיתי כמה פעמים",
+                    "מתנסה — משתמש מדי פעם",
+                    "בשימוש קבוע — כלי עבודה יומי",
+                  ]}
+                  value={data.aiLevel}
+                  onChange={(v) => set("aiLevel", v)}
+                />
+              </div>
+
+              <div>
+                <p className="text-white font-semibold mb-3">
+                  האם השתמשת בכלי AI לכתיבת קוד?
+                </p>
+                <RadioGroup
+                  name="usesCodeAI"
+                  options={[
+                    "לא, בכלל לא נגעתי בזה",
+                    "שמעתי אבל לא ניסיתי",
+                    "ניסיתי (Cursor / Copilot / Claude Code)",
+                    "כן, בשימוש קבוע",
+                  ]}
+                  value={data.usesCodeAI}
+                  onChange={(v) => set("usesCodeAI", v)}
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-8">
+              <button
+                onClick={() => setStep(1)}
+                className="px-6 py-4 rounded-xl border border-brand-accent/40 text-white hover:bg-brand-card transition-colors"
+              >
+                → חזור
+              </button>
+              <button
+                onClick={() => setStep(3)}
+                disabled={!step2Valid}
+                className="flex-1 py-4 rounded-xl bg-gradient-to-l from-brand-accent-2 to-brand-accent text-white font-bold text-lg hover:opacity-90 transition-opacity disabled:opacity-40"
+              >
+                המשך ←
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {step === 3 && (
+          <motion.div
+            key="step3"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.3 }}
+          >
+            <h2 className="text-3xl font-black text-white mb-1">הקהילה שלך</h2>
+            <p className="text-slate-400 mb-8">שלב 3 מתוך 3 — כמה שאלות אחרונות</p>
+
+            <div className="space-y-6">
+              <div>
+                <label className="block text-white font-semibold mb-2">
+                  מה לוקח לך הכי הרבה זמן בניהול הקהילה?
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="לדוגמה: כתיבת דרשות, מענה לשאלות, תיאום אירועים..."
+                  value={data.communityChallenge}
+                  onChange={(e) => set("communityChallenge", e.target.value)}
+                  className={inputClass + " resize-none"}
+                />
+              </div>
+              <div>
+                <label className="block text-white font-semibold mb-2">
+                  מה מאתגר אותך בתקשורת עם הקהל?
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="לדוגמה: כתיבת עלונים, הודעות, תוכן לרשתות..."
+                  value={data.communicationChallenge}
+                  onChange={(e) => set("communicationChallenge", e.target.value)}
+                  className={inputClass + " resize-none"}
+                />
+              </div>
+              <div>
+                <label className="block text-white font-semibold mb-2">
+                  מה תרצה לקחת מהסדנה?
+                </label>
+                <textarea
+                  rows={3}
+                  placeholder="מה יחשב לך הצלחה אחרי הסדנה?"
+                  value={data.expectations}
+                  onChange={(e) => set("expectations", e.target.value)}
+                  className={inputClass + " resize-none"}
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-8">
+              <button
+                onClick={() => setStep(2)}
+                className="px-6 py-4 rounded-xl border border-brand-accent/40 text-white hover:bg-brand-card transition-colors"
+              >
+                → חזור
+              </button>
+              <button
+                onClick={handleSubmit}
+                disabled={status === "loading" || !step3Valid}
+                className="flex-1 py-4 rounded-xl bg-gradient-to-l from-brand-accent-2 to-brand-accent text-white font-bold text-lg hover:opacity-90 transition-opacity disabled:opacity-40"
+              >
+                {status === "loading" ? "שולח..." : "לתשלום ←"}
+              </button>
+            </div>
+            {status === "error" && (
+              <p className="text-red-400 text-center mt-4">
+                משהו השתבש. נסה שוב.
+              </p>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
