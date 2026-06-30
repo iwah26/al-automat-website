@@ -112,19 +112,35 @@ export function RegistrationWizard() {
   async function handleSubmit() {
     setStatus("loading");
     try {
-      const res = await fetch(WEBHOOK_URL, {
+      // שליחת נתונים ל-Boost.space
+      await fetch(WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify([
           {
             source: "rabanim-registration",
             ...data,
+            aiTools: data.aiTools.join(", "),
             timestamp: new Date().toISOString(),
           },
         ]),
       });
-      if (!res.ok) throw new Error("bad response");
-      window.location.href = "https://mrng.to/XRkRG6PGRI";
+
+      // יצירת payment link אישי ב-Green Invoice
+      const checkoutRes = await fetch("/api/rabanim/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: data.firstName,
+          lastName: data.lastName,
+          email: data.email,
+          phone: data.phone,
+        }),
+      });
+
+      if (!checkoutRes.ok) throw new Error("checkout failed");
+      const { url } = await checkoutRes.json();
+      window.location.href = url;
     } catch {
       setStatus("error");
     }
