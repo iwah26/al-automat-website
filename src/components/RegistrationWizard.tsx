@@ -14,7 +14,7 @@ interface FormData {
   role: string;
   location: string;
   usesAI: string;
-  aiTool: string;
+  aiTools: string[];
   paysForAI: string;
   aiLevel: string;
   usesCodeAI: string;
@@ -74,7 +74,7 @@ export function RegistrationWizard() {
     role: "",
     location: "",
     usesAI: "",
-    aiTool: "",
+    aiTools: [],
     paysForAI: "",
     aiLevel: "",
     usesCodeAI: "",
@@ -87,11 +87,24 @@ export function RegistrationWizard() {
     setData((prev) => ({ ...prev, [key]: value }));
   }
 
+  function toggleTool(tool: string) {
+    setData((prev) => ({
+      ...prev,
+      aiTools: prev.aiTools.includes(tool)
+        ? prev.aiTools.filter((t) => t !== tool)
+        : [...prev.aiTools, tool],
+    }));
+  }
+
   const step1Valid =
     data.firstName && data.lastName && data.phone && data.email && data.role && data.location;
 
+  const usesAIYes = data.usesAI === "כן";
+
   const step2Valid =
-    data.usesAI && data.paysForAI && data.aiLevel && data.usesCodeAI;
+    data.usesAI &&
+    (!usesAIYes || (data.aiTools.length > 0 && data.paysForAI && data.aiLevel)) &&
+    data.usesCodeAI;
 
   const step3Valid =
     data.communityChallenge && data.communicationChallenge && data.expectations;
@@ -224,52 +237,86 @@ export function RegistrationWizard() {
                   name="usesAI"
                   options={["כן", "לא"]}
                   value={data.usesAI}
-                  onChange={(v) => set("usesAI", v)}
+                  onChange={(v) => {
+                    set("usesAI", v);
+                    if (v === "לא") {
+                      setData((prev) => ({
+                        ...prev,
+                        usesAI: v,
+                        aiTools: [],
+                        paysForAI: "",
+                        aiLevel: "",
+                      }));
+                    }
+                  }}
                 />
               </div>
 
-              {data.usesAI === "כן" && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                >
-                  <p className="text-white font-semibold mb-3">באיזה כלי?</p>
-                  <RadioGroup
-                    name="aiTool"
-                    options={["ChatGPT", "Claude", "Gemini", "כמה כלים", "אחר"]}
-                    value={data.aiTool}
-                    onChange={(v) => set("aiTool", v)}
-                  />
-                </motion.div>
-              )}
+              <AnimatePresence>
+                {usesAIYes && (
+                  <motion.div
+                    key="ai-details"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="space-y-7 overflow-hidden"
+                  >
+                    <div>
+                      <p className="text-white font-semibold mb-3">
+                        באיזה כלים? (אפשר לבחור כמה)
+                      </p>
+                      <div className="space-y-2">
+                        {["ChatGPT", "Claude", "Gemini", "Perplexity", "אחר"].map((tool) => (
+                          <label
+                            key={tool}
+                            className={`flex items-center gap-3 px-4 py-3 rounded-xl border cursor-pointer transition-colors ${
+                              data.aiTools.includes(tool)
+                                ? "border-brand-accent bg-brand-dark"
+                                : "border-brand-accent/30 bg-brand-card hover:border-brand-accent/60"
+                            }`}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={data.aiTools.includes(tool)}
+                              onChange={() => toggleTool(tool)}
+                              className="accent-brand-accent w-4 h-4"
+                            />
+                            <span className="text-white">{tool}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </div>
 
-              <div>
-                <p className="text-white font-semibold mb-3">
-                  האם אתה משלם על כלי AI?
-                </p>
-                <RadioGroup
-                  name="paysForAI"
-                  options={["כן, משלם", "לא, רק גרסה חינמית", "לא משתמש בכלל"]}
-                  value={data.paysForAI}
-                  onChange={(v) => set("paysForAI", v)}
-                />
-              </div>
+                    <div>
+                      <p className="text-white font-semibold mb-3">
+                        האם אתה משלם על כלי AI?
+                      </p>
+                      <RadioGroup
+                        name="paysForAI"
+                        options={["כן, משלם", "לא, רק גרסה חינמית"]}
+                        value={data.paysForAI}
+                        onChange={(v) => set("paysForAI", v)}
+                      />
+                    </div>
 
-              <div>
-                <p className="text-white font-semibold mb-3">
-                  איך תתאר את רמתך עם AI?
-                </p>
-                <RadioGroup
-                  name="aiLevel"
-                  options={[
-                    "מתחיל — ניסיתי כמה פעמים",
-                    "מתנסה — משתמש מדי פעם",
-                    "בשימוש קבוע — כלי עבודה יומי",
-                  ]}
-                  value={data.aiLevel}
-                  onChange={(v) => set("aiLevel", v)}
-                />
-              </div>
+                    <div>
+                      <p className="text-white font-semibold mb-3">
+                        איך תתאר את רמתך עם AI?
+                      </p>
+                      <RadioGroup
+                        name="aiLevel"
+                        options={[
+                          "מתחיל — ניסיתי כמה פעמים",
+                          "מתנסה — משתמש מדי פעם",
+                          "בשימוש קבוע — כלי עבודה יומי",
+                        ]}
+                        value={data.aiLevel}
+                        onChange={(v) => set("aiLevel", v)}
+                      />
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               <div>
                 <p className="text-white font-semibold mb-3">
