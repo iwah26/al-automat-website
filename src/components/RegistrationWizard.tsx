@@ -103,8 +103,8 @@ export function RegistrationWizard() {
 
   const step2Valid =
     data.usesAI &&
-    (!usesAIYes || (data.aiTools.length > 0 && data.paysForAI && data.aiLevel)) &&
-    data.usesCodeAI;
+    (!usesAIYes ||
+      (data.aiTools.length > 0 && data.paysForAI && data.aiLevel && data.usesCodeAI));
 
   const step3Valid =
     data.communityChallenge && data.communicationChallenge && data.expectations;
@@ -314,26 +314,26 @@ export function RegistrationWizard() {
                         onChange={(v) => set("aiLevel", v)}
                       />
                     </div>
+
+                    <div>
+                      <p className="text-white font-semibold mb-3">
+                        האם השתמשת בכלי AI לכתיבת קוד?
+                      </p>
+                      <RadioGroup
+                        name="usesCodeAI"
+                        options={[
+                          "לא, בכלל לא נגעתי בזה",
+                          "שמעתי אבל לא ניסיתי",
+                          "ניסיתי (Cursor / Copilot / Claude Code)",
+                          "כן, בשימוש קבוע",
+                        ]}
+                        value={data.usesCodeAI}
+                        onChange={(v) => set("usesCodeAI", v)}
+                      />
+                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
-
-              <div>
-                <p className="text-white font-semibold mb-3">
-                  האם השתמשת בכלי AI לכתיבת קוד?
-                </p>
-                <RadioGroup
-                  name="usesCodeAI"
-                  options={[
-                    "לא, בכלל לא נגעתי בזה",
-                    "שמעתי אבל לא ניסיתי",
-                    "ניסיתי (Cursor / Copilot / Claude Code)",
-                    "כן, בשימוש קבוע",
-                  ]}
-                  value={data.usesCodeAI}
-                  onChange={(v) => set("usesCodeAI", v)}
-                />
-              </div>
             </div>
 
             <div className="flex gap-3 mt-8">
