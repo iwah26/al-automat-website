@@ -124,7 +124,7 @@ export function RegistrationWizard() {
         ]),
       });
       if (!res.ok) throw new Error("bad response");
-      window.location.href = "/tashlum";
+      window.location.href = "https://mrng.to/XRkRG6PGRI";
     } catch {
       setStatus("error");
     }
