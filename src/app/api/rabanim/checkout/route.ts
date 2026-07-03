@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       lastName,
       email,
       returnUrl: `${origin}/api/rabanim/paypal-return`,
-      cancelUrl: `${origin}/sednah-rabanim`,
+      cancelUrl: `${origin}/sednah-rabanim/form`,
     });
 
     return NextResponse.json({ url: approveUrl });

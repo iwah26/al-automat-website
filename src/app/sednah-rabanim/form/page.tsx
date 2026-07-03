@@ -1,18 +1,18 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { SednahRabanimIntro } from "@/components/SednahRabanimIntro";
+import { RegistrationWizard } from "@/components/RegistrationWizard";
 
 export const metadata = {
   title: "הרשמה לסדנת הרבנים | על אוטומט",
   description: "הרשמה לסדנת AI לרבנים — טופס רישום",
 };
 
-export default function SednahRabanimPage() {
+export default function SednahRabanimFormPage() {
   return (
     <>
       <Navbar />
       <main className="min-h-screen pt-28 pb-20 px-6">
-        <SednahRabanimIntro />
+        <RegistrationWizard />
       </main>
       <Footer />
     </>

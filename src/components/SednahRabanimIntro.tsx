@@ -1,7 +1,10 @@
+import Link from "next/link";
+
 export function SednahRabanimIntro() {
   return (
     <div className="max-w-2xl mx-auto text-right mb-16">
       <div className="text-center mb-10">
+        <p className="text-2xl text-white font-bold mb-2">שלום לך הרב!</p>
         <h1 className="text-4xl font-black text-white leading-snug">
           Claude Code לרבנים
         </h1>
@@ -32,10 +35,24 @@ export function SednahRabanimIntro() {
           ההקלטות המלאות, תמלול מלא, ופרומפטים שימושיים — כדי שתוכל להטמיע
           אותם מיד במערכות הקהילה שלך.
         </p>
-        <p className="font-semibold text-white">
-          📅 12.7 (כ״ז תמוז) + 19.7 (ה׳ אב) | 18:00–21:00 שעון ישראל
-          <br />
-          💰 ₪950 | 30 מקומות בלבד + גישה מלאה להקלטות
+
+        <div className="p-5 rounded-2xl bg-brand-card border border-brand-accent/20">
+          <p className="font-semibold text-white mb-3">
+            📅 12.7 (כ״ז תמוז) + 19.7 (ה׳ אב)
+          </p>
+          <p className="font-semibold text-white mb-2">🕕 השעות לפי אזור:</p>
+          <ul className="space-y-1">
+            <li>🇮🇱 18:00–21:00</li>
+            <li>🇬🇧 16:00–19:00</li>
+            <li>🇪🇸🇫🇷 17:00–20:00</li>
+            <li>🇦🇷 12:00–15:00</li>
+            <li>🇺🇸🇻🇪 11:00–14:00</li>
+            <li>🇲🇽 09:00–12:00</li>
+          </ul>
+        </div>
+
+        <p className="font-bold text-white text-xl">
+          🔥 גישה מוגבלת ל-30 מקומות בלבד
         </p>
       </div>
 
@@ -77,7 +94,17 @@ export function SednahRabanimIntro() {
         </div>
       </div>
 
-      <p className="text-center text-2xl mt-12">👇 להרשמה</p>
+      <div className="text-center mt-12">
+        <p className="text-3xl font-black text-white mb-8">
+          כל זה רק ב-950₪
+        </p>
+        <Link
+          href="/sednah-rabanim/form"
+          className="inline-block px-10 py-4 rounded-xl bg-gradient-to-l from-brand-accent-2 to-brand-accent text-white font-bold text-lg hover:opacity-90 transition-opacity"
+        >
+          להרשמה ←
+        </Link>
+      </div>
     </div>
   );
 }
