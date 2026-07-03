@@ -5,3 +5,4 @@
 - Connect contact form to a real backend (Resend / Formspree) instead of mailto fallback
 - Add loading skeleton or page transition animation
 - SEO: add JSON-LD structured data for LocalBusiness
+- Password-protect /course page (transcripts/recordings) — no password = no access. Needs per-student password + limit to max 2 devices per password (prevent sharing) — likely needs DB (Supabase) for password/device tracking, not just static auth. Needs dedicated design session. Requested by Isaac 2026-07-01, see projects/אוטומציה/specs/zoom-fireflies-website.md

@@ -9,3 +9,4 @@
 - 2026-05-15 — custom domain al-automat.co.il connected via Vercel + SiteGround DNS
 - Added רהיטים category with subcategories to navcheret form
 - הוספת פרטי קשר בית העסק (טלפון, כתובת) ל-Contact + דף /terms עם תקנון ביטולים לפי חוק הגנת הצרכן
+- 2026-07-03: Added rabanim workshop payment flow (Morning dynamic payment form + webhook), Supabase-backed registrations + course access, /course password gate with 2-device limit, WhatsApp (Green API) confirmation + reminder cron. Needs env vars filled before going live (see below).

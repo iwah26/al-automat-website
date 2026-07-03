@@ -6,18 +6,29 @@ import { motion, AnimatePresence } from "framer-motion";
 const WEBHOOK_URL =
   "https://hook.integrator.boost.space/otgpr8yi5mzx38k4n76s3d97wzq3wjp0";
 
+const ROLE_LABELS: Record<string, string> = {
+  avreich: "אברך",
+  "rav-kehila": "רב קהילה",
+  "rav-rashi": "הרב הראשי",
+  menahel: "מנהל מוסד",
+  other: "",
+};
+
 interface FormData {
   firstName: string;
   lastName: string;
   phone: string;
   email: string;
   role: string;
+  communityName: string;
   location: string;
   usesAI: string;
   aiTools: string[];
   paysForAI: string;
   aiLevel: string;
   usesCodeAI: string;
+  paysForClaude: string;
+  usesClaudeAPI: string;
   communityChallenge: string;
   communicationChallenge: string;
   expectations: string;
@@ -72,12 +83,15 @@ export function RegistrationWizard() {
     phone: "",
     email: "",
     role: "",
+    communityName: "",
     location: "",
     usesAI: "",
     aiTools: [],
     paysForAI: "",
     aiLevel: "",
     usesCodeAI: "",
+    paysForClaude: "",
+    usesClaudeAPI: "",
     communityChallenge: "",
     communicationChallenge: "",
     expectations: "",
@@ -100,11 +114,16 @@ export function RegistrationWizard() {
     data.firstName && data.lastName && data.phone && data.email && data.role && data.location;
 
   const usesAIYes = data.usesAI === "כן";
+  const hasClaudeSelected = data.aiTools.includes("Claude");
 
   const step2Valid =
     data.usesAI &&
     (!usesAIYes ||
-      (data.aiTools.length > 0 && data.paysForAI && data.aiLevel && data.usesCodeAI));
+      (data.aiTools.length > 0 &&
+        data.paysForAI &&
+        data.aiLevel &&
+        data.usesCodeAI &&
+        (!hasClaudeSelected || (data.paysForClaude && data.usesClaudeAPI))));
 
   const step3Valid =
     data.communityChallenge && data.communicationChallenge && data.expectations;
@@ -126,7 +145,12 @@ export function RegistrationWizard() {
         ]),
       });
 
-      // יצירת payment link אישי ב-Green Invoice
+      localStorage.setItem("rabanim_firstName", data.firstName);
+      localStorage.setItem("rabanim_lastName", data.lastName);
+      localStorage.setItem("rabanim_role", data.role);
+      localStorage.setItem("rabanim_paysForClaude", data.paysForClaude);
+      localStorage.setItem("rabanim_usesClaudeAPI", data.usesClaudeAPI);
+
       const checkoutRes = await fetch("/api/rabanim/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -135,6 +159,9 @@ export function RegistrationWizard() {
           lastName: data.lastName,
           email: data.email,
           phone: data.phone,
+          role: data.role,
+          communityName: data.communityName,
+          location: data.location,
         }),
       });
 
@@ -169,10 +196,27 @@ export function RegistrationWizard() {
             exit={{ opacity: 0, x: -40 }}
             transition={{ duration: 0.3 }}
           >
-            <h1 className="text-3xl font-black text-white mb-1">
-              הרשמה לסדנת הרבנים
-            </h1>
-            <p className="text-slate-400 mb-8">שלב 1 מתוך 3 — פרטים אישיים</p>
+            <div className="mb-8 text-right">
+              <h1 className="text-3xl font-black text-white leading-snug">
+                שלום כבוד הרב{" "}
+                {(data.firstName || data.lastName) && (
+                  <span className="text-brand-accent">
+                    {`${data.firstName} ${data.lastName}`.trim()}{" "}
+                  </span>
+                )}
+                שליט״א
+              </h1>
+              {(ROLE_LABELS[data.role] || data.communityName) && (
+                <p className="text-brand-accent/80 font-semibold text-lg mt-1">
+                  {ROLE_LABELS[data.role]}
+                  {ROLE_LABELS[data.role] && data.communityName ? " " : ""}
+                  {data.communityName}
+                </p>
+              )}
+              <p className="text-slate-400 mt-2 text-base">
+                אנא מלא את הפרטים הבאים כדי להשלים את הרשמתך לסדנה
+              </p>
+            </div>
 
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -215,6 +259,14 @@ export function RegistrationWizard() {
                 <option value="menahel">מנהל מוסד</option>
                 <option value="other">אחר</option>
               </select>
+              {data.role && (
+                <input
+                  placeholder="שם הקהילה / המוסד"
+                  value={data.communityName}
+                  onChange={(e) => set("communityName", e.target.value)}
+                  className={inputClass}
+                />
+              )}
               <input
                 placeholder="מיקום (עיר + ארץ)"
                 value={data.location}
@@ -347,6 +399,34 @@ export function RegistrationWizard() {
                         onChange={(v) => set("usesCodeAI", v)}
                       />
                     </div>
+
+                    {hasClaudeSelected && (
+                      <>
+                        <div>
+                          <p className="text-white font-semibold mb-3">
+                            האם אתה משלם על Claude (גרסת Pro)?
+                          </p>
+                          <RadioGroup
+                            name="paysForClaude"
+                            options={["כן, יש לי Pro", "לא, רק גרסה חינמית"]}
+                            value={data.paysForClaude}
+                            onChange={(v) => set("paysForClaude", v)}
+                          />
+                        </div>
+
+                        <div>
+                          <p className="text-white font-semibold mb-3">
+                            האם יש לך גישה ל-Claude API?
+                          </p>
+                          <RadioGroup
+                            name="usesClaudeAPI"
+                            options={["כן, יש לי גישה", "לא"]}
+                            value={data.usesClaudeAPI}
+                            onChange={(v) => set("usesClaudeAPI", v)}
+                          />
+                        </div>
+                      </>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
