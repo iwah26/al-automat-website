@@ -1,44 +1,39 @@
-# סדנת רבנים — צ'קליסט לפני הפעלה בפרודקשן
+# סדנת רבנים — סטטוס הפעלה
 
-הקוד מוכן ועובר build נקי. נשארו רק צעדים שדורשים ממך לפעול בדשבורדים חיצוניים
-(לא ניתן לעשות דרך הקוד).
+**✅ הכל חי בפרודקשן ונבדק מקצה לקצה (2026-07-03).**
 
-## 1. Supabase — ✅ בוצע
-פרויקט `rabanim-workshop` נוצר, הסכמה רצה, `.env.local` מולא ונבדק (200 OK).
+## מה נבדק ועובד
+- טופס הרשמה ב-`/sednah-rabanim` → שומר ל-Supabase (`payment_status: pending`) → מחזיר לינק תשלום PayPal
+- `/course-login` — דף כניסה עם סיסמה, דוחה סיסמה שגויה (401)
+- `/api/rabanim/reminders` — דורש `CRON_SECRET`, דוחה בקשות לא מאומתות (401)
+- `vercel.json` — cron jobs לתזכורות ב-11.7 וב-18.7 (18:00 שעון ישראל) מוגדרים ויעבדו אוטומטית
 
-## 2. Green API — ✅ בוצע
-הועתק אוטומטית מ-`whatsapp-green-api/.env`.
+## מנגנון התשלום — PayPal (לא Morning)
+Morning (Green Invoice) אין לו מסוף סליקת אשראי פעיל בחשבון — ה-PayPal מחובר
+כתוסף אבל לא נתמך ליצירת דף תשלום דינמי דרך `/payments/form`. לכן:
+- התשלום עצמו נשאר לינק PayPal סטטי (כמו לפני)
+- אישור תשלום מגיע דרך **PayPal IPN**, מועבר גם דרך שדה ה-**Callback** בהגדרות
+  תוסף ה-PayPal ב-Morning (כדי לא לגעת בזרימת יצירת החשבונית הקיימת שם)
+- ההתאמה בין תשלום להרשמה היא לפי **כתובת מייל** (לא reference דינמי) — אם
+  רב משלם עם מייל שונה מהטופס, ההודעה לא תישלח אוטומטית (תיקון ידני ב-Supabase:
+  לעדכן `payment_status` ל-`paid` ולהוסיף שורה ל-`rabanim_course_access`)
 
-## 3. תשלום — PayPal IPN (לא Morning!)
-**גילוי חשוב:** ל-Morning (Green Invoice) אין מסוף סליקה מחובר בחשבון —
-התשלום בפועל עובר דרך PayPal (לינק סטטי). לכן ויתרנו על יצירת דף תשלום דינמי
-דרך Morning API, ובמקום זה מאמתים תשלום דרך **PayPal IPN**, ומתאימים אותו
-להרשמה לפי כתובת המייל (לא reference דינמי).
+## תקלת תשתית שנמצאה ותוקנה: שני חשבונות Vercel
+היה בלגן: ה-repo ב-GitHub (`iwah26/al-automat-website`) היה מחובר ל-**שני**
+חשבונות Vercel נפרדים — אחד (`isaac-wahnon-s-projects`) מקבל push webhooks
+אבל לא מחזיק את הדומיין, והשני (`onautomat-4917's projects`, שכן מחזיק את
+`www.al-automat.co.il`) **לא היה מחובר ל-git בכלל** — עלה פעם ידנית, ולכן
+"Redeploy" רק חזר שוב על אותה גרסה ישנה. תוקן: חיברנו את `onautomat-4917`
+ל-git repo כמו שצריך. **מכאן והלאה, git push ל-main אמור לפרוס אוטומטית.**
 
-**מה שנשאר לעשות ב-PayPal:**
-1. היכנס לחשבון ה-PayPal העסקי שלך → **Account Settings → Notifications → Instant Payment Notifications (IPN)**
-2. הפעל IPN, וקבע URL:
-   `https://www.al-automat.co.il/api/rabanim/paypal-webhook`
-3. שמור
+⚠️ **לזכור לפרויקטים אחרים:** יש אצל יצחק בלגן דומה בין GitHub/Vercel/Supabase
+בפרויקטים אחרים גם (הוא אמר את זה במפורש). אם דפלוי לא "נתפס" בפעם הבאה —
+לבדוק קודם כל **איזה חשבון Vercel מחזיק את הדומיין** לפני שמנסים לאבחן את הקוד.
 
-זהו — אין secret/API key נוסף לשמור מהצד הזה; PayPal IPN מאומת מול שרתי PayPal ישירות בקוד.
-
-⚠️ **מגבלה שכדאי לדעת:** ההתאמה בין תשלום להרשמה נעשית לפי **כתובת המייל** של
-המשלם מול המייל שהוזן בטופס. אם רב ישלם עם מייל PayPal שונה מהמייל שמילא
-בטופס — ההודעה לא תישלח אוטומטית (אפשר לתקן ידנית ב-Supabase: לעדכן את
-`payment_status` ל-`paid` בטבלת `rabanim_registrations` ולהוסיף שורה
-ל-`rabanim_course_access` עם סיסמה).
-
-## 4. סודות עצמאיים — ✅ בוצע
-`COURSE_SESSION_SECRET` ו-`CRON_SECRET` נוצרו ונשמרו ב-`.env.local`.
-
-## 5. Vercel — נשאר
-- כל משתני הסביבה ב-`.env.local` חייבים להיות מוגדרים גם ב-**Vercel Project Settings → Environment Variables**
-- `vercel.json` כבר מכיל שני cron jobs לתזכורות (11.7, 18.7 ב-18:00 שעון ישראל) — יתחילו לעבוד אוטומטית אחרי deploy
-
-## מה נבנה (לצורך הבנה, לא צריך לגעת)
+## קבצים
 - `src/lib/rabanimSupabase.ts`, `src/lib/greenApi.ts`, `src/lib/courseSession.ts`
-- `src/app/api/rabanim/checkout` — שומר הרשמה ב-Supabase (`payment_status: pending`), מחזיר לינק PayPal סטטי
-- `src/app/api/rabanim/paypal-webhook` — מאמת IPN מול PayPal, מתאים לפי מייל, מסמן "שולם", מייצר סיסמה, שולח אישור WhatsApp
-- `src/app/api/rabanim/course-login` + `src/app/course-login` — הגנת סיסמה ל-/course, עד 2 מכשירים
+- `src/app/api/rabanim/checkout` — שומר הרשמה, מחזיר לינק PayPal
+- `src/app/api/rabanim/paypal-webhook` — מאמת IPN, מתאים לפי מייל, מסמן "שולם", שולח WhatsApp
+- `src/app/api/rabanim/course-login` + `src/app/course-login` — הגנת סיסמה, עד 2 מכשירים
 - `src/app/api/rabanim/reminders` + `vercel.json` — תזכורות אוטומטיות
+- `supabase/rabanim-schema.sql` — הסכמה (כבר רצה בפרויקט `rabanim-workshop`)

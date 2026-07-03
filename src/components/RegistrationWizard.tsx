@@ -1,27 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { DIAL_CODES } from "@/lib/dialCodes";
 
 const WEBHOOK_URL =
   "https://hook.integrator.boost.space/otgpr8yi5mzx38k4n76s3d97wzq3wjp0";
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const ROLE_LABELS: Record<string, string> = {
   avreich: "אברך",
   "rav-kehila": "רב קהילה",
   "rav-rashi": "הרב הראשי",
+  "rav-yeshiva": "רב בישיבה",
   menahel: "מנהל מוסד",
+  "menahel-beit-sefer": "מנהל בית ספר",
+  "melamed-beit-sefer": "מלמד בבית ספר",
   other: "",
 };
 
 interface FormData {
   firstName: string;
   lastName: string;
+  phoneDialCode: string;
   phone: string;
   email: string;
   role: string;
   communityName: string;
-  location: string;
+  country: string;
+  city: string;
   usesAI: string;
   aiTools: string[];
   paysForAI: string;
@@ -77,14 +85,19 @@ function RadioGroup({
 export function RegistrationWizard() {
   const [step, setStep] = useState(1);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [countries, setCountries] = useState<string[]>([]);
+  const [cities, setCities] = useState<string[]>([]);
+  const [citiesLoading, setCitiesLoading] = useState(false);
   const [data, setData] = useState<FormData>({
     firstName: "",
     lastName: "",
+    phoneDialCode: "972",
     phone: "",
     email: "",
     role: "",
     communityName: "",
-    location: "",
+    country: "",
+    city: "",
     usesAI: "",
     aiTools: [],
     paysForAI: "",
@@ -97,8 +110,36 @@ export function RegistrationWizard() {
     expectations: "",
   });
 
+  useEffect(() => {
+    fetch("https://countriesnow.space/api/v0.1/countries/positions")
+      .then((r) => r.json())
+      .then((json) => {
+        const names: string[] = (json.data ?? []).map(
+          (c: { name: string }) => c.name
+        );
+        setCountries(names.sort((a, b) => a.localeCompare(b)));
+      })
+      .catch(() => setCountries([]));
+  }, []);
+
   function set(key: keyof FormData, value: string) {
     setData((prev) => ({ ...prev, [key]: value }));
+  }
+
+  function setCountry(country: string) {
+    setData((prev) => ({ ...prev, country, city: "" }));
+    setCities([]);
+    if (!country) return;
+    setCitiesLoading(true);
+    fetch(
+      `https://countriesnow.space/api/v0.1/countries/cities/q?country=${encodeURIComponent(
+        country
+      )}`
+    )
+      .then((r) => r.json())
+      .then((json) => setCities((json.data ?? []).sort((a: string, b: string) => a.localeCompare(b))))
+      .catch(() => setCities([]))
+      .finally(() => setCitiesLoading(false));
   }
 
   function toggleTool(tool: string) {
@@ -110,8 +151,16 @@ export function RegistrationWizard() {
     }));
   }
 
+  const emailValid = EMAIL_REGEX.test(data.email);
+
   const step1Valid =
-    data.firstName && data.lastName && data.phone && data.email && data.role && data.location;
+    data.firstName &&
+    data.lastName &&
+    data.phone &&
+    emailValid &&
+    data.role &&
+    data.country &&
+    data.city;
 
   const usesAIYes = data.usesAI === "כן";
   const hasClaudeSelected = data.aiTools.includes("Claude");
@@ -151,6 +200,9 @@ export function RegistrationWizard() {
       localStorage.setItem("rabanim_paysForClaude", data.paysForClaude);
       localStorage.setItem("rabanim_usesClaudeAPI", data.usesClaudeAPI);
 
+      const fullPhone = `${data.phoneDialCode}${data.phone.replace(/^0+/, "")}`;
+      const location = `${data.city}, ${data.country}`;
+
       const checkoutRes = await fetch("/api/rabanim/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -158,10 +210,10 @@ export function RegistrationWizard() {
           firstName: data.firstName,
           lastName: data.lastName,
           email: data.email,
-          phone: data.phone,
+          phone: fullPhone,
           role: data.role,
           communityName: data.communityName,
-          location: data.location,
+          location,
         }),
       });
 
@@ -233,20 +285,38 @@ export function RegistrationWizard() {
                   className={inputClass}
                 />
               </div>
-              <input
-                type="tel"
-                placeholder="טלפון"
-                value={data.phone}
-                onChange={(e) => set("phone", e.target.value)}
-                className={inputClass}
-              />
-              <input
-                type="email"
-                placeholder="מייל"
-                value={data.email}
-                onChange={(e) => set("email", e.target.value)}
-                className={inputClass}
-              />
+              <div className="flex gap-2">
+                <select
+                  value={data.phoneDialCode}
+                  onChange={(e) => set("phoneDialCode", e.target.value)}
+                  className={inputClass + " w-28 flex-none"}
+                >
+                  {DIAL_CODES.map((c) => (
+                    <option key={c.iso2} value={c.dialCode}>
+                      +{c.dialCode} {c.name}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="tel"
+                  placeholder="טלפון"
+                  value={data.phone}
+                  onChange={(e) => set("phone", e.target.value)}
+                  className={inputClass + " flex-1"}
+                />
+              </div>
+              <div>
+                <input
+                  type="email"
+                  placeholder="מייל"
+                  value={data.email}
+                  onChange={(e) => set("email", e.target.value)}
+                  className={inputClass}
+                />
+                {data.email.length > 0 && !emailValid && (
+                  <p className="text-red-400 text-sm mt-1">כתובת מייל לא תקינה</p>
+                )}
+              </div>
               <select
                 value={data.role}
                 onChange={(e) => set("role", e.target.value)}
@@ -256,7 +326,10 @@ export function RegistrationWizard() {
                 <option value="avreich">אברך</option>
                 <option value="rav-kehila">רב קהילה</option>
                 <option value="rav-rashi">רב ראשי</option>
+                <option value="rav-yeshiva">רב בישיבה</option>
                 <option value="menahel">מנהל מוסד</option>
+                <option value="menahel-beit-sefer">מנהל בית ספר</option>
+                <option value="melamed-beit-sefer">מלמד בבית ספר</option>
                 <option value="other">אחר</option>
               </select>
               {data.role && (
@@ -267,12 +340,33 @@ export function RegistrationWizard() {
                   className={inputClass}
                 />
               )}
-              <input
-                placeholder="מיקום (עיר + ארץ)"
-                value={data.location}
-                onChange={(e) => set("location", e.target.value)}
+              <select
+                value={data.country}
+                onChange={(e) => setCountry(e.target.value)}
                 className={inputClass}
-              />
+              >
+                <option value="">מדינה</option>
+                {countries.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={data.city}
+                onChange={(e) => set("city", e.target.value)}
+                disabled={!data.country || citiesLoading}
+                className={inputClass + " disabled:opacity-40"}
+              >
+                <option value="">
+                  {citiesLoading ? "טוען ערים..." : "עיר"}
+                </option>
+                {cities.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <button
