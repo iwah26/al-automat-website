@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
       await finalizeRegistrationPayment(registration);
     }
 
-    return NextResponse.redirect(`${origin}/sednah-rabanim/success`);
+    return NextResponse.redirect(`${origin}/todah`);
   } catch (err) {
     console.error("PayPal return: capture failed", err);
     return NextResponse.redirect(`${origin}/sednah-rabanim`);
