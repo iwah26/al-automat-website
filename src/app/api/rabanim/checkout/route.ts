@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRabanimSupabase } from "@/lib/rabanimSupabase";
-
-const PAYMENT_URL = "https://mrng.to/XRkRG6PGRI";
+import { createOrder } from "@/lib/paypal";
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,25 +12,41 @@ export async function POST(req: NextRequest) {
     }
 
     const supabase = getRabanimSupabase();
-    const { error } = await supabase.from("rabanim_registrations").insert({
-      first_name: firstName,
-      last_name: lastName,
-      phone,
-      email,
-      role,
-      community_name: communityName,
-      location,
-    });
+    const { data: registration, error } = await supabase
+      .from("rabanim_registrations")
+      .insert({
+        first_name: firstName,
+        last_name: lastName,
+        phone,
+        email,
+        role,
+        community_name: communityName,
+        location,
+      })
+      .select()
+      .single();
 
-    if (error) {
+    if (error || !registration) {
       console.error("Supabase insert error:", error);
       return NextResponse.json({ error: "DB error" }, { status: 500 });
     }
 
-    // Payment happens on a static PayPal link (no per-registrant reference).
-    // Confirmation is matched back to this registration by email via the
-    // PayPal IPN webhook — see /api/rabanim/paypal-webhook.
-    return NextResponse.json({ url: PAYMENT_URL });
+    const origin = req.nextUrl.origin;
+    const { orderId, approveUrl } = await createOrder({
+      registrationId: registration.id,
+      firstName,
+      lastName,
+      email,
+      returnUrl: `${origin}/api/rabanim/paypal-return`,
+      cancelUrl: `${origin}/sednah-rabanim`,
+    });
+
+    await supabase
+      .from("rabanim_registrations")
+      .update({ paypal_order_id: orderId })
+      .eq("id", registration.id);
+
+    return NextResponse.json({ url: approveUrl });
   } catch (err) {
     console.error(err);
     return NextResponse.json({ error: "Server error" }, { status: 500 });

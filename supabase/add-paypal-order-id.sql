@@ -1,0 +1,2 @@
+alter table rabanim_registrations add column paypal_order_id text;
+create index rabanim_registrations_paypal_order_id_idx on rabanim_registrations(paypal_order_id);
