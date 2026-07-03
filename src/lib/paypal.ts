@@ -1,5 +1,5 @@
 const API_BASE = "https://api-m.paypal.com";
-const PRICE_ILS = "1.00"; // TEMP: testing price, revert to 950.00 before real traffic
+const PRICE_ILS = "950.00";
 
 async function getAccessToken(): Promise<string> {
   const clientId = process.env.PAYPAL_CLIENT_ID;
