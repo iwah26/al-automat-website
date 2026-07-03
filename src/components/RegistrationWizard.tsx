@@ -42,8 +42,9 @@ interface FormData {
   expectations: string;
 }
 
-const inputClass =
-  "w-full px-4 py-3 rounded-xl bg-brand-card border border-brand-accent/30 text-white placeholder-slate-400 focus:outline-none focus:border-brand-accent transition-colors text-right";
+const inputBaseClass =
+  "px-4 py-3 rounded-xl bg-brand-card border border-brand-accent/30 text-white placeholder-slate-400 focus:outline-none focus:border-brand-accent transition-colors text-right";
+const inputClass = "w-full " + inputBaseClass;
 
 function RadioGroup({
   name,
@@ -286,10 +287,17 @@ export function RegistrationWizard() {
                 />
               </div>
               <div className="flex gap-2">
+                <input
+                  type="tel"
+                  placeholder="טלפון"
+                  value={data.phone}
+                  onChange={(e) => set("phone", e.target.value)}
+                  className={inputBaseClass + " flex-1 min-w-0"}
+                />
                 <select
                   value={data.phoneDialCode}
                   onChange={(e) => set("phoneDialCode", e.target.value)}
-                  className={inputClass + " w-28 flex-none"}
+                  className={inputBaseClass + " w-24 flex-none truncate text-sm"}
                 >
                   {DIAL_CODES.map((c) => (
                     <option key={c.iso2} value={c.dialCode}>
@@ -297,13 +305,6 @@ export function RegistrationWizard() {
                     </option>
                   ))}
                 </select>
-                <input
-                  type="tel"
-                  placeholder="טלפון"
-                  value={data.phone}
-                  onChange={(e) => set("phone", e.target.value)}
-                  className={inputClass + " flex-1"}
-                />
               </div>
               <div>
                 <input
