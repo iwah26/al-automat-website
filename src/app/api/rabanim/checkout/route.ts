@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
     }
 
     const origin = req.nextUrl.origin;
-    const { orderId, approveUrl } = await createOrder({
+    const { approveUrl } = await createOrder({
       registrationId: registration.id,
       firstName,
       lastName,
@@ -40,11 +40,6 @@ export async function POST(req: NextRequest) {
       returnUrl: `${origin}/api/rabanim/paypal-return`,
       cancelUrl: `${origin}/sednah-rabanim`,
     });
-
-    await supabase
-      .from("rabanim_registrations")
-      .update({ paypal_order_id: orderId })
-      .eq("id", registration.id);
 
     return NextResponse.json({ url: approveUrl });
   } catch (err) {
