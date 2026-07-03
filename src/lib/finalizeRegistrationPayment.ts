@@ -1,5 +1,5 @@
 import { getRabanimSupabase } from "@/lib/rabanimSupabase";
-import { sendWhatsApp } from "@/lib/greenApi";
+import { sendWhatsApp, addToRabanimGroup } from "@/lib/greenApi";
 
 interface Registration {
   id: string;
@@ -50,6 +50,16 @@ https://us02web.zoom.us/j/81000618945?pwd=hCmFZOH5MbK3B4FwwKSmBpVTLyB1Um.1
     await sendWhatsApp(registration.phone, message);
   } catch (err) {
     console.error("finalizeRegistrationPayment: WhatsApp send failed", err);
+  }
+
+  try {
+    await addToRabanimGroup(registration.phone);
+    await sendWhatsApp(
+      registration.phone,
+      `צירפנו אותך לקבוצת *"סדנת Claude Code לרבנים 🧠"* בוואטסאפ — שם נעדכן על הסדנה ונענה על שאלות.`
+    );
+  } catch (err) {
+    console.error("finalizeRegistrationPayment: group add failed", err);
   }
 
   const ownerPhone = process.env.OWNER_NOTIFY_PHONE;

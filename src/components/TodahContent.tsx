@@ -159,7 +159,14 @@ export function TodahContent() {
           done={!!checked["whatsapp"]}
           onToggle={() => toggle("whatsapp")}
         >
-          <p className="text-slate-400 text-sm">הקישור יישלח בקרוב</p>
+          <p className="text-slate-400 text-sm mb-1">
+            הצטרף לקבוצת <span className="text-white">"הרבטומטים🕵🏻 - הקבוצה הפתוחה"</span> —
+            קבוצה לחידושי AI לרבנים
+          </p>
+          <DownloadLink
+            href="https://chat.whatsapp.com/IDbCTp4SuIeA9aOB3i9eWF?s=cl&p=a&ilr=2"
+            label="הצטרפות לקבוצה"
+          />
         </CheckItem>
 
         <CheckItem
@@ -167,9 +174,47 @@ export function TodahContent() {
           done={!!checked["recordings"]}
           onToggle={() => toggle("recordings")}
         >
-          <p className="text-slate-400 text-sm">הפרטים יישלחו לפני תחילת הסדנה</p>
+          <p className="text-slate-400 text-sm mb-1">
+            אחרי כל מפגש תעלה הקלטה לעמוד קורס ייעודי. הגישה מוגנת בסיסמה
+            אישית שקיבלת/תקבל בוואטסאפ — עד 2 מכשירים.
+          </p>
+          <DownloadLink href="/course" label="מעבר לעמוד הקורס" />
         </CheckItem>
       </div>
+
+      {/* פרטי הסדנה */}
+      <div className="mt-12 space-y-6">
+        <section className="p-5 rounded-2xl bg-brand-card border border-brand-accent/20">
+          <h2 className="text-xl font-bold text-white mb-3">📅 פרטי הסדנה</h2>
+          <ul className="text-slate-300 space-y-1">
+            <li>מפגש ראשון: 12.7 (כ״ז תמוז)</li>
+            <li>מפגש שני: 19.7 (ה׳ אב)</li>
+            <li>שעה: 18:00–21:00 שעון ישראל</li>
+            <li>
+              לינק זום (לשני המפגשים):{" "}
+              <a
+                href="https://us02web.zoom.us/j/81000618945?pwd=hCmFZOH5MbK3B4FwwKSmBpVTLyB1Um.1"
+                className="text-brand-accent underline"
+              >
+                לחץ כאן להצטרפות
+              </a>
+            </li>
+          </ul>
+        </section>
+
+        <section className="p-5 rounded-2xl bg-brand-card border border-brand-accent/20">
+          <h2 className="text-xl font-bold text-white mb-3">💻 מחשב</h2>
+          <ul className="text-slate-300 space-y-1 list-disc pr-5">
+            <li>מחשב נייד / נייח עם Windows או Mac</li>
+            <li>חיבור אינטרנט יציב</li>
+            <li>מסך שניתן לשתף בזום</li>
+          </ul>
+        </section>
+      </div>
+
+      <p className="text-center text-slate-400 mt-12">
+        שאלות? פשוט תכתוב לנו בוואטסאפ — נתראה בזום! 😊
+      </p>
     </div>
   );
 }
