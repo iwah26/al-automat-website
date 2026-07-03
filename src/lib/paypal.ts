@@ -57,7 +57,7 @@ export async function createOrder(params: {
       application_context: {
         brand_name: "על אוטומט",
         user_action: "PAY_NOW",
-        landing_page: "GUEST_CHECKOUT",
+        landing_page: "BILLING",
         return_url: params.returnUrl,
         cancel_url: params.cancelUrl,
       },
