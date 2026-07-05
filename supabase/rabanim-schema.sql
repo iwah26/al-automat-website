@@ -25,3 +25,14 @@ create table rabanim_course_access (
 );
 
 create index rabanim_course_access_password_idx on rabanim_course_access(password);
+
+-- מעקב קליקים על קישור ההרשמה — כדי לדעת מי הגיע דרך שליחה ישירה
+-- (ולא לשלם עמלת אפיליאייט על מי שכבר הגיע ככה)
+create table rabanim_link_clicks (
+  id uuid primary key default gen_random_uuid(),
+  code text not null,
+  clicked_at timestamptz not null default now(),
+  user_agent text
+);
+
+create index rabanim_link_clicks_code_idx on rabanim_link_clicks(code);

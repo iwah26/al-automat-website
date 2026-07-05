@@ -16,3 +16,7 @@ out/
 # OS
 .DS_Store
 tsconfig.tsbuildinfo
+
+# Private / sensitive data — never commit
+.private/
+**/.private/
