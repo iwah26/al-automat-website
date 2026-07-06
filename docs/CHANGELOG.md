@@ -10,3 +10,4 @@
 - Added רהיטים category with subcategories to navcheret form
 - הוספת פרטי קשר בית העסק (טלפון, כתובת) ל-Contact + דף /terms עם תקנון ביטולים לפי חוק הגנת הצרכן
 - 2026-07-03: Added rabanim workshop payment flow (Morning dynamic payment form + webhook), Supabase-backed registrations + course access, /course password gate with 2-device limit, WhatsApp (Green API) confirmation + reminder cron. Needs env vars filled before going live (see below).
+- 2026-07-06: Added affiliate/referral tracking for sednah-rabanim — `?c=<code>` now threaded through form→checkout→DB (`rabanim_registrations.referral_code`, needs manual `alter table` from supabase/rabanim-schema.sql run once in Supabase SQL editor), plus a per-affiliate report page at /sednah-rabanim/affiliate?code=<code>.

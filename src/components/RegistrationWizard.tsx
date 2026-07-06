@@ -83,7 +83,7 @@ function RadioGroup({
   );
 }
 
-export function RegistrationWizard() {
+export function RegistrationWizard({ referralCode }: { referralCode?: string }) {
   const [step, setStep] = useState(1);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [countries, setCountries] = useState<string[]>([]);
@@ -215,6 +215,7 @@ export function RegistrationWizard() {
           role: data.role,
           communityName: data.communityName,
           location,
+          referralCode,
         }),
       });
 

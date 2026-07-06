@@ -7,12 +7,17 @@ export const metadata = {
   description: "הרשמה לסדנת AI לרבנים — טופס רישום",
 };
 
-export default function SednahRabanimFormPage() {
+export default async function SednahRabanimFormPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ c?: string }>;
+}) {
+  const { c } = await searchParams;
   return (
     <>
       <Navbar />
       <main className="min-h-screen pt-28 pb-20 px-6">
-        <RegistrationWizard />
+        <RegistrationWizard referralCode={c} />
       </main>
       <Footer />
     </>

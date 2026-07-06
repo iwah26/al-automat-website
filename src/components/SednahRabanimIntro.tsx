@@ -1,6 +1,10 @@
 import Link from "next/link";
 
-export function SednahRabanimIntro() {
+export function SednahRabanimIntro({ referralCode }: { referralCode?: string }) {
+  const formHref = referralCode
+    ? `/sednah-rabanim/form?c=${encodeURIComponent(referralCode)}`
+    : "/sednah-rabanim/form";
+
   return (
     <div className="max-w-2xl mx-auto text-right mb-16">
       <div className="text-center mb-10">
@@ -99,7 +103,7 @@ export function SednahRabanimIntro() {
           כל זה רק ב-950₪
         </p>
         <Link
-          href="/sednah-rabanim/form"
+          href={formHref}
           className="inline-block px-10 py-4 rounded-xl bg-gradient-to-l from-brand-accent-2 to-brand-accent text-white font-bold text-lg hover:opacity-90 transition-opacity"
         >
           להרשמה ←

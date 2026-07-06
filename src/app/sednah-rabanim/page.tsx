@@ -52,7 +52,7 @@ export default async function SednahRabanimPage({
     <>
       <Navbar />
       <main className="min-h-screen pt-28 pb-20 px-6">
-        <SednahRabanimIntro />
+        <SednahRabanimIntro referralCode={c} />
       </main>
       <Footer />
     </>

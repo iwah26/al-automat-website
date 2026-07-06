@@ -5,7 +5,7 @@ import { createOrder } from "@/lib/paypal";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { firstName, lastName, phone, email, role, communityName, location } = body;
+    const { firstName, lastName, phone, email, role, communityName, location, referralCode } = body;
 
     if (!firstName || !lastName || !phone || !email) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
         role,
         community_name: communityName,
         location,
+        referral_code: referralCode || null,
       })
       .select()
       .single();

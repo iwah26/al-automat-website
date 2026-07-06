@@ -36,3 +36,7 @@ create table rabanim_link_clicks (
 );
 
 create index rabanim_link_clicks_code_idx on rabanim_link_clicks(code);
+
+-- מעקב אפיליאייט: איזה קוד הביא כל רישום, כדי שכל קודקוד יראה מי רכש דרכו
+alter table rabanim_registrations add column if not exists referral_code text;
+create index if not exists rabanim_registrations_referral_code_idx on rabanim_registrations(referral_code);
