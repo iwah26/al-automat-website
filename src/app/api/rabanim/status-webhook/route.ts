@@ -13,7 +13,7 @@ function looksLikeStatusReply(payload: unknown): boolean {
 export async function POST(req: NextRequest) {
   const auth = req.headers.get("authorization");
   if (auth !== `Bearer ${process.env.GREEN_API_WEBHOOK_TOKEN}`) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "unauthorized", deployMarker: "check-2026-07-09a" }, { status: 401 });
   }
 
   const payload = await req.json();
