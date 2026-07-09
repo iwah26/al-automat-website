@@ -59,7 +59,14 @@ export async function GET(req: NextRequest) {
     try {
       await sendWhatsApp(
         phone,
-        `תודה שהגבת לסטטוס 🙏 הנה קישור לסדנה שדיברתי עליה:\n${REG_LINK}`
+        `איזה כיף שהגבת לסטטוס! 🙏
+
+איזה כיף שאתה מעוניין — אתה בדרך להפוך למומחה בקלוד קוד 💪
+
+הנה הקישור לסדנה שדיברתי עליה, "קלוד קוד לרבנים":
+${REG_LINK}
+
+רוצה שאשריין לך מקום?`
       );
       await supabase.from("rabanim_status_engagements").update({ link_sent: true }).eq("id_message", entry.idMessage);
       sent++;
