@@ -40,3 +40,17 @@ create index rabanim_link_clicks_code_idx on rabanim_link_clicks(code);
 -- מעקב אפיליאייט: איזה קוד הביא כל רישום, כדי שכל קודקוד יראה מי רכש דרכו
 alter table rabanim_registrations add column if not exists referral_code text;
 create index if not exists rabanim_registrations_referral_code_idx on rabanim_registrations(referral_code);
+
+-- לוג גולמי של כל webhook שמגיע מ-Green API (בעיקר לזיהוי תגובות/ריאקציות לסטטוסים)
+-- שלב 1: רק לוגינג לצפייה, כדי לראות payload אמיתי לפני שבונים לוגיקת auto-send
+create table if not exists rabanim_status_webhook_events (
+  id uuid primary key default gen_random_uuid(),
+  type_webhook text,
+  sender text,
+  payload jsonb not null,
+  matched_status_reply boolean not null default false,
+  auto_link_sent boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists rabanim_status_webhook_events_sender_idx on rabanim_status_webhook_events(sender);
