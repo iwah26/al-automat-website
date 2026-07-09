@@ -1,0 +1,15 @@
+name: Poll WhatsApp status engagements
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call status-engagement-poll endpoint
+        run: |
+          curl -sf -X GET "https://www.al-automat.co.il/api/rabanim/status-engagement-poll" \
+            -H "Authorization: Bearer ${{ secrets.RABANIM_CRON_SECRET }}"
