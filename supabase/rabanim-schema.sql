@@ -58,3 +58,11 @@ create table if not exists rabanim_status_engagements (
 );
 
 create index if not exists rabanim_status_engagements_phone_idx on rabanim_status_engagements(phone);
+
+-- רשימה לבנה: רק תגובות/ריאקציות לסטטוסים שנרשמו כאן ידנית מפעילות שליחה
+-- אוטומטית של הקישור — לא כל סטטוס שיצחק מעלה (רבים לא קשורים לסדנה).
+create table if not exists rabanim_tracked_statuses (
+  id_message text primary key,
+  note text,
+  created_at timestamptz not null default now()
+);

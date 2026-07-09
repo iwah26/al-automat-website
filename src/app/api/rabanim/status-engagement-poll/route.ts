@@ -37,9 +37,17 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "getIncomingStatuses failed" }, { status: 502 });
   }
   const entries: any[] = await res.json();
-  const engagements = entries.filter(isStatusEngagement);
-
   const supabase = getRabanimSupabase();
+
+  const { data: tracked } = await supabase.from("rabanim_tracked_statuses").select("id_message");
+  const trackedIds = new Set((tracked ?? []).map((t) => t.id_message));
+
+  // Only auto-reply to reactions/replies on statuses Isaac explicitly opted
+  // in (via rabanim_tracked_statuses) — not every status he ever posts.
+  const engagements = entries.filter(
+    (entry) => isStatusEngagement(entry) && trackedIds.has(entry.quotedMessage?.stanzaId)
+  );
+
   let sent = 0;
   let skipped = 0;
 
