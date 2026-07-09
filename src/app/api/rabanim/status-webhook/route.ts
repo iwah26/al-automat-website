@@ -17,14 +17,21 @@ export async function POST(req: NextRequest) {
   }
 
   const payload = await req.json();
-  const matched = looksLikeStatusReply(payload);
+
+  // Green API fires this webhook for every incoming message across all of
+  // Isaac's WhatsApp chats/groups, not just status replies — only persist
+  // events that look status-related, to avoid logging unrelated private
+  // conversations into this table.
+  if (!looksLikeStatusReply(payload)) {
+    return NextResponse.json({ ok: true });
+  }
 
   try {
     await getRabanimSupabase().from("rabanim_status_webhook_events").insert({
       type_webhook: payload?.typeWebhook ?? null,
       sender: payload?.senderData?.sender ?? payload?.senderData?.chatId ?? null,
       payload,
-      matched_status_reply: matched,
+      matched_status_reply: true,
     });
   } catch (err) {
     console.error("status-webhook: failed to log event", err);
