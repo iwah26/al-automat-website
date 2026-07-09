@@ -41,16 +41,20 @@ create index rabanim_link_clicks_code_idx on rabanim_link_clicks(code);
 alter table rabanim_registrations add column if not exists referral_code text;
 create index if not exists rabanim_registrations_referral_code_idx on rabanim_registrations(referral_code);
 
--- לוג גולמי של כל webhook שמגיע מ-Green API (בעיקר לזיהוי תגובות/ריאקציות לסטטוסים)
--- שלב 1: רק לוגינג לצפייה, כדי לראות payload אמיתי לפני שבונים לוגיקת auto-send
-create table if not exists rabanim_status_webhook_events (
+-- הוחלף ע"י rabanim_status_engagements: Green API לא שולח webhook על
+-- תגובות/ריאקציות לסטטוס בכלל (רק endpoint לפולינג — getIncomingStatuses),
+-- אז עברנו מ-webhook ל-cron שסורק כל כמה דקות.
+drop table if exists rabanim_status_webhook_events;
+
+-- תגובות/ריאקציות לסטטוסים של יצחק שזוהו דרך polling על getIncomingStatuses.
+-- id_message ייחודי מונע שליחה כפולה של הקישור לאותו אירוע בין ריצות ה-cron.
+create table if not exists rabanim_status_engagements (
   id uuid primary key default gen_random_uuid(),
-  type_webhook text,
-  sender text,
-  payload jsonb not null,
-  matched_status_reply boolean not null default false,
-  auto_link_sent boolean not null default false,
+  id_message text not null unique,
+  phone text not null,
+  message_type text,
+  link_sent boolean not null default false,
   created_at timestamptz not null default now()
 );
 
-create index if not exists rabanim_status_webhook_events_sender_idx on rabanim_status_webhook_events(sender);
+create index if not exists rabanim_status_engagements_phone_idx on rabanim_status_engagements(phone);

@@ -1,6 +1,7 @@
 {
   "crons": [
     { "path": "/api/rabanim/reminders?session=1", "schedule": "0 15 11 7 *" },
-    { "path": "/api/rabanim/reminders?session=2", "schedule": "0 15 18 7 *" }
+    { "path": "/api/rabanim/reminders?session=2", "schedule": "0 15 18 7 *" },
+    { "path": "/api/rabanim/status-engagement-poll", "schedule": "*/10 * * * *" }
   ]
 }
