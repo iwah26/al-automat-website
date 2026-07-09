@@ -22,18 +22,4 @@ export async function sendWhatsApp(phone: string, message: string): Promise<void
   if (!res.ok) throw new Error(`Green API send failed: ${res.status}`);
 }
 
-const RABANIM_GROUP_ID = "120363408102585143@g.us"; // סדנת Claude Code לרבנים 🧠
-
-export async function addToRabanimGroup(phone: string): Promise<void> {
-  const { url, instance, token } = greenApiCreds();
-
-  const res = await fetch(`${url}/waInstance${instance}/addGroupParticipant/${token}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      groupId: RABANIM_GROUP_ID,
-      participantChatId: toChatId(phone),
-    }),
-  });
-  if (!res.ok) throw new Error(`Green API group add failed: ${res.status}`);
-}
+export const RABANIM_GROUP_INVITE_LINK = "https://chat.whatsapp.com/IauAEmx8w1QB7ePiFwHxTb"; // סדנת Claude Code לרבנים 🧠
