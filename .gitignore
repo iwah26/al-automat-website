@@ -20,3 +20,4 @@ tsconfig.tsbuildinfo
 # Private / sensitive data — never commit
 .private/
 **/.private/
+.env*.local

@@ -1,0 +1,876 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Claude Code לרבנים — מצגת הסדנה</title>
+<style>
+  :root{
+    --ink:#160d26;
+    --purple-1:#2e1e45;
+    --purple-2:#3a2657;
+    --purple-3:#412a62;
+    --lavender:#c3b0e0;
+    --violet:#8a68b8;
+    --line:#8081be;
+    --paper:#e8e4f5;
+    --paper-dim:#b6aecb;
+    --white:#ffffff;
+    --gold:#e0b768;
+    --gold-dim:#8a733f;
+    --sess-a:#7a59a5;
+    --sess-b:#4f8f8c;
+    --radius:18px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+    background:var(--ink);
+    color:var(--white);
+    direction:rtl;
+  }
+
+  ::selection{ background:var(--violet); color:#fff; }
+
+  .deck{ width:100%; }
+
+  .slide{
+    position:relative;
+    min-height:100vh;
+    width:100%;
+    padding:70px 8vw 60px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:28px;
+    overflow:hidden;
+    background:
+      radial-gradient(1100px 620px at 88% -10%, rgba(122,89,165,0.30), transparent 60%),
+      radial-gradient(900px 560px at -10% 108%, rgba(103,67,154,0.28), transparent 60%),
+      linear-gradient(180deg,var(--purple-1) 0%, var(--purple-2) 55%, var(--purple-3) 100%);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .slide.dark{
+    background:
+      radial-gradient(900px 520px at 90% 0%, rgba(122,89,165,0.18), transparent 60%),
+      linear-gradient(180deg,#1a1130 0%, #201636 100%);
+  }
+
+  .slide-index{
+    position:absolute;
+    top:28px;
+    left:8vw;
+    font-size:13px;
+    font-weight:600;
+    color:var(--paper-dim);
+    letter-spacing:0.04em;
+    font-variant-numeric:tabular-nums;
+  }
+  .slide-track{
+    position:absolute;
+    top:28px;
+    right:8vw;
+    font-size:13px;
+    font-weight:700;
+    letter-spacing:0.08em;
+    padding:5px 14px;
+    border-radius:999px;
+    border:1px solid rgba(255,255,255,0.25);
+    color:var(--paper);
+  }
+  .track-a{ border-color:var(--sess-a); color:#d9c9f0; }
+  .track-b{ border-color:var(--sess-b); color:#bfe6e2; }
+
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-size:15px;
+    font-weight:700;
+    letter-spacing:0.06em;
+    color:var(--lavender);
+    text-transform:none;
+  }
+  .eyebrow::before{
+    content:"";
+    display:inline-block;
+    width:26px;height:2px;
+    background:var(--lavender);
+  }
+
+  h1{
+    font-size:clamp(38px,5.2vw,72px);
+    font-weight:900;
+    line-height:1.08;
+    letter-spacing:-0.01em;
+    margin:0;
+    text-wrap:balance;
+  }
+  h1 .accent{
+    background:linear-gradient(90deg,#ffffff 0%, var(--lavender) 100%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+  h2{
+    font-size:clamp(26px,3.4vw,44px);
+    font-weight:800;
+    line-height:1.16;
+    margin:0;
+    text-wrap:balance;
+  }
+  .lede{
+    font-size:clamp(17px,1.6vw,22px);
+    font-weight:500;
+    color:var(--paper);
+    max-width:62ch;
+    line-height:1.55;
+  }
+  .cover-sub{
+    font-size:clamp(19px,2vw,26px);
+    font-weight:700;
+    color:var(--white);
+    max-width:640px;
+    line-height:1.5;
+  }
+
+  .content{ max-width:1180px; }
+
+  /* ---- cards / grid ---- */
+  .grid{ display:grid; gap:18px; }
+  .grid-2{ grid-template-columns:1fr 1fr; }
+  .grid-3{ grid-template-columns:repeat(3,1fr); }
+  .grid-4{ grid-template-columns:repeat(4,1fr); }
+  @media (max-width:900px){ .grid-2,.grid-3,.grid-4{ grid-template-columns:1fr; } }
+
+  .card{
+    background:rgba(255,255,255,0.055);
+    border:1px solid rgba(255,255,255,0.14);
+    border-radius:var(--radius);
+    padding:24px 26px;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .card h3{ font-size:19px; font-weight:800; margin:0; color:var(--white); }
+  .card p{ margin:0; font-size:15.5px; line-height:1.55; color:var(--paper); }
+  .card .tag{
+    align-self:flex-start;
+    font-size:12px; font-weight:700; letter-spacing:0.05em;
+    color:var(--lavender); border:1px solid rgba(195,176,224,0.4);
+    padding:3px 10px; border-radius:999px;
+  }
+
+  /* ---- tables ---- */
+  .table-wrap{ overflow-x:auto; border-radius:var(--radius); border:1px solid rgba(255,255,255,0.14); }
+  table{ border-collapse:collapse; width:100%; min-width:480px; font-size:15.5px; }
+  th,td{ padding:14px 20px; text-align:right; border-bottom:1px solid rgba(255,255,255,0.1); }
+  th{
+    background:rgba(255,255,255,0.07);
+    font-weight:800; color:var(--lavender);
+    font-size:13px; letter-spacing:0.04em;
+  }
+  td{ color:var(--paper); font-weight:500; }
+  tr:last-child td{ border-bottom:none; }
+  td strong,th strong{ color:var(--white); }
+  td.hl{ color:var(--white); font-weight:700; }
+
+  /* ---- timeline ---- */
+  .timeline{ display:flex; flex-direction:column; gap:10px; }
+  .tl-row{ display:flex; align-items:center; gap:16px; }
+  .tl-time{
+    width:112px; flex-shrink:0; font-variant-numeric:tabular-nums;
+    font-size:13.5px; font-weight:700; color:var(--paper-dim); text-align:left;
+  }
+  .tl-bar-track{ flex:1; background:rgba(255,255,255,0.08); border-radius:10px; height:46px; position:relative; overflow:hidden; }
+  .tl-bar{
+    height:100%; border-radius:10px;
+    display:flex; align-items:center; padding:0 18px;
+    font-weight:700; font-size:14.5px; color:#1a1130;
+    white-space:nowrap;
+  }
+
+  /* ---- prompt / code block ---- */
+  .prompt{
+    background:#120b20;
+    border:1px solid rgba(224,183,104,0.35);
+    border-radius:var(--radius);
+    padding:22px 24px;
+    direction:rtl;
+  }
+  .prompt .prompt-label{
+    font-size:12px; font-weight:800; letter-spacing:0.08em; color:var(--gold);
+    margin-bottom:10px; display:block;
+  }
+  .prompt pre{
+    margin:0; white-space:pre-wrap; word-break:break-word;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:15px; line-height:1.65; color:#f3ecff;
+    direction:rtl; text-align:right;
+  }
+
+  /* ---- quote ---- */
+  .quote{
+    border-right:4px solid var(--gold);
+    padding:6px 28px;
+    font-size:clamp(22px,2.6vw,32px);
+    font-weight:800;
+    line-height:1.45;
+    color:var(--white);
+    max-width:900px;
+  }
+  .quote cite{ display:block; margin-top:14px; font-size:15px; font-weight:600; color:var(--paper-dim); font-style:normal; }
+
+  /* ---- checklist ---- */
+  .checklist{ display:flex; flex-direction:column; gap:12px; }
+  .check-item{ display:flex; align-items:flex-start; gap:14px; font-size:17px; font-weight:600; color:var(--paper); }
+  .check-mark{
+    flex-shrink:0; width:26px; height:26px; border-radius:8px;
+    background:rgba(195,176,224,0.18); border:1px solid var(--lavender);
+    display:flex; align-items:center; justify-content:center; font-size:14px; color:var(--lavender);
+  }
+
+  /* ---- diagram flow ---- */
+  .flow{ display:flex; flex-direction:column; gap:0; align-items:center; width:100%; max-width:520px; }
+  .flow-box{
+    width:100%; text-align:center; padding:16px 20px; border-radius:14px;
+    background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.16);
+    font-weight:700; font-size:16px;
+  }
+  .flow-box small{ display:block; font-weight:500; font-size:13px; color:var(--paper-dim); margin-top:4px; }
+  .flow-arrow{ font-size:20px; color:var(--lavender); padding:6px 0; }
+
+  /* ---- session divider ---- */
+  .divider-wrap{ display:flex; align-items:center; gap:40px; flex-wrap:wrap; }
+  .divider-num{
+    font-size:clamp(90px,14vw,190px);
+    font-weight:900; line-height:0.8;
+    background:linear-gradient(160deg,#ffffff 0%, var(--lavender) 70%);
+    -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  }
+
+  .badge{
+    display:inline-block;
+    background:rgba(122,89,165,0.25);
+    border:1.5px solid var(--line);
+    color:var(--paper);
+    font-size:15px; font-weight:600;
+    padding:8px 20px; border-radius:999px;
+  }
+
+  .foot-note{ font-size:13.5px; color:var(--paper-dim); font-weight:600; }
+
+  .logo{
+    font-size:14px; font-weight:800; letter-spacing:0.04em; color:var(--paper-dim);
+    display:flex; align-items:center; gap:8px;
+  }
+  .logo .dot{ width:8px; height:8px; border-radius:50%; background:var(--gold); }
+
+  /* ---- nav ---- */
+  .navbar{
+    position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
+    display:flex; align-items:center; gap:10px;
+    background:rgba(20,13,36,0.72);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:999px;
+    padding:9px 14px;
+    z-index:50;
+  }
+  .navbar button{
+    all:unset; cursor:pointer; width:30px; height:30px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--white); font-size:15px; font-weight:700;
+  }
+  .navbar button:hover{ background:rgba(255,255,255,0.15); }
+  .navbar .counter{ font-size:13px; font-weight:700; color:var(--paper-dim); min-width:52px; text-align:center; font-variant-numeric:tabular-nums; }
+
+  @media print{
+    .navbar,.slide-index,.slide-track{ display:none; }
+    .slide{ min-height:auto; page-break-after:always; }
+  }
+</style>
+<div class="deck" id="deck">
+
+  <!-- 1 — COVER -->
+  <section class="slide" data-title="שער">
+    <span class="slide-index">01 / 30</span>
+    <div style="display:flex;flex-direction:column;align-items:flex-start;gap:34px;max-width:820px;">
+      <div class="logo"><span class="dot"></span> אל אוטומט · תוכנית הדרכה</div>
+      <span class="badge">סדנה מעשית · שני מפגשים בזום</span>
+      <h1>Claude Code<br><span class="accent">לרבנים</span></h1>
+      <div class="cover-sub">בנייה עצמית — מערכת לניהול הקהילה, ללא ידע בתכנות.</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;">
+        <span class="badge">2 מפגשים · 3 שעות כל מפגש</span>
+        <span class="badge">18:00–21:00 · בזום</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 — TOC -->
+  <section class="slide" data-title="מבנה הסדנה">
+    <span class="slide-index">02 / 30</span>
+    <span class="eyebrow">מבנה הסדנה</span>
+    <h2>מה בונים, ומתי</h2>
+    <div class="grid grid-2 content">
+      <div class="card" style="border-color:rgba(122,89,165,0.55);">
+        <span class="tag" style="color:#d9c9f0;border-color:var(--sess-a);">מפגש א' · 180 דקות</span>
+        <h3>תשתית + התחלת הבנייה</h3>
+        <p>AI לבידור מול AI לעבודה · התקנה · API ואבטחה · מנהל משרד אישי · אפיון · תחילת מערכת הקהילה.</p>
+      </div>
+      <div class="card" style="border-color:rgba(79,143,140,0.55);">
+        <span class="tag" style="color:#bfe6e2;border-color:var(--sess-b);">מפגש ב' · 180 דקות</span>
+        <h3>גומרים, בודקים, משיקים</h3>
+        <p>המשך בנייה · מנגנון התראות · דשבורד בוקר · אוטומציות · דמו חי · סגירה.</p>
+      </div>
+    </div>
+    <div class="lede content">בין המפגשים: עבודת בית קצרה — הזנת 10 אנשים אמיתיים מהקהילה, ורישום מה עבד ומה לא.</div>
+  </section>
+
+  <!-- 3 — PROMISE -->
+  <section class="slide dark" data-title="ההבטחה">
+    <span class="slide-index">03 / 30</span>
+    <span class="eyebrow">ההבטחה</span>
+    <div class="quote">
+      "אחרי הסדנה הזאת — כל רב ידע לבנות כלי AI שייעל את עבודתו, ללא ידע בתכנות."
+    </div>
+  </section>
+
+  <!-- 4 — AUDIENCE -->
+  <section class="slide" data-title="למי זה מיועד">
+    <span class="slide-index">04 / 30</span>
+    <span class="eyebrow">למי זה מיועד</span>
+    <h2>רבנים המשרתים בחו"ל, בקהילות עם משאבים מוגבלים</h2>
+    <div class="lede content">מעט עובדים, מעט כסף, הרבה משימות. מי שמרגיש תקוע על דברים קטנים — ורוצה לפנות זמן למה שחשוב.</div>
+    <div class="grid grid-2 content" style="margin-top:10px;">
+      <div class="card">
+        <span class="tag">לא נדרש</span>
+        <h3>ידע בתכנות</h3>
+      </div>
+      <div class="card">
+        <span class="tag">כן נדרש</span>
+        <h3>מחשב, אינטרנט, רצון ללמוד</h3>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 — SESSION A DIVIDER -->
+  <section class="slide dark" data-title="מפגש א'">
+    <span class="slide-index">05 / 30</span>
+    <span class="slide-track track-a">מפגש א'</span>
+    <div class="divider-wrap">
+      <div class="divider-num">א'</div>
+      <div>
+        <span class="eyebrow">קפיצת מדרגה ב-AI + בניית התשתית</span>
+        <h1 style="margin-top:10px;">מכלי משחק<br><span class="accent">לכלי ייעול</span></h1>
+      </div>
+    </div>
+    <div class="content">
+      <div class="timeline">
+        <div class="tl-row"><span class="tl-time">0:00–0:25</span><div class="tl-bar-track"><div class="tl-bar" style="width:14%;background:#c3b0e0;">AI לבידור vs עבודה</div></div></div>
+        <div class="tl-row"><span class="tl-time">0:25–1:00</span><div class="tl-bar-track"><div class="tl-bar" style="width:19%;background:#b39fdb;">התקנת תשתית</div></div></div>
+        <div class="tl-row"><span class="tl-time">1:00–1:20</span><div class="tl-bar-track"><div class="tl-bar" style="width:11%;background:#a48cd0;">API, אבטחה, Git</div></div></div>
+        <div class="tl-row"><span class="tl-time">1:20–2:00</span><div class="tl-bar-track"><div class="tl-bar" style="width:22%;background:#9579c4;">מנהל משרד אישי</div></div></div>
+        <div class="tl-row"><span class="tl-time">2:00–2:20</span><div class="tl-bar-track"><div class="tl-bar" style="width:11%;background:#8666b8;">אפיון המערכת</div></div></div>
+        <div class="tl-row"><span class="tl-time">2:20–3:00</span><div class="tl-bar-track"><div class="tl-bar" style="width:22%;background:#7753ac;color:#fff;">בונים מערכת קהילה</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 — AI FOR FUN VS WORK -->
+  <section class="slide" data-title="AI לבידור vs AI לעבודה">
+    <span class="slide-index">06 / 30</span>
+    <span class="slide-track track-a">מפגש א' · 0:00–0:25</span>
+    <span class="eyebrow">AI לבידור מול AI לעבודה</span>
+    <h2>95% מהמשתמשים מכירים AI לבידור בלבד</h2>
+    <div class="content grid grid-2">
+      <div class="card">
+        <h3>איך היו בונים תוכנה קודם</h3>
+        <p>מפתח שלמד שנים · עלה עשרות אלפי דולר · לקח חודשים.</p>
+      </div>
+      <div class="card" style="border-color:rgba(224,183,104,0.5);">
+        <h3>מה השתנה</h3>
+        <p>הרב הוא המנהל — Claude Code הוא הידיים. הוא תמיד ידע מה הוא רוצה, רק לא ידע לכתוב את קבצי הטקסט. עכשיו יש מי שכותב אותם במקומו.</p>
+      </div>
+    </div>
+    <div class="quote content" style="margin-top:6px;">
+      "אתה לא הופך למתכנת. אתה הופך לרב שיש לו כלים."
+    </div>
+  </section>
+
+  <!-- 7 — MODEL SIZES -->
+  <section class="slide" data-title="Opus, Sonnet, Haiku">
+    <span class="slide-index">07 / 30</span>
+    <span class="slide-track track-a">מפגש א' · 0:00–0:25</span>
+    <span class="eyebrow">בתוך Claude</span>
+    <h2>שלושה גדלים — כמו חולצות</h2>
+    <div class="content table-wrap">
+      <table>
+        <thead><tr><th>מודל</th><th>גודל</th><th>מה הוא</th><th>מתי משתמשים</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">Haiku</td><td>S</td><td>הכי קל, זול, מהיר</td><td>שאלות פשוטות</td></tr>
+          <tr><td class="hl">Sonnet</td><td>M</td><td>באמצע</td><td>רוב העבודה היומיומית</td></tr>
+          <tr><td class="hl">Opus</td><td>L</td><td>הכי חכם, יקר, איטי</td><td>בעיות מורכבות</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="quote content">"לא צריך לדעת בחור — שאל את Claude איזה מודל להשתמש."</div>
+  </section>
+
+  <!-- 8 — TOKENS / PRO vs API -->
+  <section class="slide" data-title="טוקנים ומחירים">
+    <span class="slide-index">08 / 30</span>
+    <span class="slide-track track-a">מפגש א' · 0:00–0:25</span>
+    <span class="eyebrow">טוקנים ומחירים</span>
+    <h2>Pro ($20 קבוע) מול API (לפי צריכה)</h2>
+    <div class="content table-wrap">
+      <table>
+        <thead><tr><th></th><th>Pro בלבד</th><th>API בלבד</th><th>שניהם</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">claude.ai</td><td>✔</td><td>—</td><td>✔</td></tr>
+          <tr><td class="hl">Claude Code</td><td>—</td><td>✔</td><td>✔</td></tr>
+          <tr><td class="hl">מחיר</td><td>$20 קבוע</td><td>לפי שימוש</td><td>שניהם</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="quote content">"Pro — בשביל ללמוד ולשאול. API — בשביל שהמערכת שתבנו תעבוד לבד."</div>
+  </section>
+
+  <!-- 9 — INSTALL -->
+  <section class="slide" data-title="התקנת תשתית">
+    <span class="slide-index">09 / 30</span>
+    <span class="slide-track track-a">מפגש א' · 0:25–1:00</span>
+    <span class="eyebrow">התקנת תשתית · 35 דקות</span>
+    <h2>כולם יוצאים עם Claude Code מותקן ועובד</h2>
+    <div class="content checklist">
+      <div class="check-item"><span class="check-mark">✓</span> VS Code — סביבת העבודה</div>
+      <div class="check-item"><span class="check-mark">✓</span> Claude Code בתוך VS Code + API Key</div>
+      <div class="check-item"><span class="check-mark">✓</span> אקסלנשן RTL (עברית מימין לשמאל) — "Claude Code RTL Support"</div>
+      <div class="check-item"><span class="check-mark">✓</span> פיצ'ר צלצול בסיום משימה</div>
+      <div class="check-item"><span class="check-mark">✓</span> מעקב טוקנים ועלויות בזמן אמת</div>
+    </div>
+    <div class="lede content">כשמשהו לא עובד: צילום מסך של השגיאה → מדביקים לקלוד קוד ושואלים "קיבלתי את זה, מה לעשות?"</div>
+    <div class="foot-note content">טיפ לאיסק: לעצור אחרי ההתקנה ולבדוק שכולם ב-OK לפני שממשיכים.</div>
+  </section>
+
+  <!-- 10 — API house metaphor -->
+  <section class="slide" data-title="מה זה API">
+    <span class="slide-index">10 / 30</span>
+    <span class="slide-track track-a">מפגש א' · 1:00–1:20</span>
+    <span class="eyebrow">API — משל הבית</span>
+    <h2>כל מערכת בענן היא בית</h2>
+    <div class="lede content">לבעל הבית יש גישה מלאה פנימה. אבל אפשר גם לפתוח דלת לאורחים — עם כללים: מי מורשה להיכנס, מה מותר לו לעשות, ובאיזו שפה לדבר. כך עובד API — הדלת הרשמית לכל מערכת.</div>
+    <div class="content table-wrap">
+      <table>
+        <thead><tr><th>פעולה</th><th>דוגמה</th><th>רגישות</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">GET — לקרוא</td><td>לראות רשימת אנשים</td><td>רגיש</td></tr>
+          <tr><td class="hl">POST — להוסיף</td><td>להוסיף אדם חדש</td><td>יותר רגיש</td></tr>
+          <tr><td class="hl">DELETE — למחוק</td><td>למחוק רשומה</td><td>הכי רגיש</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 11 — Frontend/Backend/token -->
+  <section class="slide" data-title="Frontend vs Backend">
+    <span class="slide-index">11 / 30</span>
+    <span class="slide-track track-a">מפגש א' · 1:00–1:20</span>
+    <span class="eyebrow">איפה יושב הטוקן</span>
+    <h2>הטוקן נמצא רק ב-Backend</h2>
+    <div style="display:flex;gap:48px;flex-wrap:wrap;align-items:center;" class="content">
+      <div class="flow">
+        <div class="flow-box">המשתמש (דפדפן)</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box">Frontend <small>רץ אצל המשתמש — כולם רואים</small></div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box" style="border-color:var(--gold);background:rgba(224,183,104,0.12);">Backend <small>אף אחד לא יכול לגשת — כאן הטוקן</small></div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box">API חיצוני <small>Anthropic, Google וכו'</small></div>
+      </div>
+      <div style="max-width:340px;display:flex;flex-direction:column;gap:14px;">
+        <p class="lede" style="max-width:none;">קוד כניסה = טוקן API. כמו קוד לדלת הבית — בלי קוד, אין כניסה.</p>
+        <p class="lede" style="max-width:none;">הסכנה: אם הטוקן ב-Frontend — כל קליק ימני ← Inspect חושף אותו.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 — Git & GitHub -->
+  <section class="slide" data-title="Git ו-GitHub">
+    <span class="slide-index">12 / 30</span>
+    <span class="slide-track track-a">מפגש א' · 1:00–1:20</span>
+    <span class="eyebrow">Git ו-GitHub</span>
+    <h2>גיבוי חכם — כמו "שמור משחק" לפני שלב קשה</h2>
+    <div class="content grid grid-2">
+      <div class="card">
+        <h3>איך זה עובד</h3>
+        <p><strong>git commit</strong> — שומר נקודת ביקורת עם תיאור קצר.<br><strong>git push</strong> — מעלה לענן (GitHub).</p>
+        <p>כל commit הוא צילום מצב שלם. אפשר תמיד לחזור אליו.</p>
+      </div>
+      <div class="card">
+        <h3>מה עולה ל-GitHub, מה לא</h3>
+        <p>עולה: הקוד, מבנה הפרויקט, CLAUDE.md.<br>לא עולה: קובץ <code>.env</code> (הטוקנים), בסיס הנתונים, מידע פרטי.</p>
+      </div>
+    </div>
+    <div class="quote content">"GitHub שומר את המתכון — לא את האוכל."</div>
+  </section>
+
+  <!-- 13 — CLAUDE.md -->
+  <section class="slide" data-title="CLAUDE.md">
+    <span class="slide-index">13 / 30</span>
+    <span class="slide-track track-a">מפגש א' · 1:20–2:00</span>
+    <span class="eyebrow">CLAUDE.md — המוח של הפרויקט</span>
+    <h2>Claude לא זוכר כלום בין שיחה לשיחה — עד שכותבים לו</h2>
+    <div class="content table-wrap">
+      <table>
+        <thead><tr><th></th><th>בלי CLAUDE.md</th><th>עם CLAUDE.md</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">פתיחה</td><td>"מי אתה?"</td><td>"בוקר טוב רב משה, יש היום יארצייט של..."</td></tr>
+          <tr><td class="hl">תשובות</td><td>סגנון כללי</td><td>לפי הקהילה הספציפית</td></tr>
+          <tr><td class="hl">המשכיות</td><td>מתחיל מאפס כל פעם</td><td>ממשיך מאיפה שעצר</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="quote content">"כל מה שאתה רוצה שClaude Code ידע — כתוב אותו. הוא לא מנחש, הוא קורא."</div>
+  </section>
+
+  <!-- 14 — Skills vs Agents -->
+  <section class="slide" data-title="Skills vs Agents">
+    <span class="slide-index">14 / 30</span>
+    <span class="slide-track track-a">מפגש א' · 1:20–2:00</span>
+    <span class="eyebrow">Skills מול Agents</span>
+    <h2>מתכון קבוע, או שף שמחליט</h2>
+    <div class="content table-wrap">
+      <table>
+        <thead><tr><th></th><th>Skill</th><th>Agent</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">מה זה</td><td>פעולה חוזרת, צעדים קבועים</td><td>מומחה עם הקשר וזיכרון</td></tr>
+          <tr><td class="hl">מתי</td><td>תמיד אותו הדבר</td><td>עבודה שדורשת שיקול דעת</td></tr>
+          <tr><td class="hl">דוגמה</td><td>"סגור סשן", "בדוק אבטחה"</td><td>עוזר אישי לקהילה, בונה תוכניות</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="quote content">"Skill = מתכון. Agent = שף. המתכון תמיד אותו הדבר — השף מחליט מה לבשל."</div>
+  </section>
+
+  <!-- 15 — Tools behind the scenes -->
+  <section class="slide" data-title="הכלים מאחורי הגב">
+    <span class="slide-index">15 / 30</span>
+    <span class="slide-track track-a">מפגש א' · 1:20–2:00</span>
+    <span class="eyebrow">הכלים מאחורי הגב</span>
+    <h2>מהמקלדת שלך — לאינטרנט</h2>
+    <div style="display:flex;gap:48px;flex-wrap:wrap;" class="content">
+      <div class="flow">
+        <div class="flow-box">כותבים קוד ב-Claude Code</div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box">GitHub <small>שומר את הקוד</small></div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box">Vercel <small>מפרסם לאינטרנט</small></div>
+        <div class="flow-arrow">↓</div>
+        <div class="flow-box" style="border-color:var(--gold);background:rgba(224,183,104,0.12);">Supabase <small>שומר את נתוני הקהילה</small></div>
+      </div>
+      <div style="max-width:320px;">
+        <p class="lede" style="max-width:none;">כל השלושה — חינם לקהילה קטנה-בינונית.</p>
+        <p class="lede" style="max-width:none;">עלות חודשית לרב ממוצע: <strong style="color:#fff;">$0</strong>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 — Personal office manager -->
+  <section class="slide" data-title="מנהל משרד אישי">
+    <span class="slide-index">16 / 30</span>
+    <span class="slide-track track-a">מפגש א' · 1:20–2:00</span>
+    <span class="eyebrow">בנייה יחד · מנהל משרד אישי</span>
+    <h2>הרב פותח בבוקר, שואל "מה יש היום?" — ומקבל תשובה</h2>
+    <div class="content grid grid-3">
+      <div class="card"><h3>CLAUDE.md</h3><p>מי אני, מה הקהילה שלי, איך אני עובד</p></div>
+      <div class="card"><h3>BRAIN.md</h3><p>מה פעיל עכשיו, מה חוסם</p></div>
+      <div class="card"><h3>TASKS.md</h3><p>משימות לפי עדיפות</p></div>
+      <div class="card"><h3>COMMUNITY.md</h3><p>חברי הקהילה, אירועים, חגים</p></div>
+      <div class="card"><h3>LESSONS.md</h3><p>מה למדתי על הקהילה שלי</p></div>
+    </div>
+  </section>
+
+  <!-- 17 — Characterization -->
+  <section class="slide" data-title="אפיון המערכת">
+    <span class="slide-index">17 / 30</span>
+    <span class="slide-track track-a">מפגש א' · 2:00–2:20</span>
+    <span class="eyebrow">אפיון המערכת · 20 דקות</span>
+    <h2>לפני שבונים בית — מכינים תוכנית</h2>
+    <div class="content prompt">
+      <span class="prompt-label">פרומפט להדביק ל-Claude Code</span>
+      <pre>אתה עוזר אישי שמאפיין מערכת ניהול קהילה לרב.
+תפקידך: לשאול אותי שאלות אחת אחת, להבין את הקהילה שלי,
+ובסוף לסכם מסמך אפיון מלא.
+
+כללים:
+- שאל שאלה אחת בכל פעם — לא כולן ביחד
+- המתן לתשובה לפני שממשיכים
+- בסוף — הכן מסמך אפיון מסודר
+
+התחל עכשיו עם השאלה הראשונה.</pre>
+    </div>
+    <div class="lede content">כמה משפחות בקהילה? אילו פרטים חשוב לדעת? על אילו אירועים רוצים תזכורת? איך לקבל התראות — וואטסאפ / אימייל / דשבורד?</div>
+  </section>
+
+  <!-- 18 — Start building -->
+  <section class="slide" data-title="מתחילים לבנות">
+    <span class="slide-index">18 / 30</span>
+    <span class="slide-track track-a">מפגש א' · 2:20–3:00</span>
+    <span class="eyebrow">בונים · מערכת ניהול קהילה</span>
+    <h2>כולם בונים אותה תשתית בסיסית</h2>
+    <div class="content table-wrap">
+      <table>
+        <thead><tr><th>שדה</th><th>סוג</th><th>דוגמה</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">שם מלא</td><td>טקסט</td><td>ישראל ישראלי</td></tr>
+          <tr><td class="hl">טלפון</td><td>מספר</td><td>+1-555-0123</td></tr>
+          <tr><td class="hl">תאריך לידה עברי</td><td>תאריך</td><td>כ"ה אדר</td></tr>
+          <tr><td class="hl">יארצייט</td><td>שם + תאריך</td><td>אבא — ג' טבת</td></tr>
+          <tr><td class="hl">רמת מעורבות</td><td>רשימה</td><td>פעיל / מזדמן / רדום</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="foot-note content">Claude Code כותב, הרב מנחה ובודק — עצירה לבדיקה משותפת כל 10 דקות.</div>
+  </section>
+
+  <!-- 19 — End of Session A -->
+  <section class="slide" data-title="תוצר סוף מפגש א'">
+    <span class="slide-index">19 / 30</span>
+    <span class="slide-track track-a">סוף מפגש א'</span>
+    <span class="eyebrow">תוצר סוף מפגש</span>
+    <h2>מה יוצא ביד</h2>
+    <div class="content checklist">
+      <div class="check-item"><span class="check-mark">✓</span> Claude Code מותקן ועובד</div>
+      <div class="check-item"><span class="check-mark">✓</span> מנהל משרד אישי בנוי</div>
+      <div class="check-item"><span class="check-mark">✓</span> גרסה ראשונה של מערכת הקהילה עם נתונים אמיתיים</div>
+    </div>
+    <div class="card content" style="margin-top:10px;max-width:560px;">
+      <span class="tag">עבודת בית לפני מפגש ב'</span>
+      <p>להזין 3-5 אנשים מהקהילה · לשאול "מי יש לי בקהילה?" · למלא את הטופס שנשלח לפני הסשן.</p>
+    </div>
+  </section>
+
+  <!-- 20 — SESSION B DIVIDER -->
+  <section class="slide dark" data-title="מפגש ב'">
+    <span class="slide-index">20 / 30</span>
+    <span class="slide-track track-b">מפגש ב'</span>
+    <div class="divider-wrap">
+      <div class="divider-num">ב'</div>
+      <div>
+        <span class="eyebrow">גומרים, בודקים, משיקים</span>
+        <h1 style="margin-top:10px;">פרידה מהאקסל<span class="accent"></span></h1>
+      </div>
+    </div>
+    <div class="content">
+      <div class="timeline">
+        <div class="tl-row"><span class="tl-time">0:00–0:20</span><div class="tl-bar-track"><div class="tl-bar" style="width:11%;background:#8fd0cb;">פתיחה + סקירה</div></div></div>
+        <div class="tl-row"><span class="tl-time">0:20–1:00</span><div class="tl-bar-track"><div class="tl-bar" style="width:22%;background:#7cc4bf;">התראות</div></div></div>
+        <div class="tl-row"><span class="tl-time">1:00–1:20</span><div class="tl-bar-track"><div class="tl-bar" style="width:11%;background:#69b8b3;">דשבורד בוקר</div></div></div>
+        <div class="tl-row"><span class="tl-time">1:20–1:50</span><div class="tl-bar-track"><div class="tl-bar" style="width:16%;background:#56aca7;">תיקונים + נתונים</div></div></div>
+        <div class="tl-row"><span class="tl-time">1:50–2:30</span><div class="tl-bar-track"><div class="tl-bar" style="width:22%;background:#43a09b;color:#fff;">אוטומציות</div></div></div>
+        <div class="tl-row"><span class="tl-time">2:30–2:50</span><div class="tl-bar-track"><div class="tl-bar" style="width:11%;background:#33908c;color:#fff;">דמו חי</div></div></div>
+        <div class="tl-row"><span class="tl-time">2:50–3:00</span><div class="tl-bar-track"><div class="tl-bar" style="width:6%;background:#23807c;color:#fff;">סגירה</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 21 — Notification mechanism -->
+  <section class="slide" data-title="מנגנון התראות">
+    <span class="slide-index">21 / 30</span>
+    <span class="slide-track track-b">מפגש ב' · 0:20–1:00</span>
+    <span class="eyebrow">המשך בנייה · מנגנון התראות</span>
+    <h2>הודעה שונה לכל סוג אירוע</h2>
+    <div class="content grid grid-3">
+      <div class="card"><h3>יום הולדת</h3><p>ברכה אישית בשמו</p></div>
+      <div class="card"><h3>יארצייט</h3><p>הודעת זיכרון</p></div>
+      <div class="card"><h3>יום פטירה</h3><p>הודעת נחמה</p></div>
+    </div>
+    <div class="prompt content">
+      <span class="prompt-label">דוגמה לפרומפט</span>
+      <pre>בנה פונקציה שכל בוקר ב-8:00 בודקת מי חוגג יום הולדת
+היום לפי הלוח העברי ושולחת לו הודעת ווטסאפ עם ברכה
+אישית בשמו.</pre>
+    </div>
+  </section>
+
+  <!-- 22 — Hebrew calendar / Hebcal -->
+  <section class="slide" data-title="לוח עברי">
+    <span class="slide-index">22 / 30</span>
+    <span class="slide-track track-b">מפגש ב' · 0:20–1:00</span>
+    <span class="eyebrow">אתגר הלוח העברי</span>
+    <h2>שתי בעיות שכל מערכת קהילה נתקלת בהן</h2>
+    <div class="content grid grid-2">
+      <div class="card">
+        <span class="tag">בעיה 1</span>
+        <h3>לפני / אחרי שקיעה</h3>
+        <p>היום ההלכתי מתחיל בשקיעה. לידה אחרי שקיעה — ה"יום" כבר המחרת. לכן שואלים: "לפני שקיעה או אחרי?"</p>
+      </div>
+      <div class="card">
+        <span class="tag">בעיה 2</span>
+        <h3>התאריך הלועזי משתנה כל שנה</h3>
+        <p>י"ח אדר יכול ליפול בפברואר או במרץ. ובשנה מעוברת — אדר א' או ב'?</p>
+      </div>
+    </div>
+    <div class="quote content" style="font-size:22px;">הפתרון: <strong>Hebcal API</strong> — מחשב שקיעות לפי מיקום, ממיר תאריכים אוטומטית, מטפל בשנה מעוברת.</div>
+  </section>
+
+  <!-- 23 — Email delivery -->
+  <section class="slide" data-title="התראות בפועל">
+    <span class="slide-index">23 / 30</span>
+    <span class="slide-track track-b">מפגש ב' · 0:20–1:00</span>
+    <span class="eyebrow">איך ההתראה יוצאת</span>
+    <h2>אימייל דרך Resend — פשוט, מהיר, חינם</h2>
+    <div class="lede content">למה אימייל ולא WhatsApp: חיבור WhatsApp מורכב. Resend מתחבר תוך שניות ונותן 100 אימיילים ביום — חינם.</div>
+    <div class="content table-wrap">
+      <table>
+        <thead><tr><th>הגדרה</th><th>מה קורה</th></tr></thead>
+        <tbody>
+          <tr><td class="hl">יום לפני</td><td>אימייל יום לפני כל אירוע</td></tr>
+          <tr><td class="hl">שבוע לפני</td><td>אימייל שבוע לפני כל אירוע</td></tr>
+          <tr><td class="hl">תחילת שבוע</td><td>כל יום ראשון — רשימת כל אירועי השבוע</td></tr>
+          <tr><td class="hl">שילוב</td><td>תחילת שבוע + יום לפני</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="foot-note content">כל רב מגדיר מה מתאים לו — המערכת עובדת לפי זה.</div>
+  </section>
+
+  <!-- 24 — Morning dashboard -->
+  <section class="slide" data-title="דשבורד בוקר">
+    <span class="slide-index">24 / 30</span>
+    <span class="slide-track track-b">מפגש ב' · 1:00–1:20</span>
+    <span class="eyebrow">דשבורד בוקר</span>
+    <h2>הרב פותח את המחשב — ורואה בשניות מה לעשות</h2>
+    <div class="content grid grid-3">
+      <div class="card"><h3>היום</h3><p>ימי הולדת, יארצייטים, פגישות</p></div>
+      <div class="card"><h3>השבוע</h3><p>אירועים קרובים</p></div>
+      <div class="card"><h3>לתשומת לב</h3><p>מי לא נראה יותר מחודש — "כדאי ליצור קשר"</p></div>
+    </div>
+    <div class="foot-note content">פשוט, נקי, בעברית, RTL, מוגן בסיסמה.</div>
+  </section>
+
+  <!-- 25 — Fixes + real data -->
+  <section class="slide" data-title="תיקונים + נתונים אמיתיים">
+    <span class="slide-index">25 / 30</span>
+    <span class="slide-track track-b">מפגש ב' · 1:20–1:50</span>
+    <span class="eyebrow">תיקונים + הזנת נתונים אמיתיים</span>
+    <h2>אחד אחד — עד ש-20-30 אנשים בפנים</h2>
+    <div class="content checklist">
+      <div class="check-item"><span class="check-mark">✓</span> כל רב מביא בעיה אחת שנתקע בה — פותרים יחד</div>
+      <div class="check-item"><span class="check-mark">✓</span> הזנת עוד אנשים מהקהילה — עד 20-30</div>
+      <div class="check-item"><span class="check-mark">✓</span> בדיקה: ההתראות יוצאות נכון?</div>
+    </div>
+    <div class="foot-note content">טיפ לאיסק: הזמן לעבור אחד אחד ולוודא שאף אחד לא נשאר מאחור.</div>
+  </section>
+
+  <!-- 26 — Automations grid -->
+  <section class="slide" data-title="אוטומציות">
+    <span class="slide-index">26 / 30</span>
+    <span class="slide-track track-b">מפגש ב' · 1:50–2:30</span>
+    <span class="eyebrow">בונים 2-3 אוטומציות</span>
+    <h2>עובדות לבד, בלי שהרב יזכור</h2>
+    <div class="content grid grid-2">
+      <div class="card"><span class="tag">כל יום ראשון 8:00</span><h3>התראת יארצייט שבועית</h3><p>רשימת כל היארצייטים השבוע — שם הנפטר, בן המשפחה, תאריך.</p></div>
+      <div class="card"><span class="tag">ביום עצמו</span><h3>ברכת יום הולדת</h3><p>אימייל לרב עם שם ופרטי האדם החוגג לפי הלוח העברי.</p></div>
+      <div class="card"><span class="tag">ראש חודש</span><h3>דוח חודשי</h3><p>מי חגג, מי יש לו יארצייט, מי לא נראה יותר מחודש.</p></div>
+      <div class="card"><span class="tag">בונוס</span><h3>מעקב נוכחות</h3><p>אחרי כל שבת — מי בא, גרף מגמות לאורך זמן.</p></div>
+    </div>
+  </section>
+
+  <!-- 27 — Live demo -->
+  <section class="slide dark" data-title="דמו חי">
+    <span class="slide-index">27 / 30</span>
+    <span class="slide-track track-b">מפגש ב' · 2:30–2:50</span>
+    <span class="eyebrow">דמו חי — כל אחד לבד</span>
+    <h2>הרב עושה לבד, איסק לא מתערב</h2>
+    <div class="lede content">כל רב מעלה מסך למשך 2 דקות, שואל את Claude Code שאלה שהוא בוחר, ומנסה לבנות משהו קטן בזמן אמת.</div>
+    <div class="quote content">"אם הצלחת לעשות את זה לבד עכשיו — תצליח לעשות את זה לבד גם מחר."</div>
+  </section>
+
+  <!-- 28 — End of Session B -->
+  <section class="slide" data-title="תוצר סוף מפגש ב'">
+    <span class="slide-index">28 / 30</span>
+    <span class="slide-track track-b">סוף מפגש ב'</span>
+    <span class="eyebrow">תוצר סוף מפגש</span>
+    <h2>מה הרב לוקח הביתה</h2>
+    <div class="content checklist">
+      <div class="check-item"><span class="check-mark">✓</span> מנהל משרד אישי שעוזר כל בוקר</div>
+      <div class="check-item"><span class="check-mark">✓</span> מערכת ניהול קהילה חיה עם נתונים אמיתיים</div>
+      <div class="check-item"><span class="check-mark">✓</span> מנגנון התראות עובד (ימי הולדת, יארצייט)</div>
+      <div class="check-item"><span class="check-mark">✓</span> 2-3 אוטומציות שעובדות לבד</div>
+      <div class="check-item"><span class="check-mark">✓</span> יכולת להמשיך לבנות לבד</div>
+      <div class="check-item"><span class="check-mark">✓</span> קהילת רבנים שבנו יחד (ווטסאפ)</div>
+    </div>
+  </section>
+
+  <!-- 29 — Community offer -->
+  <section class="slide dark" data-title="קהילת AI לרבנים">
+    <span class="slide-index">29 / 30</span>
+    <span class="eyebrow">סגירה · הזמנה</span>
+    <h2>קהילת AI לרבנים</h2>
+    <div class="lede content">קבוצת WhatsApp שכל יום שולחים עדכון אחד על AI — כלי חדש, טיפ, דבר שימושי.</div>
+    <div class="content" style="display:flex;gap:24px;align-items:center;flex-wrap:wrap;">
+      <div class="card" style="max-width:280px;">
+        <span class="tag">מחיר רגיל</span>
+        <h3 style="font-size:28px;text-decoration:line-through;color:var(--paper-dim);">$15 לחודש</h3>
+      </div>
+      <div class="card" style="max-width:280px;border-color:var(--gold);background:rgba(224,183,104,0.1);">
+        <span class="tag" style="color:var(--gold);border-color:var(--gold);">מחיר מוקדם לבוגרי הסדנה</span>
+        <h3 style="font-size:32px;color:var(--gold);">$10 לחודש</h3>
+      </div>
+    </div>
+    <div class="quote content">"אתם הראשונים. המחיר הזה נשמר רק למי שמצטרף היום."</div>
+  </section>
+
+  <!-- 30 — Final close -->
+  <section class="slide" data-title="סגירה">
+    <span class="slide-index">30 / 30</span>
+    <span class="eyebrow">סגירה</span>
+    <h1>לא לפחד —<br><span class="accent">להמשיך לעבוד</span></h1>
+    <div class="quote content">"הכלי הזה לא מושלם. גם אתם לא מושלמים. אבל כל שאלה שתשאלו — תלמדו. כל טעות — תתקנו. ככה זה עובד."</div>
+    <div class="content" style="margin-top:6px;">
+      <span class="tag" style="margin-bottom:14px;display:inline-block;">שלושה דברים לעשות מחר בבוקר</span>
+      <div class="checklist">
+        <div class="check-item"><span class="check-mark">1</span> לפתוח Claude Code</div>
+        <div class="check-item"><span class="check-mark">2</span> לשאול "מה יש היום?"</div>
+        <div class="check-item"><span class="check-mark">3</span> לנסות דבר אחד חדש</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<div class="navbar">
+  <button id="prevBtn" aria-label="הקודם">›</button>
+  <span class="counter" id="counter">1 / 30</span>
+  <button id="nextBtn" aria-label="הבא">‹</button>
+</div>
+
+<script>
+  (function(){
+    var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+    var counter = document.getElementById('counter');
+    function currentIndex(){
+      var mid = window.scrollY + window.innerHeight/2;
+      var idx = 0;
+      slides.forEach(function(s,i){
+        if (s.offsetTop <= mid) idx = i;
+      });
+      return idx;
+    }
+    function updateCounter(){
+      counter.textContent = (currentIndex()+1) + ' / ' + slides.length;
+    }
+    function goTo(i){
+      i = Math.max(0, Math.min(slides.length-1, i));
+      slides[i].scrollIntoView({behavior:'smooth'});
+    }
+    document.getElementById('nextBtn').addEventListener('click', function(){ goTo(currentIndex()+1); });
+    document.getElementById('prevBtn').addEventListener('click', function(){ goTo(currentIndex()-1); });
+    window.addEventListener('scroll', updateCounter, {passive:true});
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowDown' || e.key === 'PageDown'){ goTo(currentIndex()+1); e.preventDefault(); }
+      if (e.key === 'ArrowUp' || e.key === 'PageUp'){ goTo(currentIndex()-1); e.preventDefault(); }
+    });
+    updateCounter();
+  })();
+</script>
