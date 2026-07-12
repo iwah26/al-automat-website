@@ -28,19 +28,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  try {
-    await setSessionVideo(sessionId, {
-      libraryId: String(VideoLibraryId),
-      videoId: String(VideoGuid),
-      title: VideoTitle,
-      uploadedAt: new Date().toISOString(),
-    });
-  } catch (err) {
-    return NextResponse.json(
-      { error: "setSessionVideo failed", detail: String(err) },
-      { status: 500 }
-    );
-  }
+  await setSessionVideo(sessionId, {
+    libraryId: String(VideoLibraryId),
+    videoId: String(VideoGuid),
+    title: VideoTitle,
+    uploadedAt: new Date().toISOString(),
+  });
 
   console.log(`✅ Session ${sessionId} video saved: ${VideoGuid}`);
   return NextResponse.json({ ok: true, sessionId });
