@@ -19,8 +19,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, skipped: true });
   }
 
-  // VideoTitle צריך להיות "1" או "2" (מספר השיעור)
-  const sessionId = String(VideoTitle || "").trim();
+  // VideoTitle צריך להיות "1" או "2" (מספר השיעור) — מתעלם מסיומת קובץ אם הועלה בשם "1.mp4"
+  const sessionId = String(VideoTitle || "").trim().replace(/\.[a-z0-9]+$/i, "");
   if (!["1", "2"].includes(sessionId)) {
     return NextResponse.json(
       { error: `Unknown session title: "${sessionId}". Expected "1" or "2".` },
