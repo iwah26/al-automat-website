@@ -1,4 +1,4 @@
-import { put, list } from "@vercel/blob";
+import { put, get } from "@vercel/blob";
 
 export interface VideoData {
   libraryId: string;
@@ -11,11 +11,10 @@ const CONFIG_FILENAME = "course-videos.json";
 
 async function readConfig(): Promise<Record<string, VideoData>> {
   try {
-    const { blobs } = await list({ prefix: "course-videos" });
-    if (blobs.length === 0) return {};
-    const res = await fetch(blobs[0].url, { cache: "no-store" });
-    if (!res.ok) return {};
-    return await res.json();
+    const blob = await get(CONFIG_FILENAME, { access: "private" });
+    if (!blob) return {};
+    const text = await new Response(blob.stream).text();
+    return JSON.parse(text);
   } catch {
     return {};
   }
@@ -23,7 +22,7 @@ async function readConfig(): Promise<Record<string, VideoData>> {
 
 async function writeConfig(data: Record<string, VideoData>) {
   await put(CONFIG_FILENAME, JSON.stringify(data), {
-    access: "public",
+    access: "private",
     addRandomSuffix: false,
   });
 }
