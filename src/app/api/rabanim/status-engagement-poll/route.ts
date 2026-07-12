@@ -44,8 +44,15 @@ export async function GET(req: NextRequest) {
 
   // Only auto-reply to reactions/replies on statuses Isaac explicitly opted
   // in (via rabanim_tracked_statuses) — not every status he ever posts.
+  // Exception: when the allowlist is empty, fall back to matching any status
+  // engagement. Needed because a status posted while the Green API instance
+  // was disconnected never gets an id via getOutgoingStatuses, so it can't
+  // be added to the allowlist at all — this is safe only because Isaac
+  // confirmed no other status is live right now (2026-07-12).
   const engagements = entries.filter(
-    (entry) => isStatusEngagement(entry) && trackedIds.has(entry.quotedMessage?.stanzaId)
+    (entry) =>
+      isStatusEngagement(entry) &&
+      (trackedIds.size === 0 || trackedIds.has(entry.quotedMessage?.stanzaId))
   );
 
   let sent = 0;
