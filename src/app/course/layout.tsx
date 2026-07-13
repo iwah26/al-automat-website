@@ -14,7 +14,7 @@ export default async function CourseLayout({ children }: { children: React.React
   return (
     <>
       <Navbar />
-      <div className="min-h-screen pt-16 flex flex-row-reverse">
+      <div className="min-h-screen pt-16 flex flex-row-reverse bg-course-bg">
         <CourseSidebar sessions={SESSIONS} />
         <main className="flex-1 px-6 py-8 overflow-auto">
           {children}
