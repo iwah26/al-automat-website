@@ -95,8 +95,11 @@ export async function GET(req: NextRequest) {
   }
 
   const drive = getDriveClient();
+  const sinceClause = process.env.PIPELINE_START_DATE
+    ? ` and createdTime > '${process.env.PIPELINE_START_DATE}'`
+    : "";
   const listRes = await drive.files.list({
-    q: `'${folderId}' in parents and trashed = false`,
+    q: `'${folderId}' in parents and trashed = false${sinceClause}`,
     fields: "files(id, name, mimeType)",
     orderBy: "createdTime desc",
     pageSize: 50,
