@@ -1,0 +1,15 @@
+name: Transcribe call recordings
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call transcribe-poll endpoint
+        run: |
+          curl -sf -X GET "https://www.al-automat.co.il/api/calls/transcribe-poll" \
+            -H "Authorization: Bearer ${{ secrets.CALLS_CRON_SECRET }}"
