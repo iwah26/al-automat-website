@@ -14,6 +14,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 const MAX_FILES_PER_RUN = 3;
+const MAX_PRIVACY_SYNC_PER_RUN = 5;
 const BLOB_CLEANUP_DELAY_MS = 10 * 60 * 1000;
 
 export async function GET(req: NextRequest) {
@@ -58,7 +59,8 @@ export async function GET(req: NextRequest) {
     .from("call_recordings_processed")
     .select("drive_file_id, fireflies_title")
     .eq("privacy_locked", false)
-    .not("fireflies_title", "is", null);
+    .not("fireflies_title", "is", null)
+    .limit(MAX_PRIVACY_SYNC_PER_RUN);
 
   let locked = 0;
   for (const row of pendingPrivacy ?? []) {
