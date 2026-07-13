@@ -72,3 +72,51 @@ export async function lockTranscriptPrivacy(transcriptId: string) {
     { input: { id: transcriptId, privacy: "owner" } }
   );
 }
+
+export interface TranscriptDetails {
+  id: string;
+  title: string;
+  date: number;
+  duration: number;
+  transcriptText: string;
+  summary: string | null;
+  keywords: string[];
+  actionItems: string | null;
+}
+
+export async function fetchTranscriptDetails(transcriptId: string): Promise<TranscriptDetails> {
+  const data = await firefliesGraphQL(
+    `query($id: String!) {
+      transcript(id: $id) {
+        id
+        title
+        date
+        duration
+        sentences { speaker_name text }
+        summary { overview keywords action_items }
+      }
+    }`,
+    { id: transcriptId }
+  );
+  const t = data.transcript;
+  const transcriptText = (t.sentences ?? [])
+    .map((s: { speaker_name: string; text: string }) => `${s.speaker_name}: ${s.text}`)
+    .join("\n");
+
+  return {
+    id: t.id,
+    title: t.title,
+    date: t.date,
+    duration: t.duration,
+    transcriptText,
+    summary: t.summary?.overview ?? null,
+    keywords: t.summary?.keywords ?? [],
+    actionItems: t.summary?.action_items ?? null,
+  };
+}
+
+// Parses "Grabación de llamadas <contact>_<YYMMDD>_<HHMMSS>" style titles
+export function parseContactNameFromTitle(title: string): string | null {
+  const match = title.match(/^(?:Grabaci[oó]n de llamadas|Llamada)\s+(.+?)_\d{6}_\d{6}$/);
+  return match ? match[1].trim() : null;
+}

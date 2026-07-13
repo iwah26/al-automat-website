@@ -6,6 +6,8 @@ import {
   uploadAudioToFireflies,
   findTranscriptIdByTitle,
   lockTranscriptPrivacy,
+  fetchTranscriptDetails,
+  parseContactNameFromTitle,
 } from "@/lib/callTranscription";
 
 export const dynamic = "force-dynamic";
@@ -50,7 +52,8 @@ export async function GET(req: NextRequest) {
 
   // Lock down privacy on transcripts from earlier runs, once Fireflies has
   // finished processing them (uploadAudio doesn't return a transcript id,
-  // so this has to be matched up afterwards by exact title).
+  // so this has to be matched up afterwards by exact title). Once matched,
+  // also pull the full transcript into our own searchable table.
   const { data: pendingPrivacy } = await supabase
     .from("call_recordings_processed")
     .select("drive_file_id, fireflies_title")
@@ -63,6 +66,22 @@ export async function GET(req: NextRequest) {
       const transcriptId = await findTranscriptIdByTitle(row.fireflies_title);
       if (!transcriptId) continue;
       await lockTranscriptPrivacy(transcriptId);
+
+      const details = await fetchTranscriptDetails(transcriptId);
+      await supabase.from("call_transcripts").upsert({
+        fireflies_id: details.id,
+        drive_file_id: row.drive_file_id,
+        title: details.title,
+        contact_name: parseContactNameFromTitle(details.title),
+        call_date: new Date(details.date).toISOString(),
+        duration_seconds: details.duration,
+        summary: details.summary,
+        keywords: details.keywords,
+        action_items: details.actionItems,
+        transcript_text: details.transcriptText,
+        source: "phone",
+      });
+
       await supabase
         .from("call_recordings_processed")
         .update({ privacy_locked: true })
