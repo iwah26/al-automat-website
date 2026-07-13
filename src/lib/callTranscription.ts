@@ -68,7 +68,7 @@ export async function findTranscriptIdByTitle(title: string): Promise<string | n
 
 export async function lockTranscriptPrivacy(transcriptId: string) {
   await firefliesGraphQL(
-    `mutation($input: UpdateMeetingPrivacyInput!) { updateMeetingPrivacy(input: $input) { success } }`,
+    `mutation($input: UpdateMeetingPrivacyInput!) { updateMeetingPrivacy(input: $input) { id privacy } }`,
     { input: { id: transcriptId, privacy: "owner" } }
   );
 }
