@@ -40,7 +40,7 @@ export async function GET(req: NextRequest) {
     if (!row.blob_pathname) continue;
     if (Date.now() - new Date(row.created_at).getTime() < BLOB_CLEANUP_DELAY_MS) continue;
     try {
-      await del(row.blob_pathname);
+      await del(row.blob_pathname, { token: process.env.CALLS_BLOB_TOKEN });
     } catch (err) {
       console.error("Blob delete error:", err);
     }
@@ -127,6 +127,7 @@ export async function GET(req: NextRequest) {
         addRandomSuffix: false,
         allowOverwrite: true,
         contentType: file.mimeType ?? undefined,
+        token: process.env.CALLS_BLOB_TOKEN,
       });
 
       const title = (file.name ?? file.id!).replace(/\.[^/.]+$/, "");
