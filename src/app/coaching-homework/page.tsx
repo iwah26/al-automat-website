@@ -2,9 +2,17 @@
 
 import { useEffect, useMemo, useState } from "react";
 
+interface Homework {
+  id: string;
+  number: number;
+  title: string;
+  done: boolean;
+  created_at: string;
+}
+
 interface Item {
   id: string;
-  homework_number: number;
+  homework_id: string;
   text: string;
   done: boolean;
   created_at: string;
@@ -14,19 +22,19 @@ const inputClass =
   "w-full px-4 py-3 rounded-xl bg-brand-card border border-brand-accent/30 text-white placeholder-slate-500 focus:outline-none focus:border-brand-accent transition-colors";
 
 export default function CoachingHomeworkPage() {
+  const [homeworks, setHomeworks] = useState<Homework[]>([]);
   const [items, setItems] = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
-  const [newText, setNewText] = useState("");
-  const [activeNumber, setActiveNumber] = useState<number>(1);
+  const [openId, setOpenId] = useState<string | null>(null);
+  const [newTitle, setNewTitle] = useState("");
+  const [newItemText, setNewItemText] = useState<Record<string, string>>({});
 
   async function load() {
     setLoading(true);
-    const res = await fetch("/api/coaching-homework/items");
+    const res = await fetch("/api/coaching-homework/homeworks");
     const data = await res.json();
-    const loaded: Item[] = data.items ?? [];
-    setItems(loaded);
-    const maxNumber = loaded.reduce((m, it) => Math.max(m, it.homework_number), 0);
-    setActiveNumber((prev) => (prev === 1 && maxNumber > 0 ? maxNumber : prev));
+    setHomeworks(data.homeworks ?? []);
+    setItems(data.items ?? []);
     setLoading(false);
   }
 
@@ -34,30 +42,61 @@ export default function CoachingHomeworkPage() {
     load();
   }, []);
 
-  const grouped = useMemo(() => {
-    const map = new Map<number, Item[]>();
+  const itemsByHomework = useMemo(() => {
+    const map = new Map<string, Item[]>();
     for (const it of items) {
-      if (!map.has(it.homework_number)) map.set(it.homework_number, []);
-      map.get(it.homework_number)!.push(it);
+      if (!map.has(it.homework_id)) map.set(it.homework_id, []);
+      map.get(it.homework_id)!.push(it);
     }
-    return [...map.entries()].sort((a, b) => a[0] - b[0]);
+    return map;
   }, [items]);
 
-  async function addItem(e: React.FormEvent) {
+  const nextNumber = useMemo(
+    () => homeworks.reduce((m, hw) => Math.max(m, hw.number), 0) + 1,
+    [homeworks]
+  );
+
+  async function addHomework(e: React.FormEvent) {
     e.preventDefault();
-    if (!newText.trim()) return;
-    const res = await fetch("/api/coaching-homework/items", {
+    if (!newTitle.trim()) return;
+    const res = await fetch("/api/coaching-homework/homeworks", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ homework_number: activeNumber, text: newText }),
+      body: JSON.stringify({ number: nextNumber, title: newTitle }),
     });
     if (res.ok) {
-      setNewText("");
+      setNewTitle("");
       load();
     }
   }
 
-  async function toggleDone(item: Item) {
+  async function toggleHomeworkDone(hw: Homework) {
+    setHomeworks((prev) =>
+      prev.map((h) => (h.id === hw.id ? { ...h, done: !h.done } : h))
+    );
+    await fetch(`/api/coaching-homework/homeworks/${hw.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ done: !hw.done }),
+    });
+  }
+
+  async function addItem(homeworkId: string, e: React.FormEvent) {
+    e.preventDefault();
+    const text = (newItemText[homeworkId] ?? "").trim();
+    if (!text) return;
+    const res = await fetch("/api/coaching-homework/items", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ homework_id: homeworkId, text }),
+    });
+    if (res.ok) {
+      setNewItemText((prev) => ({ ...prev, [homeworkId]: "" }));
+      load();
+    }
+  }
+
+  async function toggleItemDone(item: Item) {
     setItems((prev) =>
       prev.map((it) => (it.id === item.id ? { ...it, done: !it.done } : it))
     );
@@ -81,71 +120,111 @@ export default function CoachingHomeworkPage() {
           הדף הזה אישי - המאמן רואה אותו רק דרך קישור נפרד לצפייה בלבד.
         </p>
 
-        <form onSubmit={addItem} className="flex gap-2 mb-8">
+        <form onSubmit={addHomework} className="flex gap-2 mb-8">
           <input
-            type="number"
-            min={1}
-            value={activeNumber}
-            onChange={(e) => setActiveNumber(Number(e.target.value) || 1)}
-            className={`${inputClass} w-24`}
-            title="מספר שיעורי בית"
-          />
-          <input
-            value={newText}
-            onChange={(e) => setNewText(e.target.value)}
-            placeholder="דבר חדש שעשיתי / משפט..."
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            placeholder={`שיעורי בית מספר ${nextNumber} - כותרת המשימה`}
             className={inputClass}
           />
           <button
             type="submit"
             className="px-5 py-3 rounded-xl bg-gradient-to-l from-brand-accent-2 to-brand-accent text-white font-bold text-sm hover:opacity-90 transition-opacity whitespace-nowrap"
           >
-            הוספה
+            שיעור בית חדש
           </button>
         </form>
 
         {loading && <p className="text-slate-400">טוען...</p>}
-
-        {!loading && grouped.length === 0 && (
-          <p className="text-slate-400">עדיין אין פריטים. הוסף למעלה.</p>
+        {!loading && homeworks.length === 0 && (
+          <p className="text-slate-400">עדיין אין שיעורי בית. הוסף למעלה.</p>
         )}
 
-        <div className="space-y-8">
-          {grouped.map(([number, groupItems]) => (
-            <div key={number}>
-              <h2 className="text-lg font-bold text-white mb-3">
-                שיעורי בית מספר {number}
-              </h2>
-              <ul className="space-y-2">
-                {groupItems.map((item) => (
-                  <li
-                    key={item.id}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-card border border-brand-accent/20"
+        <div className="space-y-3">
+          {homeworks.map((hw) => {
+            const hwItems = itemsByHomework.get(hw.id) ?? [];
+            const isOpen = openId === hw.id;
+            return (
+              <div
+                key={hw.id}
+                className="rounded-xl bg-brand-card border border-brand-accent/20 overflow-hidden"
+              >
+                <div className="flex items-center gap-3 px-4 py-3">
+                  <input
+                    type="checkbox"
+                    checked={hw.done}
+                    onChange={() => toggleHomeworkDone(hw)}
+                    className="w-5 h-5 accent-brand-accent shrink-0"
+                  />
+                  <button
+                    onClick={() => setOpenId(isOpen ? null : hw.id)}
+                    className={`flex-1 text-right text-sm font-bold ${
+                      hw.done ? "text-slate-500 line-through" : "text-white"
+                    }`}
                   >
-                    <input
-                      type="checkbox"
-                      checked={item.done}
-                      onChange={() => toggleDone(item)}
-                      className="w-5 h-5 accent-brand-accent shrink-0"
-                    />
-                    <span
-                      className={`flex-1 text-sm ${
-                        item.done ? "text-slate-500 line-through" : "text-slate-200"
-                      }`}
+                    שיעורי בית מספר {hw.number} - {hw.title}
+                  </button>
+                  <button
+                    onClick={() => setOpenId(isOpen ? null : hw.id)}
+                    className="text-slate-400 text-xs shrink-0"
+                  >
+                    {isOpen ? "סגירה ▲" : `רשימה (${hwItems.length}) ▼`}
+                  </button>
+                </div>
+
+                {isOpen && (
+                  <div className="px-4 pb-4 pt-1 border-t border-brand-accent/10 space-y-2">
+                    {hwItems.map((item) => (
+                      <div
+                        key={item.id}
+                        className="flex items-center gap-3 px-3 py-2 rounded-lg bg-brand-bg"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={item.done}
+                          onChange={() => toggleItemDone(item)}
+                          className="w-4 h-4 accent-brand-accent shrink-0"
+                        />
+                        <span
+                          className={`flex-1 text-sm ${
+                            item.done ? "text-slate-500 line-through" : "text-slate-200"
+                          }`}
+                        >
+                          {item.text}
+                        </span>
+                        <button
+                          onClick={() => removeItem(item)}
+                          className="text-slate-500 hover:text-red-400 text-xs shrink-0"
+                        >
+                          מחיקה
+                        </button>
+                      </div>
+                    ))}
+
+                    <form
+                      onSubmit={(e) => addItem(hw.id, e)}
+                      className="flex gap-2 pt-1"
                     >
-                      {item.text}
-                    </span>
-                    <button
-                      onClick={() => removeItem(item)}
-                      className="text-slate-500 hover:text-red-400 text-xs shrink-0"
-                    >
-                      מחיקה
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+                      <input
+                        value={newItemText[hw.id] ?? ""}
+                        onChange={(e) =>
+                          setNewItemText((prev) => ({ ...prev, [hw.id]: e.target.value }))
+                        }
+                        placeholder="סעיף חדש ברשימה..."
+                        className={`${inputClass} py-2`}
+                      />
+                      <button
+                        type="submit"
+                        className="px-4 py-2 rounded-lg bg-gradient-to-l from-brand-accent-2 to-brand-accent text-white font-bold text-xs hover:opacity-90 transition-opacity whitespace-nowrap"
+                      >
+                        הוספה
+                      </button>
+                    </form>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
     </main>
