@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRabanimSupabase } from "@/lib/rabanimSupabase";
+import { MASHOV_HOMEWORK_NUMBER, buildMashovItems } from "@/lib/coachingHomeworkMashov";
 
 export async function GET() {
   const supabase = getRabanimSupabase();
@@ -17,7 +18,14 @@ export async function GET() {
 
   if (itemsError) return NextResponse.json({ error: "DB error" }, { status: 500 });
 
-  return NextResponse.json({ homeworks: homeworks ?? [], items: items ?? [] });
+  let allItems = items ?? [];
+  const mashovHw = (homeworks ?? []).find((h) => h.number === MASHOV_HOMEWORK_NUMBER);
+  if (mashovHw) {
+    const mashovItems = await buildMashovItems(supabase, mashovHw.id);
+    allItems = allItems.filter((it) => it.homework_id !== mashovHw.id).concat(mashovItems);
+  }
+
+  return NextResponse.json({ homeworks: homeworks ?? [], items: allItems });
 }
 
 export async function POST(req: NextRequest) {

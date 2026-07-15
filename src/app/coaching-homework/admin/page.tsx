@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getRabanimSupabase } from "@/lib/rabanimSupabase";
+import { MASHOV_HOMEWORK_NUMBER, buildMashovItems } from "@/lib/coachingHomeworkMashov";
 import HomeworkList from "./HomeworkList";
 
 export const dynamic = "force-dynamic";
@@ -27,6 +28,13 @@ export default async function CoachingHomeworkAdminPage({
 
   if (hwError || itemsError) notFound();
 
+  let allItems = items ?? [];
+  const mashovHw = (homeworks ?? []).find((h) => h.number === MASHOV_HOMEWORK_NUMBER);
+  if (mashovHw) {
+    const mashovItems = await buildMashovItems(supabase, mashovHw.id);
+    allItems = allItems.filter((it) => it.homework_id !== mashovHw.id).concat(mashovItems);
+  }
+
   return (
     <main className="min-h-screen bg-white py-10 px-4" dir="rtl">
       <div className="max-w-4xl mx-auto">
@@ -37,7 +45,7 @@ export default async function CoachingHomeworkAdminPage({
           <p className="text-slate-500">אין עדיין שיעורי בית.</p>
         )}
 
-        <HomeworkList homeworks={homeworks ?? []} items={items ?? []} />
+        <HomeworkList homeworks={homeworks ?? []} items={allItems} />
       </div>
     </main>
   );

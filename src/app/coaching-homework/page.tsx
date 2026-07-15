@@ -175,8 +175,16 @@ export default function CoachingHomeworkPage() {
                   </button>
                 </div>
 
-                {isOpen && (
+                {isOpen && (() => {
+                  const isMashovSynced =
+                    hwItems.length > 0 && hwItems.every((it) => it.text.includes(TABLE_SEP));
+                  return (
                   <div className="px-4 pb-4 pt-1 border-t border-brand-accent/10 space-y-2">
+                    {isMashovSynced && (
+                      <p className="text-slate-500 text-xs pb-1">
+                        מתעדכן אוטומטית מתוך /mashov - לא ניתן לערוך כאן
+                      </p>
+                    )}
                     {hwItems.some((it) => it.text.includes(TABLE_SEP)) ? (
                       <div className="overflow-x-auto">
                         <table className="w-full text-sm border-collapse">
@@ -190,7 +198,6 @@ export default function CoachingHomeworkPage() {
                                   {h}
                                 </th>
                               ))}
-                              <th className="border-b border-brand-accent/20" />
                             </tr>
                           </thead>
                           <tbody>
@@ -208,14 +215,6 @@ export default function CoachingHomeworkPage() {
                                       {cell}
                                     </td>
                                   ))}
-                                  <td className="px-2 py-2 whitespace-nowrap">
-                                    <button
-                                      onClick={() => removeItem(item)}
-                                      className="text-slate-500 hover:text-red-400 text-xs"
-                                    >
-                                      מחיקה
-                                    </button>
-                                  </td>
                                 </tr>
                               );
                             })}
@@ -251,27 +250,30 @@ export default function CoachingHomeworkPage() {
                       ))
                     )}
 
-                    <form
-                      onSubmit={(e) => addItem(hw.id, e)}
-                      className="flex gap-2 pt-1"
-                    >
-                      <input
-                        value={newItemText[hw.id] ?? ""}
-                        onChange={(e) =>
-                          setNewItemText((prev) => ({ ...prev, [hw.id]: e.target.value }))
-                        }
-                        placeholder="סעיף חדש ברשימה..."
-                        className={`${inputClass} py-2`}
-                      />
-                      <button
-                        type="submit"
-                        className="px-4 py-2 rounded-lg bg-gradient-to-l from-brand-accent-2 to-brand-accent text-white font-bold text-xs hover:opacity-90 transition-opacity whitespace-nowrap"
+                    {!isMashovSynced && (
+                      <form
+                        onSubmit={(e) => addItem(hw.id, e)}
+                        className="flex gap-2 pt-1"
                       >
-                        הוספה
-                      </button>
-                    </form>
+                        <input
+                          value={newItemText[hw.id] ?? ""}
+                          onChange={(e) =>
+                            setNewItemText((prev) => ({ ...prev, [hw.id]: e.target.value }))
+                          }
+                          placeholder="סעיף חדש ברשימה..."
+                          className={`${inputClass} py-2`}
+                        />
+                        <button
+                          type="submit"
+                          className="px-4 py-2 rounded-lg bg-gradient-to-l from-brand-accent-2 to-brand-accent text-white font-bold text-xs hover:opacity-90 transition-opacity whitespace-nowrap"
+                        >
+                          הוספה
+                        </button>
+                      </form>
+                    )}
                   </div>
-                )}
+                  );
+                })()}
               </div>
             );
           })}
