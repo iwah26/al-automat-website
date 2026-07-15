@@ -11,15 +11,20 @@ function greenApiCreds() {
   return { url, instance, token };
 }
 
-export async function sendWhatsApp(phone: string, message: string): Promise<void> {
+export async function sendWhatsAppToChatId(chatId: string, message: string): Promise<void> {
   const { url, instance, token } = greenApiCreds();
 
   const res = await fetch(`${url}/waInstance${instance}/sendMessage/${token}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chatId: toChatId(phone), message }),
+    body: JSON.stringify({ chatId, message }),
   });
   if (!res.ok) throw new Error(`Green API send failed: ${res.status}`);
 }
 
+export async function sendWhatsApp(phone: string, message: string): Promise<void> {
+  await sendWhatsAppToChatId(toChatId(phone), message);
+}
+
 export const RABANIM_GROUP_INVITE_LINK = "https://chat.whatsapp.com/IauAEmx8w1QB7ePiFwHxTb"; // סדנת Claude Code לרבנים 🧠
+export const YO_ANI_GROUP_ID = "120363369104963009@g.us"; // "Yo - אני"

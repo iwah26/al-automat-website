@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRabanimSupabase } from "@/lib/rabanimSupabase";
+import { sendWhatsAppToChatId, YO_ANI_GROUP_ID } from "@/lib/greenApi";
 
 export async function POST(req: NextRequest) {
   try {
@@ -16,6 +17,15 @@ export async function POST(req: NextRequest) {
     if (error) {
       console.error("Supabase insert error:", error);
       return NextResponse.json({ error: "DB error" }, { status: 500 });
+    }
+
+    try {
+      await sendWhatsAppToChatId(
+        YO_ANI_GROUP_ID,
+        `התקבל טופס משוב חדש מ-${respondent_name} 📝\nal-automat.co.il/coaching-homework`
+      );
+    } catch (notifyErr) {
+      console.error("WhatsApp notify failed:", notifyErr);
     }
 
     return NextResponse.json({ ok: true });
