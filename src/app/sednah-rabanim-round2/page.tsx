@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { MetaPixel } from "@/components/MetaPixel";
 
 export const metadata = {
   title: "המקומות התמלאו | סדנת הרבנים | על אוטומט",
@@ -9,6 +10,7 @@ export const metadata = {
 export default function SednahRabanimRound2Page() {
   return (
     <>
+      <MetaPixel />
       <Navbar />
       <main className="min-h-screen pt-28 pb-20 px-6">
         <div className="max-w-2xl mx-auto text-center text-right mb-16">
