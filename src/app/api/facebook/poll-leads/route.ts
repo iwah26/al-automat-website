@@ -3,8 +3,7 @@ import { getRabanimSupabase } from "@/lib/rabanimSupabase";
 import { sendMail } from "@/lib/mailer";
 import { sendWhatsAppToChatId } from "@/lib/greenApi";
 
-const ZOOM_JOIN_URL =
-  "https://us02web.zoom.us/j/86183821803?pwd=WxGDuKyu2aXIyDw42RRrxlKC5X5AnU.1";
+const JOIN_URL = "https://www.al-automat.co.il/api/webinar/join";
 const ZOOM_MEETING_ID = "861 8382 1803";
 const ZOOM_PASSCODE = "314248";
 
@@ -33,10 +32,11 @@ function buildConfirmationEmail(fullName: string | null) {
       </ul>
       <p><strong>פרטי הזום:</strong></p>
       <p>
-        קישור: <a href="${ZOOM_JOIN_URL}">${ZOOM_JOIN_URL}</a><br />
+        קישור: <a href="${JOIN_URL}">${JOIN_URL}</a><br />
         Meeting ID: ${ZOOM_MEETING_ID}<br />
         Passcode: ${ZOOM_PASSCODE}
       </p>
+      <p style="color:#888; font-size: 13px;">הקישור פעיל מהתחלת הוובינר ועד חצי שעה אחריו. אם תלחץ עליו מאוחר יותר, תופנה לדף הרשמה לסדנה.</p>
       <p>נתראה!</p>
     </div>
   `;

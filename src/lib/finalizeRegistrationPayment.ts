@@ -8,7 +8,19 @@ interface Registration {
   phone: string;
   email: string;
   location: string | null;
+  cohort?: string;
 }
+
+const COHORT_DETAILS: Record<string, { dates: string; zoomLink: string }> = {
+  round1: {
+    dates: "12.7 (כ״ז תמוז) + 19.7 (ה׳ אב)",
+    zoomLink: "https://us02web.zoom.us/j/81000618945?pwd=hCmFZOH5MbK3B4FwwKSmBpVTLyB1Um.1",
+  },
+  round2: {
+    dates: "26.7 + 2.8",
+    zoomLink: "https://us02web.zoom.us/j/87269000584?pwd=WmIURAVQAONHKboPHlekL0JoSuDmJz.1",
+  },
+};
 
 function generateCoursePassword(): string {
   return String(Math.floor(100000 + Math.random() * 900000));
@@ -28,14 +40,16 @@ export async function finalizeRegistrationPayment(registration: Registration) {
     password,
   });
 
+  const cohort = COHORT_DETAILS[registration.cohort ?? "round1"] ?? COHORT_DETAILS.round1;
+
   const message = `שלום כבוד הרב ${registration.first_name} ${registration.last_name} 🙏
 
 ההרשמה שלך לסדנת *"קלוד קוד לרבנים"* התקבלה בהצלחה!
 
-📅 שני מפגשים: 12.7 (כ״ז תמוז) + 19.7 (ה׳ אב)
+📅 שני מפגשים: ${cohort.dates}
 🕕 18:00–21:00 שעון ישראל
 🔗 לינק זום (לשני המפגשים):
-https://us02web.zoom.us/j/81000618945?pwd=hCmFZOH5MbK3B4FwwKSmBpVTLyB1Um.1
+${cohort.zoomLink}
 
 ✅ גישה להקלטות: https://www.al-automat.co.il/course
 🔑 סיסמת הכניסה שלך: ${password}

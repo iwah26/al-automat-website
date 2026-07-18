@@ -5,7 +5,7 @@ import { createOrder } from "@/lib/paypal";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { firstName, lastName, phone, email, role, communityName, location, referralCode } = body;
+    const { firstName, lastName, phone, email, role, communityName, location, referralCode, cohort } = body;
 
     if (!firstName || !lastName || !phone || !email) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -23,6 +23,7 @@ export async function POST(req: NextRequest) {
         community_name: communityName,
         location,
         referral_code: referralCode || null,
+        cohort: cohort || "round1",
       })
       .select()
       .single();
@@ -39,7 +40,7 @@ export async function POST(req: NextRequest) {
       lastName,
       email,
       returnUrl: `${origin}/api/rabanim/paypal-return`,
-      cancelUrl: `${origin}/sednah-rabanim/form`,
+      cancelUrl: `${origin}${cohort === "round2" ? "/sednah-rabanim-round2/form" : "/sednah-rabanim/form"}`,
     });
 
     return NextResponse.json({ url: approveUrl });

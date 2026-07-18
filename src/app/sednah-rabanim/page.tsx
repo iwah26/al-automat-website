@@ -27,7 +27,8 @@ async function isFull(): Promise<boolean> {
     const { count, error } = await getRabanimSupabase()
       .from("rabanim_registrations")
       .select("id", { count: "exact", head: true })
-      .eq("payment_status", "paid");
+      .eq("payment_status", "paid")
+      .eq("cohort", "round1");
     if (error) throw error;
     return (count ?? 0) >= SEATS_TOTAL;
   } catch {

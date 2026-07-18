@@ -1,9 +1,21 @@
 import Link from "next/link";
 
-export function SednahRabanimIntro({ referralCode }: { referralCode?: string }) {
+const COHORT_COPY: Record<string, { dates: string; formPath: string }> = {
+  round1: { dates: "12.7 (כ״ז תמוז) + 19.7 (ה׳ אב)", formPath: "/sednah-rabanim/form" },
+  round2: { dates: "26.7 + 2.8", formPath: "/sednah-rabanim-round2/form" },
+};
+
+export function SednahRabanimIntro({
+  referralCode,
+  cohort = "round1",
+}: {
+  referralCode?: string;
+  cohort?: string;
+}) {
+  const { dates, formPath } = COHORT_COPY[cohort] ?? COHORT_COPY.round1;
   const formHref = referralCode
-    ? `/sednah-rabanim/form?c=${encodeURIComponent(referralCode)}`
-    : "/sednah-rabanim/form";
+    ? `${formPath}?c=${encodeURIComponent(referralCode)}`
+    : formPath;
 
   return (
     <div className="max-w-2xl mx-auto text-right mb-16">
@@ -42,7 +54,7 @@ export function SednahRabanimIntro({ referralCode }: { referralCode?: string }) 
 
         <div className="p-5 rounded-2xl bg-brand-card border border-brand-accent/20">
           <p className="font-semibold text-white mb-3">
-            📅 12.7 (כ״ז תמוז) + 19.7 (ה׳ אב)
+            📅 {dates}
           </p>
           <p className="font-semibold text-white mb-2">🕕 השעות לפי אזור:</p>
           <ul className="space-y-1">
