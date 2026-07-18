@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRabanimSupabase } from "@/lib/rabanimSupabase";
 import { sendMail } from "@/lib/mailer";
-import { sendWhatsAppToChatId } from "@/lib/greenApi";
+import { sendWhatsAppToChatId, YO_ANI_GROUP_ID } from "@/lib/greenApi";
 import { buildWebinarConfirmationEmail } from "@/lib/webinarEmail";
 
 function extractField(fieldData: { name: string; values: string[] }[], names: string[]) {
@@ -85,11 +85,10 @@ export async function GET(req: NextRequest) {
         }
       }
 
-      const ownerPhone = process.env.OWNER_NOTIFY_PHONE;
-      if (ownerPhone) {
+      {
         try {
           await sendWhatsAppToChatId(
-            `${ownerPhone.replace(/\D/g, "")}@c.us`,
+            YO_ANI_GROUP_ID,
             `🔔 נרשם חדש לוובינר "קלוד קוד לרבנים":\n${fullName ?? "ללא שם"}\n${email ?? "ללא מייל"}\n${phone ?? ""}`
           );
         } catch (err) {
