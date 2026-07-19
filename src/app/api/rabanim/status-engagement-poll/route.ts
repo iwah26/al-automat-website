@@ -4,7 +4,13 @@ import { sendWhatsApp } from "@/lib/greenApi";
 
 const OWN_PARTICIPANT = "972526266419@c.us";
 const STATUS_REPLY_TYPES = new Set(["reactionMessage", "textMessage", "extendedTextMessage"]);
-const REG_LINK = "https://www.al-automat.co.il/sednah-rabanim?c=status-engagement";
+const REG_LINK = "https://www.al-automat.co.il/api/webinar/join";
+
+// One-off: Isaac wants this only active for the 24h after posting a status
+// on 2026-07-19 09:53 UTC (to invite reactors to the 21.7 webinar), not for
+// every status he posts going forward. Hard expiry so it self-disarms even
+// if nobody remembers to `gh workflow disable` it.
+const EXPIRES_AT = new Date("2026-07-20T09:53:49Z");
 
 /**
  * Green API never fires a webhook for WhatsApp Status replies/reactions —
@@ -25,6 +31,10 @@ export async function GET(req: NextRequest) {
   const auth = req.headers.get("authorization");
   if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  }
+
+  if (Date.now() > EXPIRES_AT.getTime()) {
+    return NextResponse.json({ skipped: "expired", expiresAt: EXPIRES_AT.toISOString() });
   }
 
   const minutes = Number(req.nextUrl.searchParams.get("minutes") ?? "15");
@@ -74,14 +84,15 @@ export async function GET(req: NextRequest) {
     try {
       await sendWhatsApp(
         phone,
-        `איזה כיף שהגבת לסטטוס! 🙏
+        `היי! 👋
+שמתי לב שהגבת לסטטוס שלי 😊
 
-איזה כיף שאתה מעוניין — אתה בדרך להפוך למומחה בקלוד קוד 💪
+ביום שלישי הקרוב (21.7) בשעה 21:00 אני מעביר וובינר פתוח וחינמי על AI ואוטומציה — הסבר פרקטי, לא תיאוריה.
 
-הנה הקישור לסדנה שדיברתי עליה, "קלוד קוד לרבנים":
+קישור להצטרפות:
 ${REG_LINK}
 
-רוצה שאשריין לך מקום?`
+מוזמן/ת! נשמח לראותך 🙌`
       );
       await supabase.from("rabanim_status_engagements").update({ link_sent: true }).eq("id_message", entry.idMessage);
       sent++;
