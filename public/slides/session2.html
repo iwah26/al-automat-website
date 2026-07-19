@@ -1,0 +1,1808 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>מפגש ב' — Claude Code לרבנים</title>
+<style>
+  @font-face{ font-family:'FB Basis'; src:url('file:///Library/Fonts/FbBasis-CondensedThin.otf'); font-weight:100; }
+  @font-face{ font-family:'FB Basis'; src:url('file:///Library/Fonts/FbBasis-CondensedLight.otf'); font-weight:300; }
+  @font-face{ font-family:'FB Basis'; src:url('file:///Library/Fonts/FbBasis-CondensedRegular.otf'); font-weight:400; }
+  @font-face{ font-family:'FB Basis'; src:url('file:///Library/Fonts/FbBasis-CondensedMedium.otf'); font-weight:500; }
+  @font-face{ font-family:'FB Basis'; src:url('file:///Library/Fonts/FbBasis-CondensedBold.otf'); font-weight:700; }
+  @font-face{ font-family:'FB Basis'; src:url('file:///Library/Fonts/FbBasis-CondensedBlack.otf'); font-weight:900; }
+
+  :root{
+    --ink:#160d26;
+    --purple-1:#2e1e45;
+    --purple-2:#3a2657;
+    --purple-3:#412a62;
+    --lavender:#c3b0e0;
+    --violet:#8a68b8;
+    --line:#8081be;
+    --paper:#e8e4f5;
+    --paper-dim:#b6aecb;
+    --white:#ffffff;
+    --gold:#e0b768;
+    --sess-a:#7a59a5;
+    --radius:18px;
+    --font:'FB Basis','Heebo',-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:var(--font);
+    font-weight:400;
+    background:var(--ink);
+    color:var(--white);
+    direction:rtl;
+  }
+  ::selection{ background:var(--violet); color:#fff; }
+  .deck{ width:100%; }
+
+  .slide{
+    position:relative;
+    min-height:100vh;
+    width:100%;
+    padding:70px 8vw 46px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:26px;
+    overflow:hidden;
+    background:
+      radial-gradient(1100px 620px at 88% -10%, rgba(122,89,165,0.30), transparent 60%),
+      radial-gradient(900px 560px at -10% 108%, rgba(103,67,154,0.28), transparent 60%),
+      linear-gradient(180deg,var(--purple-1) 0%, var(--purple-2) 55%, var(--purple-3) 100%);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .slide.dark{
+    background:
+      radial-gradient(900px 520px at 90% 0%, rgba(122,89,165,0.18), transparent 60%),
+      linear-gradient(180deg,#1a1130 0%, #201636 100%);
+  }
+
+  .slide-index{ position:absolute; top:26px; left:8vw; font-size:13px; font-weight:300; color:var(--paper-dim); letter-spacing:0.06em; font-variant-numeric:tabular-nums; }
+  .slide-track{ position:absolute; top:26px; right:8vw; font-size:13px; font-weight:500; letter-spacing:0.1em; padding:5px 14px; border-radius:999px; border:1px solid var(--sess-a); color:#d9c9f0; }
+
+  .eyebrow{ display:inline-flex; align-items:center; gap:10px; font-size:15px; font-weight:300; letter-spacing:0.12em; color:var(--lavender); }
+  .eyebrow::before{ content:""; display:inline-block; width:26px; height:2px; background:var(--lavender); }
+
+  h1{ font-family:var(--font); font-size:clamp(38px,5.2vw,72px); font-weight:900; line-height:1.06; letter-spacing:-0.005em; margin:0; text-wrap:balance; }
+  h1 .accent{ font-weight:100; background:linear-gradient(90deg,#ffffff 0%, var(--lavender) 100%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  h2{ font-family:var(--font); font-size:clamp(26px,3.4vw,44px); font-weight:700; line-height:1.14; margin:0; text-wrap:balance; }
+  .lede{ font-size:clamp(17px,1.6vw,22px); font-weight:300; color:var(--paper); max-width:62ch; line-height:1.6; }
+  .cover-sub{ font-size:clamp(19px,2vw,26px); font-weight:500; color:var(--white); max-width:640px; line-height:1.5; }
+
+  .content{ max-width:1180px; }
+  .grid{ display:grid; gap:18px; }
+  .grid-2{ grid-template-columns:1fr 1fr; }
+  .grid-3{ grid-template-columns:repeat(3,1fr); }
+  @media (max-width:900px){ .grid-2,.grid-3{ grid-template-columns:1fr; } }
+
+  .card{ background:rgba(255,255,255,0.055); border:1px solid rgba(255,255,255,0.14); border-radius:var(--radius); padding:24px 26px; display:flex; flex-direction:column; gap:10px; }
+  .card h3{ font-family:var(--font); font-size:19px; font-weight:700; margin:0; color:var(--white); }
+  .card p{ margin:0; font-size:15.5px; font-weight:300; line-height:1.6; color:var(--paper); }
+  .card .tag{ align-self:flex-start; font-size:12px; font-weight:500; letter-spacing:0.08em; color:var(--lavender); border:1px solid rgba(195,176,224,0.4); padding:3px 10px; border-radius:999px; }
+
+  .table-wrap{ overflow-x:auto; border-radius:var(--radius); border:1px solid rgba(255,255,255,0.14); }
+  table{ border-collapse:collapse; width:100%; min-width:480px; font-size:15.5px; }
+  th,td{ padding:14px 20px; text-align:right; border-bottom:1px solid rgba(255,255,255,0.1); }
+  th{ background:rgba(255,255,255,0.07); font-weight:500; color:var(--lavender); font-size:13px; letter-spacing:0.06em; }
+  td{ color:var(--paper); font-weight:300; }
+  tr:last-child td{ border-bottom:none; }
+  td.hl{ color:var(--white); font-weight:700; }
+
+  .timeline{ display:flex; flex-direction:column; gap:10px; }
+  .tl-row{ display:flex; align-items:center; gap:16px; }
+  .tl-time{ width:118px; flex-shrink:0; font-variant-numeric:tabular-nums; font-size:13.5px; font-weight:500; color:var(--paper-dim); text-align:left; }
+  .tl-bar-track{ flex:1; background:rgba(255,255,255,0.08); border-radius:10px; height:46px; position:relative; overflow:hidden; }
+  .tl-bar{ height:100%; border-radius:10px; display:flex; align-items:center; padding:0 18px; font-weight:700; font-size:14.5px; color:#1a1130; white-space:nowrap; }
+
+  .prompt{ background:#120b20; border:1px solid rgba(224,183,104,0.35); border-radius:var(--radius); padding:22px 24px; direction:rtl; }
+  .prompt .prompt-label{ font-size:12px; font-weight:700; letter-spacing:0.1em; color:var(--gold); margin-bottom:10px; display:block; }
+  .prompt pre{ margin:0; white-space:pre-wrap; word-break:break-word; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:15px; font-weight:400; line-height:1.65; color:#f3ecff; direction:rtl; text-align:right; }
+
+  .quote{ border-right:4px solid var(--gold); padding:6px 28px; font-size:clamp(22px,2.6vw,32px); font-weight:700; line-height:1.42; color:var(--white); max-width:900px; }
+
+  .checklist{ display:flex; flex-direction:column; gap:12px; }
+  .check-item{ display:flex; align-items:flex-start; gap:14px; font-size:17px; font-weight:400; color:var(--paper); }
+  .check-mark{ flex-shrink:0; width:26px; height:26px; border-radius:8px; background:rgba(195,176,224,0.18); border:1px solid var(--lavender); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:var(--lavender); }
+
+  .flow{ display:flex; flex-direction:column; gap:0; align-items:center; width:100%; max-width:520px; }
+  .flow-box{ width:100%; text-align:center; padding:16px 20px; border-radius:14px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.16); font-weight:700; font-size:16px; }
+  .flow-box small{ display:block; font-weight:300; font-size:13px; color:var(--paper-dim); margin-top:4px; }
+  .flow-arrow{ font-size:20px; color:var(--lavender); padding:6px 0; }
+
+  .divider-wrap{ display:flex; align-items:center; gap:40px; flex-wrap:wrap; }
+  .divider-num{ font-family:var(--font); font-size:clamp(90px,14vw,190px); font-weight:900; line-height:0.8; background:linear-gradient(160deg,#ffffff 0%, var(--lavender) 70%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+
+  .badge{ display:inline-block; background:rgba(122,89,165,0.25); border:1.5px solid var(--line); color:var(--paper); font-size:15px; font-weight:500; padding:8px 20px; border-radius:999px; }
+  .foot-note{ font-size:13.5px; color:var(--paper-dim); font-weight:300; }
+  .logo{ font-size:14px; font-weight:500; letter-spacing:0.06em; color:var(--paper-dim); display:flex; align-items:center; gap:8px; }
+  .logo .dot{ width:8px; height:8px; border-radius:50%; background:var(--gold); }
+
+  .navbar{ position:fixed; bottom:34px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:10px; background:rgba(20,13,36,0.72); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); border-radius:999px; padding:9px 14px; z-index:50; }
+  .navbar button{ all:unset; cursor:pointer; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--white); font-size:15px; font-weight:700; }
+  .navbar button:hover{ background:rgba(255,255,255,0.15); }
+  .navbar .counter{ font-size:13px; font-weight:500; color:var(--paper-dim); min-width:52px; text-align:center; font-variant-numeric:tabular-nums; }
+
+  /* presenter-only clock strip — thin, low-contrast, bottom edge */
+  .clockstrip{
+    position:fixed; bottom:0; left:0; right:0; height:20px;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,0.28);
+    font-size:10px; font-weight:300; letter-spacing:0.14em;
+    color:rgba(232,228,245,0.42);
+    font-variant-numeric:tabular-nums;
+    z-index:40; pointer-events:none;
+    font-family:var(--font);
+  }
+
+  @media print{
+    .navbar,.slide-index,.slide-track,.clockstrip{ display:none; }
+    .slide{ min-height:auto; page-break-after:always; }
+  }
+
+/* ===== BRAIN DECK · EDIT MODE UI v2 (additive) ===== */
+#ed-fab{position:fixed;bottom:24px;right:24px;z-index:9998;background:linear-gradient(135deg,#5f3698,#8f4fd7);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:50px;padding:13px 24px;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 14px 40px rgba(143,79,215,.45);font-family:'Futurism',sans-serif;transition:transform .15s;}
+#ed-fab:hover{transform:translateY(-2px);}
+#ed-toolbar{position:fixed;top:14px;right:14px;z-index:9999;display:none;flex-direction:column;gap:7px;background:rgba(13,15,36,.96);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:9px 11px;box-shadow:0 18px 50px rgba(0,0,0,.6);font-family:'Futurism',sans-serif;direction:rtl;max-width:96vw;}
+#ed-toolbar.on{display:flex;}
+#ed-row{display:flex;gap:7px;align-items:center;flex-wrap:wrap;}
+#ed-ctx{display:none;gap:7px;align-items:center;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.1);padding-top:8px;}
+.ed-ctx-lbl{font-size:13px;color:#9a9ba6;font-weight:700;}
+.ed-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#dfe0e6;border-radius:10px;padding:9px 13px;font-size:14px;font-weight:700;cursor:pointer;transition:all .14s;white-space:nowrap;font-family:inherit;}
+.ed-btn:hover{background:rgba(98,170,191,.18);border-color:rgba(98,170,191,.5);color:#fff;}
+.ed-btn.primary{background:linear-gradient(135deg,#5f3698,#8f4fd7);border-color:rgba(143,79,215,.5);color:#fff;}
+.ed-btn.danger:hover{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.5);color:#fff;}
+.ed-sep{width:1px;height:24px;background:rgba(255,255,255,.14);margin:0 3px;}
+.ed-dot{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.25);cursor:pointer;padding:0;transition:transform .12s;}
+.ed-dot:hover{transform:scale(1.18);border-color:#fff;}
+.ed-dot.grad-dot{background:linear-gradient(135deg,#71b9c3,#549cbc,#2d70aa,#6556d0,#9c4ed7);}
+#ed-hint{position:fixed;bottom:24px;left:24px;z-index:9998;background:rgba(13,15,36,.92);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 16px;font-size:13px;color:#9a9ba6;font-family:'Futurism',sans-serif;display:none;direction:rtl;max-width:46vw;}
+body.ed-on #ed-hint{display:block;}
+#ed-toast{position:fixed;bottom:78px;left:50%;transform:translateX(-50%) translateY(12px);z-index:9999;background:rgba(143,79,215,.95);color:#fff;padding:11px 22px;border-radius:10px;font-size:15px;font-weight:700;font-family:'Futurism',sans-serif;opacity:0;pointer-events:none;transition:all .25s;box-shadow:0 12px 34px rgba(0,0,0,.5);direction:rtl;}
+#ed-toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+#ed-restore{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:10000;display:flex;gap:10px;align-items:center;background:rgba(13,15,36,.97);border:1px solid rgba(143,79,215,.5);border-radius:12px;padding:10px 18px;font-family:'Futurism',sans-serif;font-size:14px;color:#dfe0e6;direction:rtl;box-shadow:0 18px 50px rgba(0,0,0,.6);}
+#ed-guide-v{position:absolute;left:959px;top:0;width:2px;height:1080px;background:rgba(98,170,191,.85);z-index:9990;display:none;pointer-events:none;box-shadow:0 0 10px rgba(98,170,191,.7);}
+#ed-guide-h{position:absolute;top:539px;left:0;height:2px;width:1920px;background:rgba(98,170,191,.85);z-index:9990;display:none;pointer-events:none;box-shadow:0 0 10px rgba(98,170,191,.7);}
+body.ed-on .ed-hover{outline:1.5px dashed rgba(98,170,191,.6) !important;outline-offset:3px;cursor:move;}
+body.ed-on .ed-selected{outline:2px solid #8f4fd7 !important;outline-offset:3px;}
+[contenteditable=true]{cursor:text !important;outline:2px solid #62aabf !important;outline-offset:3px;user-select:text !important;-webkit-user-select:text !important;}
+.ed-img,.ed-blur,.ed-shape,.ed-textbox,.ed-clone{position:absolute;z-index:50;}
+.ed-img img{width:100%;height:100%;display:block;object-fit:cover;border-radius:6px;pointer-events:none;}
+.ed-blur{backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);background:rgba(20,22,48,.16);border-radius:10px;}
+.ed-blur.ed-opaque{background:#14163a !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;border:1px solid rgba(255,255,255,.06);}
+.ed-shape{background:rgba(143,79,215,.22);border:2px solid rgba(143,79,215,.6);border-radius:12px;}
+.ed-textbox{font-family:'Futurism',sans-serif;font-weight:900;font-size:40px;color:#fff;min-width:60px;line-height:1.1;}
+body.ed-on .ed-img,body.ed-on .ed-blur,body.ed-on .ed-shape,body.ed-on .ed-textbox,body.ed-on .ed-clone{cursor:move;}
+.ed-handle{position:absolute;z-index:60;width:20px;height:20px;border-radius:50%;background:#8f4fd7;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5);}
+.ed-handle.br{cursor:nwse-resize;right:-10px;bottom:-10px;}
+.ed-del{position:absolute;z-index:61;top:-15px;right:-15px;width:28px;height:28px;border-radius:50%;background:#ef4444;color:#fff;border:2px solid #fff;font-size:17px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- 1 — COVER -->
+  <section class="slide" data-clock="18:00–18:01">
+    <span class="slide-index">01 / 47</span>
+    <div style="display:flex;flex-direction:column;align-items:flex-start;gap:34px;max-width:820px;">
+      <div class="logo"><span class="dot"></span> אל אוטומט · תוכנית הדרכה</div>
+      <span class="badge">מפגש ב' · גומרים, בודקים, משיקים</span>
+      <h1>מפגש <span class="accent" style="font-weight:100;">ב'</span></h1>
+      <div class="cover-sub">מגמרים לבנות — לבדיקה חיה, לשימוש אמיתי בקהילה.</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:10px;">
+        <span class="badge">מפגש 2 מתוך 2</span>
+        <span class="badge">בזום</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 — STRUCTURE (scaffold, to be filled) -->
+  <section class="slide dark" data-clock="18:01–18:02">
+    <span class="slide-index">02 / 47</span>
+    <span class="eyebrow">מה נעבור הערב</span>
+    <h2>איך נחלק את הערב</h2>
+    <div class="content checklist">
+      <div class="check-item"><span class="check-mark">א</span> חזרות</div>
+      <div class="check-item"><span class="check-mark">ב</span> ניהול טוקנים וחסכון</div>
+      <div class="check-item"><span class="check-mark">ג</span> עולם האוטומציות ואבטחת מידע</div>
+      <div class="check-item"><span class="check-mark">ד</span> העלאת נתונים לענן</div>
+      <div class="check-item"><span class="check-mark">ה</span> בונים מערכת לניהול הקהילה</div>
+      <div class="check-item"><span class="check-mark">ו</span> ייעול עבודה עם קלוד</div>
+      <div class="check-item"><span class="check-mark">ז</span> חיבור מערכות</div>
+      <div class="check-item"><span class="check-mark">ח</span> וואטסאפ מול SMS</div>
+      <div class="check-item"><span class="check-mark">ט</span> תוספות פיצ'רים למערכת</div>
+      <div class="check-item"><span class="check-mark">י</span> סיכום וסגירה</div>
+    </div>
+    <div class="foot-note content">זמנים מדויקים לכל חלק נקבעים בהמשך.</div>
+  </section>
+
+  <!-- PART A DIVIDER -->
+  <section class="slide dark" data-clock="18:02–18:03">
+    <span class="slide-index">03 / 47</span>
+    <span class="slide-track">חלק א'</span>
+    <div class="divider-wrap">
+      <div class="divider-num">א'</div>
+      <div>
+        <span class="eyebrow">חוזרים למה שלמדנו</span>
+        <h1 style="margin-top:10px;">חזרות</h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 — QUICK RECAP OF SESSION 1 -->
+  <section class="slide" data-clock="18:03–18:08">
+    <span class="slide-index">04 / 47</span>
+    <span class="eyebrow">מה למדנו במפגש א'</span>
+    <h2>סיכום מהיר</h2>
+    <div class="content grid grid-2">
+      <div class="card"><h3>א' — הקדמה</h3><p>מה זה AI/LLM, Prompt מול Context, חינם מול Pro, כלים ומודלים (Opus/Sonnet/Haiku/Fable).</p></div>
+      <div class="card" style="border-color:var(--gold);"><h3>ב' — תשתית</h3><p>Claude Code מותקן ועובד, RTL, מצב טוקנים, Plan Mode מול Execution, Bypass Permissions, Compact.</p></div>
+      <div class="card"><h3>ג' — מילון מושגים</h3><p>CLAUDE.md, API, טוקן API, קובץ .env, API מול MCP מול CLI, Backend/Frontend/Database, Git workflow.</p></div>
+      <div class="card"><h3>ד' — מתחילים לבנות</h3><p>איכות הקונטקסט, מנהל המשרד האישי (CLAUDE.md/BRAIN.md/TASKS.md), אפיון ובניית מערכת ניהול קהילה.</p></div>
+    </div>
+  </section>
+
+  <!-- PART B DIVIDER -->
+  <section class="slide dark" data-clock="18:08–18:08">
+    <span class="slide-index">05 / 47</span>
+    <span class="slide-track">חלק ב'</span>
+    <div class="divider-wrap">
+      <div class="divider-num">ב'</div>
+      <div>
+        <span class="eyebrow">שומרים על התקציב</span>
+        <h1 style="margin-top:10px;">ניהול טוקנים<br><span class="accent" style="font-weight:100;">וחסכון</span></h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 — TOKENS / COST REAL TIME (imported from session1 slide 26/48) -->
+  <section class="slide" data-clock="18:08–18:12">
+    <span class="slide-index">06 / 47</span>
+    <span class="eyebrow">מצב טוקנים ועלויות בזמן אמת</span>
+    <h2>רואים כמה זה עולה, בזמן אמת</h2>
+    <div class="content grid grid-3">
+      <div class="card"><h3><code>/usage</code></h3><p>מציג כמה עלה הסשן ומגבלות התוכנית שלך. <code>/cost</code> עדיין "עובד" כקיצור דרך — אבל הוא מוזג לתוך <code>/usage</code> ולא מופיע יותר כפקודה נפרדת ברשימת ה-Autocomplete.</p></div>
+      <div class="card"><h3><code>/context</code></h3><p>מציג פירוט של הקונטקסט הנוכחי — כמה תפוס ועל ידי מה (CLAUDE.md, קבצים, כלים), ומה ישרוד Compact. שימושי בדיוק לנושא שדיברנו עליו קודם.</p></div>
+      <div class="card" style="border-color:var(--gold);"><h3><code>/status</code></h3><p>מציג מידע על הסשן וההגדרות הנוכחיות — מודל, חיבור לחשבון וכו'. <strong>דורש טרמינל אינטראקטיבי</strong> — לא יעבוד בתוסף VS Code (ה"isn't available in this environment" שרואים זה בדיוק זה, לא באג).</p></div>
+    </div>
+    <div class="content prompt">
+      <span class="prompt-label">להעתיק ולהדביק — מנסים ביחד</span>
+      <pre>/usage
+/context
+/status</pre>
+    </div>
+  </section>
+
+  <!-- 5 — CONTEXT + COMPACT -->
+  <section class="slide dark" data-clock="18:12–18:18">
+    <span class="slide-index">07 / 47</span>
+    <span class="eyebrow">קונטקסט + Compact</span>
+    <h2>כל סשן הוא עולם בפני עצמו</h2>
+    <div class="content grid grid-2">
+      <div class="card"><h3>מה זה קונטקסט</h3><p>כל מה שקלוד "זוכר" בתוך השיחה הנוכחית — ההודעות, הקבצים, תוצאות הפעולות. ברגע שסוגרים את הצ'אט, כל זה נעלם — חוץ ממה שנשמר בפועל בקבצים (כמו CLAUDE.md, BRAIN.md).</p></div>
+      <div class="card" style="border-color:var(--gold);"><h3>הכלל: לא לערבב סשנים</h3><p>כל משימה/נושא — סשן משלו. לא ממשיכים באותו צ'אט מפרויקט לפרויקט, מכובע לכובע. קונטקסט "מלוכלך" עם הרבה נושאים שונים מוריד את איכות התשובות.</p></div>
+    </div>
+    <div class="content checklist" style="margin-top:6px;">
+      <div class="check-item"><span class="check-mark">1</span> פותחים סשן חדש לכל עבודה</div>
+      <div class="check-item"><span class="check-mark">2</span> בסיום — מבקשים מהעוזר האישי לסכם מסקנות</div>
+      <div class="check-item"><span class="check-mark">3</span> העוזר מעדכן את קבצי הזיכרון (BRAIN/TASKS/LESSONS) ורק אז סוגרים</div>
+    </div>
+    <div class="content prompt">
+      <span class="prompt-label">פרומפט לסגירת סשן</span>
+      <pre>תסכם מה עשינו בשיחה הזו, תעדכן את קבצי הזיכרון
+הרלוונטיים עם המסקנות, ואז אפשר לסגור את הסשן.</pre>
+    </div>
+    <div class="foot-note content">Compact הוא כלי אחר — מרענן את הקונטקסט <strong>בתוך אותו סשן</strong> כשהשיחה מתארכת, בלי לאבד את מה שסוכם. הוא לא תחליף לסגירה נקייה בין משימות — רק עוזר להמשיך לעבוד בנוחות באותה עבודה.</div>
+    <div class="content prompt">
+      <span class="prompt-label">להעתיק ולהדביק — מנסים ביחד</span>
+      <pre>/compact</pre>
+    </div>
+  </section>
+
+  <!-- PART C DIVIDER -->
+  <section class="slide dark" data-clock="18:18–18:19">
+    <span class="slide-index">08 / 47</span>
+    <span class="slide-track">חלק ג'</span>
+    <div class="divider-wrap">
+      <div class="divider-num">ג'</div>
+      <div>
+        <span class="eyebrow">מה אפשר לבנות</span>
+        <h1 style="margin-top:10px;">עולם האוטומציות<br><span class="accent" style="font-weight:100;">ואבטחת מידע</span></h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 — INTRO TO AUTOMATION -->
+  <section class="slide" data-clock="18:19–18:22">
+    <span class="slide-index">09 / 47</span>
+    <span class="eyebrow">הקדמה לעולם האוטומציה</span>
+    <h2>מה זה אוטומציה?</h2>
+    <div class="quote content">"אוטומציה = לגרום למערכות לדבר ולפעול אחת בשביל השנייה — בלי שאתה נמצא באמצע ומעביר מידע ידנית."</div>
+
+    <div class="content" style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:14px;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div style="width:64px;height:64px;border-radius:16px;background:#EA4335;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" width="30" height="30" fill="none"><rect x="3" y="6" width="18" height="12" rx="2" stroke="#fff" stroke-width="2"/><path d="M3.5 7l8.5 6 8.5-6" stroke="#fff" stroke-width="2" fill="none"/></svg>
+        </div>
+        <span style="font-size:13px;font-weight:500;color:var(--paper);">Gmail</span>
+      </div>
+      <span class="flow-arrow">←</span>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div style="width:64px;height:64px;border-radius:16px;background:#0F9D58;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" width="30" height="30" fill="none"><rect x="4" y="4" width="16" height="16" rx="2" stroke="#fff" stroke-width="2"/><path d="M4 10h16M4 15h16M10 4v16M15 4v16" stroke="#fff" stroke-width="1.3"/></svg>
+        </div>
+        <span style="font-size:13px;font-weight:500;color:var(--paper);">Google Sheets</span>
+      </div>
+      <span class="flow-arrow">←</span>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div style="width:64px;height:64px;border-radius:16px;background:#25D366;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" width="30" height="30" fill="none"><path d="M12 3C7 3 3 7 3 12c0 1.7.5 3.3 1.3 4.6L3 21l4.6-1.2C8.8 20.5 10.4 21 12 21c5 0 9-4 9-9s-4-9-9-9z" stroke="#fff" stroke-width="1.7"/><path d="M8.5 8.6c.2-.5.5-.5.8-.5h.6c.2 0 .4 0 .6.4.2.5.7 1.6.7 1.7.1.1.1.3 0 .4-.1.2-.1.3-.3.5-.1.2-.3.3-.4.5-.1.1-.3.3-.1.6.2.4.9 1.4 1.9 2.3 1.3 1.1 2.3 1.5 2.7 1.6.2.1.4.1.5-.1.2-.2.7-.8.9-1 .2-.2.4-.2.6-.1.2.1 1.5.7 1.7.8.2.1.4.2.5.3.1.2.1.9-.2 1.7-.3.8-1.7 1.5-2.3 1.6-.6.1-1.1.2-3.7-.8-3.1-1.2-5.1-4.3-5.3-4.5-.2-.2-1.3-1.7-1.3-3.3 0-1.5.8-2.3 1.1-2.6z" fill="#fff"/></svg>
+        </div>
+        <span style="font-size:13px;font-weight:500;color:var(--paper);">WhatsApp</span>
+      </div>
+      <span class="flow-arrow">←</span>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+        <div style="width:64px;height:64px;border-radius:16px;background:var(--gold);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="#1a1130" stroke-width="1.8"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><circle cx="18" cy="7" r="2.2"/><path d="M15 13.2c2.8.2 5 2.4 5 5.3"/></svg>
+        </div>
+        <span style="font-size:13px;font-weight:500;color:var(--paper);">מערכת CRM</span>
+      </div>
+    </div>
+    <div class="foot-note content">כל אחת מהמערכות האלה "מדברת" עם השאר בלי בן אדם באמצע — זה בדיוק מה שאוטומציה בונה.</div>
+  </section>
+
+  <!-- 7 — API EXPLAINED (house example) -->
+  <section class="slide dark" data-clock="18:22–18:26">
+    <span class="slide-index">10 / 47</span>
+    <span class="eyebrow">איך זה קורה בפועל</span>
+    <h2>הדבר שמחבר בין המערכות נקרא API</h2>
+    <div class="content" style="display:flex;gap:40px;flex-wrap:wrap;align-items:center;">
+      <svg viewBox="0 0 340 260" width="320" height="245" style="flex-shrink:0;">
+        <defs>
+          <marker id="ap-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="var(--gold)"/>
+          </marker>
+        </defs>
+        <line x1="20" y1="240" x2="320" y2="240" stroke="var(--paper-dim)" stroke-width="2" opacity="0.4"/>
+        <polygon points="30,120 170,32 310,120" fill="rgba(195,176,224,0.10)" stroke="var(--lavender)" stroke-width="3" stroke-linejoin="round"/>
+        <rect x="55" y="120" width="230" height="120" rx="4" fill="rgba(255,255,255,0.04)" stroke="var(--lavender)" stroke-width="3"/>
+        <rect x="72" y="140" width="36" height="36" rx="3" fill="rgba(255,255,255,0.05)" stroke="var(--lavender)" stroke-width="2" opacity="0.55"/>
+        <rect x="232" y="140" width="36" height="36" rx="3" fill="rgba(255,255,255,0.05)" stroke="var(--lavender)" stroke-width="2" opacity="0.55"/>
+        <rect x="152" y="140" width="36" height="36" rx="3" fill="rgba(224,183,104,0.22)" stroke="var(--gold)" stroke-width="2.5"/>
+        <rect x="149" y="182" width="42" height="58" rx="3" fill="rgba(224,183,104,0.14)" stroke="var(--gold)" stroke-width="2.5"/>
+        <rect x="183" y="197" width="15" height="21" rx="2" fill="#1a1130" stroke="var(--gold)" stroke-width="1.2"/>
+        <circle cx="188" cy="202" r="1.2" fill="var(--gold)"/><circle cx="193" cy="202" r="1.2" fill="var(--gold)"/>
+        <circle cx="188" cy="207" r="1.2" fill="var(--gold)"/><circle cx="193" cy="207" r="1.2" fill="var(--gold)"/>
+        <circle cx="188" cy="212" r="1.2" fill="var(--gold)"/><circle cx="193" cy="212" r="1.2" fill="var(--gold)"/>
+        <path d="M300,211 Q 250,211 199,211" stroke="var(--gold)" stroke-width="2.5" fill="none" stroke-dasharray="5 6" marker-end="url(#ap-arrow)"/>
+        <rect x="292" y="196" width="46" height="26" rx="6" fill="#1a1130" stroke="var(--gold)" stroke-width="1.5"/>
+        <text x="315" y="213" font-size="12" font-weight="700" fill="var(--gold)" text-anchor="middle" font-family="ui-monospace,monospace">1234</text>
+      </svg>
+      <div style="display:flex;flex-direction:column;gap:16px;flex:1;min-width:300px;">
+        <div class="card"><h3>API</h3><p>ה-API הוא השפה המשותפת שמאפשרת לשתי מערכות (או יותר) לדבר ולפעול אחת בשביל השנייה, בלי שאתה מעביר מידע ידנית ביניהן.</p></div>
+        <div class="card" style="border-color:var(--gold);"><h3>דוגמה — הבית</h3><p>תחשבו על בית עם כמה חדרים ודלת כניסה עם קוד. אתה לא צריך שבעל הבית יפתח לך בעצמו — אתה מקליד את הקוד הנכון בדלת, הדלת בודקת שהוא תקין, ופותחת לך בדיוק את החדר שמותר לך להיכנס אליו. ה-API הוא הדלת עם הקוד; המערכת (Gmail, Sheets, וואטסאפ, ה-CRM) היא הבית עם החדרים.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 — API vs MCP vs CLI (imported from session1 slide 34/48, with icons added) -->
+  <section class="slide dark" data-clock="18:26–18:30">
+    <span class="slide-index">11 / 47</span>
+    <span class="eyebrow">באיזו דלת נכנסים</span>
+    <h2>API, MCP ו-CLI — שלוש דרכים לדבר עם הבית</h2>
+    <div class="content grid grid-3">
+      <div class="card">
+        <svg viewBox="0 0 48 48" width="44" height="44"><rect x="4" y="4" width="40" height="40" rx="10" fill="rgba(195,176,224,0.16)" stroke="var(--lavender)" stroke-width="2"/><path d="M15 15h18M15 22h18M15 29h11" stroke="var(--lavender)" stroke-width="2.4" stroke-linecap="round"/></svg>
+        <h3>API</h3><p>חוקי הבית עצמו — מה מותר לבקש ואיך. לא כלי שמפעילים ישירות, אלא השפה הרשמית של הבית.</p>
+      </div>
+      <div class="card">
+        <svg viewBox="0 0 48 48" width="44" height="44"><rect x="4" y="4" width="40" height="40" rx="10" fill="rgba(195,176,224,0.16)" stroke="var(--lavender)" stroke-width="2"/><circle cx="24" cy="17" r="6" fill="none" stroke="var(--lavender)" stroke-width="2.4"/><path d="M13 37c0-7 5-12 11-12s11 5 11 12" fill="none" stroke="var(--lavender)" stroke-width="2.4" stroke-linecap="round"/></svg>
+        <h3>MCP</h3><p>פקיד קבלה שעומד בפתח כל הזמן ומתרגם כל בקשה הלוך-ושוב. נוח — אבל תופס מקום (וטוקנים) גם כשלא צריך אותו.</p>
+      </div>
+      <div class="card" style="border-color:var(--gold);">
+        <svg viewBox="0 0 48 48" width="44" height="44"><rect x="4" y="4" width="40" height="40" rx="10" fill="rgba(224,183,104,0.18)" stroke="var(--gold)" stroke-width="2"/><circle cx="24" cy="24" r="9" fill="none" stroke="var(--gold)" stroke-width="2.4"/><circle cx="24" cy="24" r="3" fill="var(--gold)"/></svg>
+        <h3>CLI</h3><p>כפתור שכבר מחווט מראש לדבר עם הבית. קלוד לוחץ עליו רק כשצריך — בלי מתורגמן שיושב שם קבוע.</p>
+      </div>
+    </div>
+    <div class="quote content">"MCP = פקיד קבלה בשכר קבוע. CLI = כפתור בכיס, שמשתמשים בו רק לפי הצורך."</div>
+  </section>
+
+  <!-- 9 — TOKENS ARE THE MOST SENSITIVE THING -->
+  <section class="slide" data-clock="18:30–18:33">
+    <span class="slide-index">12 / 47</span>
+    <span class="eyebrow">אבטחה</span>
+    <h2>הטוקנים הם הדבר הכי רגיש במערכת</h2>
+    <div class="content" style="display:flex;gap:32px;flex-wrap:wrap;align-items:center;">
+      <svg viewBox="0 0 64 64" width="64" height="64" style="flex-shrink:0;">
+        <rect x="16" y="28" width="32" height="26" rx="5" fill="rgba(239,68,68,0.16)" stroke="#ef4444" stroke-width="2.5"/>
+        <path d="M22 28v-8a10 10 0 0120 0v8" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+        <circle cx="32" cy="39" r="3.4" fill="#ef4444"/>
+        <path d="M32 42v6" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <div class="quote" style="border-color:#ef4444;">"מי שמחזיק את הטוקן יכול לבקש בשמך — בלי סיסמה נוספת. אין הבדל בין Claude Code שמשתמש בו כמו שצריך, לבין האקר שהשיג אותו במקרה."</div>
+    </div>
+  </section>
+
+  <!-- 10 — THE SOLUTION: .env + gitignore + permanent rule -->
+  <section class="slide dark" data-clock="18:33–18:40">
+    <span class="slide-index">13 / 47</span>
+    <span class="eyebrow">הפתרון</span>
+    <h2>קובץ <code>.env</code> — כל הטוקנים במקום אחד, מוגן</h2>
+    <div class="content grid grid-2">
+      <div class="card" style="border-color:var(--gold);"><h3>קובץ .env</h3><p>קובץ נפרד בפרויקט ששומר את כל הסודות (טוקנים, סיסמאות). לא נפתח בעין, לא מועתק, ולא עולה ל-GitHub.</p></div>
+      <div class="card"><h3>.gitignore</h3><p>רשימת קבצים ש-git מתעלם מהם לגמרי — <code>.env</code> תמיד נמצא ברשימה הזו, כך שהוא לעולם לא נשלח החוצה עם שאר הקוד.</p></div>
+    </div>
+    <div class="foot-note content">איך מעלים את הטוקנים בבטחה גם לענן (Vercel / Render וכו') — נסביר בהמשך, לא עכשיו.</div>
+    <div class="quote content" style="border-color:#ef4444;">"לעולם לא כותבים את טוקן ה-Claude Code עצמו — לא בקוד, לא בצ'אט, לא בשום מקום שרואים."</div>
+    <div class="content prompt">
+      <span class="prompt-label">פרומפט לזיכרון הקבוע של העוזר האישי שלך</span>
+      <pre>מהיום זה כלל קבוע: לעולם אל תבקש ממני טוקן או מפתח API
+בתוך הצ'אט, ואל תדפיס טוקן קיים או חדש בצ'אט או בפקודת Bash —
+לא משנה מה. כל טוקן נכנס רק דרך קובץ .env.
+
+כשאתה צריך שאני אכניס טוקן לקובץ .env — תמיד תן לי את המיקום
+המדויק של הקובץ, כולל הנתיב המלא, בתור קישור לחיץ שמוביל
+ישירות לתיקייה שבה הוא נמצא.
+
+וכשצריך טוקן חדש בקובץ .env — אתה כותב בעצמך את שורת
+KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדביק את הערך.</pre>
+    </div>
+  </section>
+
+  <!-- 11 — EXERCISE: build a dummy .env, then can't find it -->
+  <section class="slide" data-clock="18:40–18:45">
+    <span class="slide-index">14 / 47</span>
+    <span class="eyebrow">תרגול · יחד</span>
+    <h2>בונים קובץ .env דמה</h2>
+    <div class="content prompt">
+      <span class="prompt-label">פרומפט — כל אחד מבקש מהעוזר האישי שלו</span>
+      <pre>בנה לי קובץ .env דמה בתוך תיקיית הפרויקט, עם משתנה
+אחד לדוגמה (למשל DEMO_KEY=12345), ותן לי את הנתיב המלא
+לתיקייה שבו הוא נמצא.</pre>
+    </div>
+    <div class="quote content" style="margin-top:8px;">עכשיו כל אחד פותח את התיקייה שקיבל — <strong>אתם רואים את הקובץ?</strong></div>
+    <div class="foot-note content">רוב הסיכויים שלא. למה? — בדף הבא.</div>
+  </section>
+
+  <!-- 12 — ANSWER: hidden files, Mac + Windows -->
+  <section class="slide dark" data-clock="18:45–18:48">
+    <span class="slide-index">15 / 47</span>
+    <span class="eyebrow">למה לא רואים אותו</span>
+    <h2>קבצים שמתחילים בנקודה — מוסתרים כברירת מחדל</h2>
+    <div class="content"><div class="card" style="max-width:820px;border-color:var(--gold);"><p>קובץ ששמו מתחיל ב-<code>.</code> (כמו <code>.env</code>) מסומן על ידי המערכת כקובץ מוסתר — כדי שלא יפריע ולא יימחק בטעות. צריך לבקש מהמערכת במפורש להראות אותו.</p></div></div>
+    <div class="content grid grid-2">
+      <div class="card">
+        <h3>Mac — Finder</h3>
+        <div dir="ltr" style="direction:ltr;text-align:left;background:rgba(0,0,0,0.28);border-radius:8px;padding:9px 16px;font-weight:700;font-size:16px;align-self:flex-start;">Cmd + Shift + .</div>
+        <p>מציג/מסתיר קבצים מוסתרים (נקודה), כולל <code>.env</code>.</p>
+      </div>
+      <div class="card">
+        <h3>Windows — File Explorer</h3>
+        <div dir="ltr" style="direction:ltr;text-align:left;background:rgba(0,0,0,0.28);border-radius:8px;padding:9px 16px;font-weight:700;font-size:16px;align-self:flex-start;">View → Show → Hidden items</div>
+        <p>מציג/מסתיר קבצים מוסתרים, כולל <code>.env</code>.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15b — WHAT IS A WEBHOOK -->
+  <section class="slide" data-clock="18:48–18:53">
+    <span class="slide-index">16 / 47</span>
+    <span class="eyebrow">עוד דרך לקבל מידע</span>
+    <h2>מה זה Webhook?</h2>
+    <div class="content grid grid-2">
+      <div class="card"><h3>API רגיל — אתה שואל</h3><p>אתה (או קלוד קוד) פונה לשירות ומבקש מידע — "מה קורה אצלך?" זו יוזמה שלך, בכל פעם שאתה בוחר לבדוק.</p></div>
+      <div class="card" style="border-color:var(--gold);"><h3>Webhook — הוא מספר לך</h3><p>השירות עצמו פונה אליך אוטומטית, ברגע שקורה משהו — בלי שאתה שואל. כמו פעמון בדלת, במקום לדפוק כל כמה דקות ולבדוק אם מישהו הגיע.</p></div>
+    </div>
+    <div class="foot-note content">המערכת שנבנה בחלק הבא יכולה גם היא לקבל מידע דרך webhook — למשל הודעת וואטסאפ נכנסת, מילוי טופס, או עדכון תשלום, מגיעים אליה מיד ברגע שהם קורים.</div>
+  </section>
+
+  <!-- PART D DIVIDER -->
+  <section class="slide dark" data-clock="18:53–18:53">
+    <span class="slide-index">17 / 47</span>
+    <span class="slide-track">חלק ד'</span>
+    <div class="divider-wrap">
+      <div class="divider-num">ד'</div>
+      <div>
+        <span class="eyebrow">מהמחשב שלכם לעולם</span>
+        <h1 style="margin-top:10px;">העלאת נתונים<br><span class="accent" style="font-weight:100;">לענן</span></h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 — LOCAL VS CLOUD (question, no answer yet) -->
+  <section class="slide dark" data-clock="18:53–18:56">
+    <span class="slide-index">18 / 47</span>
+    <span class="eyebrow">מקומי מול ענן</span>
+    <h2>כל זה יפה — כשעובדים על המחשב שלך</h2>
+    <div class="quote content">אבל מה קורה כשהמערכת עוברת לענן, ורצה על שרת שאינו המחשב שלך — איך היא מקבלת גישה לטוקנים בלי קובץ <code>.env</code> יושב שם על המחשב?</div>
+    <div class="foot-note content">נענה על זה בהמשך הדרך.</div>
+  </section>
+
+  <!-- 14 — FRONTEND / BACKEND with illustration -->
+  <section class="slide" data-clock="18:56–19:01">
+    <span class="slide-index">19 / 47</span>
+    <span class="eyebrow">מילון מושגים</span>
+    <h2>Frontend ו-Backend</h2>
+    <div class="content" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;max-width:220px;">
+        <svg viewBox="0 0 64 64" width="64" height="64">
+          <rect x="6" y="10" width="52" height="38" rx="5" fill="rgba(195,176,224,0.14)" stroke="var(--lavender)" stroke-width="2.5"/>
+          <circle cx="14" cy="17" r="1.6" fill="var(--lavender)"/><circle cx="19" cy="17" r="1.6" fill="var(--lavender)"/><circle cx="24" cy="17" r="1.6" fill="var(--lavender)"/>
+          <line x1="6" y1="22" x2="58" y2="22" stroke="var(--lavender)" stroke-width="1.5"/>
+          <path d="M22 36a10 6 0 1020 0 10 6 0 10-20 0z" fill="none" stroke="var(--lavender)" stroke-width="2.2"/>
+          <circle cx="32" cy="36" r="3" fill="var(--lavender)"/>
+          <path d="M20 58h24" stroke="var(--lavender)" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M32 48v10" stroke="var(--lavender)" stroke-width="2.5"/>
+        </svg>
+        <h3 style="margin:0;font-size:18px;">Frontend</h3>
+        <p style="margin:0;font-size:14px;color:var(--paper-dim);text-align:center;">מה שכולם רואים</p>
+      </div>
+      <span class="flow-arrow" style="font-size:28px;">⇄</span>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:10px;max-width:220px;">
+        <svg viewBox="0 0 64 64" width="64" height="64">
+          <rect x="14" y="6" width="36" height="14" rx="3" fill="rgba(224,183,104,0.16)" stroke="var(--gold)" stroke-width="2.2"/>
+          <rect x="14" y="25" width="36" height="14" rx="3" fill="rgba(224,183,104,0.16)" stroke="var(--gold)" stroke-width="2.2"/>
+          <rect x="14" y="44" width="36" height="14" rx="3" fill="rgba(224,183,104,0.16)" stroke="var(--gold)" stroke-width="2.2"/>
+          <circle cx="43" cy="13" r="1.6" fill="var(--gold)"/><circle cx="43" cy="32" r="1.6" fill="var(--gold)"/><circle cx="43" cy="51" r="1.6" fill="var(--gold)"/>
+          <rect x="18" y="9" width="14" height="2.4" rx="1" fill="var(--gold)"/>
+          <rect x="18" y="28" width="14" height="2.4" rx="1" fill="var(--gold)"/>
+          <rect x="18" y="47" width="14" height="2.4" rx="1" fill="var(--gold)"/>
+        </svg>
+        <h3 style="margin:0;font-size:18px;">Backend</h3>
+        <p style="margin:0;font-size:14px;color:var(--paper-dim);text-align:center;">מה שאף אחד לא רואה</p>
+      </div>
+    </div>
+    <div class="content grid grid-2" style="margin-top:8px;">
+      <div class="card"><h3>Frontend</h3><p>רץ בדפדפן של המשתמש. כל מה שכתוב שם — כל אחד יכול לראות דרך "קליק ימני ← Inspect". לכן טוקנים וסודות אף פעם לא יושבים כאן.</p></div>
+      <div class="card" style="border-color:var(--gold);"><h3>Backend</h3><p>רץ על השרת, לא אצל המשתמש. כאן חי הטוקן, כאן קורית הלוגיקה הרגישה — אף אחד מבחוץ לא יכול לגשת אליו ישירות.</p></div>
+    </div>
+  </section>
+
+  <!-- 15 — THREE TOOLS: SHOW ONLY -->
+  <section class="slide dark" data-clock="19:01–19:03">
+    <span class="slide-index">20 / 47</span>
+    <span class="eyebrow">הכלים שכל פרויקט חי עליהם</span>
+    <h2>GitHub · Vercel · Supabase</h2>
+    <div class="content" style="display:flex;align-items:center;gap:36px;flex-wrap:wrap;justify-content:center;margin-top:10px;">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+        <div style="width:84px;height:84px;border-radius:20px;background:#161b22;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.15);">
+          <svg viewBox="0 0 40 40" width="42" height="42" fill="#fff"><path d="M20 3C10.6 3 3 10.6 3 20c0 7.5 4.9 13.9 11.6 16.1.8.2 1.1-.4 1.1-.8v-3c-4.7 1-5.7-2.3-5.7-2.3-.8-2-1.9-2.5-1.9-2.5-1.5-1 .1-1 .1-1 1.7.1 2.6 1.7 2.6 1.7 1.5 2.6 3.9 1.9 4.9 1.4.1-1.1.6-1.9 1-2.3-3.8-.4-7.7-1.9-7.7-8.4 0-1.9.7-3.4 1.7-4.6-.2-.4-.8-2.1.2-4.4 0 0 1.4-.5 4.6 1.7 1.3-.4 2.8-.6 4.2-.6s2.9.2 4.2.6c3.2-2.2 4.6-1.7 4.6-1.7.9 2.3.3 4 .2 4.4 1.1 1.2 1.7 2.7 1.7 4.6 0 6.5-3.9 8-7.7 8.4.6.5 1.1 1.6 1.1 3.1v4.6c0 .4.3 1 1.1.8C32.1 33.9 37 27.5 37 20c0-9.4-7.6-17-17-17z"/></svg>
+        </div>
+        <span style="font-weight:700;">GitHub</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+        <div style="width:84px;height:84px;border-radius:20px;background:#000;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.15);">
+          <svg viewBox="0 0 40 40" width="38" height="38"><polygon points="20,7 35,32 5,32" fill="#fff"/></svg>
+        </div>
+        <span style="font-weight:700;">Vercel</span>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+        <div style="width:84px;height:84px;border-radius:20px;background:#1c1c1c;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.15);">
+          <svg viewBox="0 0 40 40" width="34" height="34"><polygon points="22,3 8,23 19,23 17,37 32,17 21,17" fill="#3ECF8E"/></svg>
+        </div>
+        <span style="font-weight:700;">Supabase</span>
+      </div>
+    </div>
+    <div class="foot-note content" style="text-align:center;">נכיר כל אחד מהם לעומק בדפים הבאים.</div>
+  </section>
+
+  <!-- 16 — WHAT IS GITHUB -->
+  <section class="slide" data-clock="19:03–19:08">
+    <span class="slide-index">21 / 47</span>
+    <span class="eyebrow">GitHub</span>
+    <h2>איפה חי הקוד שלך</h2>
+    <div class="lede content">מקום בענן ששומר את כל הקוד של הפרויקט — עם היסטוריה מלאה של כל שינוי, כמו Google Docs לקוד.</div>
+    <div class="content grid grid-2">
+      <div class="card"><h3>מה כן נמצא ב-GitHub</h3><p>הקוד עצמו, קבצי ההגדרה של הפרויקט, תיעוד. כל מה שצריך כדי שהפרויקט ירוץ — חוץ מהסודות.</p></div>
+      <div class="card" style="border-color:#ef4444;"><h3>מה אסור שיהיה שם</h3><p>קובץ <code>.env</code>, טוקנים, סיסמאות. בזכות <code>.gitignore</code> הם פשוט לא נשלחים ל-GitHub מלכתחילה.</p></div>
+    </div>
+    <div class="content grid grid-2">
+      <div class="card" style="border-color:var(--gold);"><h3>גרסאות (Commits)</h3><p>כל שמירה היא גרסה חדשה, לא מוחקת ולא דורסת את הקודמת. כל הגרסאות נשמרות — תמיד אפשר לחזור אחורה לגרסה ישנה אם משהו נשבר.</p></div>
+      <div class="card"><h3>Private, לא Public</h3><p>ברירת המחדל היא מאגר (Repository) פרטי — רק אתה (וקלוד קוד מטעמך) רואים אותו. אף אחד אחר לא יכול לראות את הקוד או להוריד אותו.</p></div>
+    </div>
+  </section>
+
+  <!-- 17 — HOW TO DEPLOY TO GITHUB -->
+  <section class="slide dark" data-clock="19:08–19:14">
+    <span class="slide-index">22 / 47</span>
+    <span class="eyebrow">בפועל</span>
+    <h2>איך מעלים את הפרויקט ל-GitHub</h2>
+    <div class="content card" style="max-width:820px;border-color:var(--gold);">
+      <h3>קודם כל — מחברים את קלוד קוד ל-GitHub</h3>
+      <p>לפני שאפשר להעלות משהו, קלוד קוד צריך הרשאה לדבר עם חשבון ה-GitHub שלכם. מריצים פעם אחת <code>gh auth login</code> — זה פותח דפדפן, מתחברים עם חשבון ה-GitHub שלכם, ומאשרים. שוב — בלי להדביק שום טוקן בצ'אט.</p>
+    </div>
+    <div class="content prompt">
+      <span class="prompt-label">פרומפט — מבקשים מהעוזר האישי</span>
+      <pre>תוודא שיש לך גישה ל-GitHub (gh auth login אם עוד לא),
+ואז תעלה את הפרויקט הזה כמאגר חדש ופרטי (private) — לא public.
+לפני זה תוודא שקובץ ה-.env לא נכלל בהעלאה
+(בדוק שהוא ברשימת ה-.gitignore).</pre>
+    </div>
+    <div class="content checklist">
+      <div class="check-item"><span class="check-mark">1</span> מחברים חשבון GitHub לקלוד קוד — פעם אחת, דרך הדפדפן</div>
+      <div class="check-item"><span class="check-mark">2</span> יוצרים מאגר (repository) חדש, מסומן Private</div>
+      <div class="check-item"><span class="check-mark">3</span> Claude Code מכין את הקוד ושומר גרסה ראשונה (commit)</div>
+      <div class="check-item"><span class="check-mark">4</span> דוחפים (push) את הגרסה ל-GitHub</div>
+      <div class="check-item"><span class="check-mark">5</span> בודקים ב-GitHub עצמו שה-<code>.env</code> באמת לא שם</div>
+    </div>
+  </section>
+
+  <!-- 18 — WHAT IS VERCEL -->
+  <section class="slide" data-clock="19:14–19:21">
+    <span class="slide-index">23 / 47</span>
+    <span class="eyebrow">Vercel</span>
+    <h2>המקום שבו האתר/המערכת רצים בפועל</h2>
+    <div class="lede content">Vercel לוקח את הקוד מ-GitHub ומריץ אותו בענן, בכתובת אמיתית באינטרנט — במקום שירוץ רק על המחשב שלך.</div>
+    <div class="content grid grid-2">
+      <div class="card" style="border-color:var(--gold);"><h3>איפה יושבים הטוקנים ב-Vercel</h3><p>בהגדרות הפרויקט בענן, תחת <strong>Environment Variables</strong> — נפרד לגמרי מקובץ ה-.env המקומי, ולא נראה בקוד או בצ'אט.</p></div>
+      <div class="card"><h3>דומיין אישי</h3><p>אפשר לחבר דומיין משלכם (למשל <span dir="ltr" style="unicode-bidi:isolate;">community-name.com</span>) ל-Vercel, כדי שהאתר ירוץ תחת הכתובת שלכם — לא כתובת גנרית.</p></div>
+    </div>
+    <div class="content checklist">
+      <div class="check-item"><span class="check-mark">1</span> מתחברים פעם אחת דרך הדפדפן (<code>vercel login</code>) — לא מדביקים טוקן בצ'אט</div>
+      <div class="check-item"><span class="check-mark">2</span> אחרי החיבור, קלוד קוד יכול להריץ <code>vercel deploy</code> ישירות, בלי שאתם מעבירים לו טוקן בעצמכם</div>
+      <div class="check-item"><span class="check-mark">3</span> משתני הסביבה בענן מוגדרים דרך <code>vercel env add</code> — גם זה לא עובר דרך הצ'אט</div>
+    </div>
+    <div class="foot-note content">הכלל מדף 10 בתוקף גם כאן: קלוד קוד לא צריך לדעת את טוקן ה-Vercel עצמו כדי לדבר איתו.</div>
+  </section>
+
+  <!-- 19 — WHAT IS SUPABASE -->
+  <section class="slide dark" data-clock="19:21–19:25">
+    <span class="slide-index">24 / 47</span>
+    <span class="eyebrow">Supabase</span>
+    <h2>מסד הנתונים בענן של הפרויקט</h2>
+    <div class="lede content">המקום שבו נשמר המידע עצמו — אנשי הקהילה, הודעות, טבלאות. לא הקוד — הנתונים.</div>
+    <div class="content grid grid-2">
+      <div class="card"><h3>מה מותר שיהיה שם</h3><p>הנתונים עצמם — טבלת אנשי קהילה, אירועים, היסטוריית הודעות. מוגנים בהרשאות גישה (RLS) כך שרק המערכת שלכם יכולה לגעת בהם.</p></div>
+      <div class="card" style="border-color:#ef4444;"><h3>מה אסור שיהיה שם</h3><p>ה-<strong>service key</strong> של Supabase נותן גישה מלאה לכל הנתונים בלי הגבלה — לעולם לא נחשף בפרונטאנד, בקוד גלוי או בצ'אט. גם הוא שייך רק ל-<code>.env</code>.</p></div>
+    </div>
+  </section>
+
+  <!-- 20 — CLAUDE CODE + SUPABASE: TABLES + DATA -->
+  <section class="slide dark" data-clock="19:25–19:30">
+    <span class="slide-index">25 / 47</span>
+    <span class="eyebrow">בפועל</span>
+    <h2>איך קלוד קוד עובד מול Supabase</h2>
+    <div class="content grid grid-2">
+      <div class="card"><h3>יצירת טבלאות (SQL)</h3><p>ל-Supabase יש <strong>CLI</strong> משלו. מתחברים פעם אחת דרך הדפדפן (<code>supabase login</code>) — לא טוקן בצ'אט — ומאותו רגע קלוד קוד יכול להריץ migrations וליצור/לשנות טבלאות ישירות מהטרמינל, בלי להדביק שום דבר ידנית ב-SQL Editor.</p></div>
+      <div class="card" style="border-color:var(--gold);"><h3>הכנסת מידע (Insert)</h3><p>אחרי שהטבלה קיימת — קלוד קוד יכול להכניס, לעדכן ולשלוף מידע ישירות דרך ה-API, בלי מגע יד, כל עוד ה-service key יושב ב-<code>.env</code> ולא בצ'אט.</p></div>
+    </div>
+    <div class="content checklist">
+      <div class="check-item"><span class="check-mark">1</span> יוצרים פרויקט Supabase</div>
+      <div class="check-item"><span class="check-mark">2</span> שמים את ה-URL וה-service key ב-<code>.env</code> (עם נתיב מלא לחיץ)</div>
+      <div class="check-item"><span class="check-mark">3</span> מתחברים פעם אחת עם <code>supabase login</code> — אחרי זה קלוד קוד יוצר ומשנה טבלאות ישירות דרך ה-CLI</div>
+      <div class="check-item"><span class="check-mark">4</span> מרגע שהטבלה קיימת — קלוד קוד מכניס ומעדכן מידע ישירות, בלי מגע יד</div>
+    </div>
+    <div class="foot-note content">מומלץ להפעיל הרשאות (RLS) על כל טבלה, כך שרק המערכת שלכם — לא כל מי שמצליח להשיג את ה-URL — יכולה לגעת בנתונים.</div>
+  </section>
+
+  <!-- 21 — SECURITY RULES SUMMARY PROMPT -->
+  <section class="slide dark" data-clock="19:30–19:34">
+    <span class="slide-index">26 / 47</span>
+    <span class="eyebrow">סיכום · אבטחה</span>
+    <h2>מטמיעים את כל כללי האבטחה בעוזר האישי — אחת ולתמיד</h2>
+    <div class="content prompt">
+      <span class="prompt-label">פרומפט — כל אחד מריץ אצל העוזר האישי שלו</span>
+      <pre>מהיום אלה כללי אבטחה קבועים שאתה שומר תמיד, בכל שיחה,
+בלי יוצא מן הכלל:
+
+1. טוקנים ומפתחות API — לעולם לא בצ'אט, לא בפקודת Bash,
+   לא בקוד גלוי. רק בקובץ .env.
+
+2. כשצריך טוקן חדש ב-.env — אתה כותב בעצמך את שורת
+   KEY= ריקה, ואני רק מדביק את הערך. וכל פעם שאתה נוגע
+   ב-.env, תן לי תמיד את הנתיב המלא כקישור לחיץ לתיקייה.
+
+3. .env תמיד ברשימת .gitignore — לעולם לא עולה ל-GitHub.
+
+4. מאגרי GitHub של הפרויקטים שלי — תמיד Private, לא Public.
+
+5. משתני סביבה בענן (Vercel Environment Variables, service key
+   של Supabase וכו') — לא נחשפים בצ'אט או בקוד גלוי, רק דרך
+   ההגדרות של השירות עצמו.
+
+6. התחברות לשירותים חיצוניים (GitHub, Vercel, Supabase) —
+   תמיד דרך login בדפדפן, פעם אחת. לא דרך טוקן שאני מדביק לך.
+
+תוסיף את כל הכללים האלה לזיכרון הקבוע שלך (CLAUDE.md) עכשיו,
+ואל תשכח אותם אף פעם.</pre>
+    </div>
+  </section>
+
+  <!-- PART E DIVIDER -->
+  <section class="slide dark" data-clock="19:34–19:35">
+    <span class="slide-index">27 / 47</span>
+    <span class="slide-track">חלק ה'</span>
+    <div class="divider-wrap">
+      <div class="divider-num">ה'</div>
+      <div>
+        <span class="eyebrow">מהתאוריה למעשה</span>
+        <h1 style="margin-top:10px;">בונים מערכת<br><span class="accent" style="font-weight:100;">לניהול הקהילה</span></h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- 22 — BUILD THE COMMUNITY SYSTEM (before break) -->
+  <section class="slide" data-clock="19:35–19:45">
+    <span class="slide-index">28 / 47</span>
+    <span class="eyebrow">עכשיו — בונים</span>
+    <h2>לפני ההפסקה: מריצים את הפרומפט, והמערכת נבנית לבד</h2>
+    <div class="content prompt">
+      <span class="prompt-label">פרומפט — לפי האפיון שכל אחד הביא</span>
+      <pre>על בסיס האפיון שהכנתי, בנה לי מערכת ניהול קהילה עם טבלת
+אנשי קהילה: שם, טלפון, מייל.
+
+לכל תאריך — גם תאריך לידה וגם תאריך פטירה ליארצייט — מזינים
+תאריך לועזי, ובוחרים רק אם זה היה לפני השקיעה או אחרי השקיעה
+(בלי צורך בשעה מדויקת). המערכת ממירה לתאריך העברי בהתאם, כי
+היום העברי מתחיל בערב. תאריך הפטירה משמש לחישוב יארצייט שנתי
+אוטומטי.
+
+בנה גם טופס (form) שאפשר לשלוח לבני הקהילה עצמם למילוי עצמי.
+בטופס, כל אחד ממלא את הפרטים שלו, מציין מצב משפחתי (נשוי/רווק),
+ומוסיף אנשי קשר משפחתיים לפי תפקיד: אבא, אמא, סבא, סבתא, אח,
+אחות, דוד — עם פרטים בסיסיים לכל אחד (שם, טלפון אם יש).
+
+לכל בן משפחה כזה, שואלים גם אם הוא בחיים או נפטר. אם נפטר —
+שואלים קודם אם ידוע התאריך העברי של הפטירה: אם כן, מספיק יום
+וחודש עברי בלבד (בלי שנה — לא צריך אותה כדי לחשב יארצייט שחוזר
+כל שנה). אם לא ידוע התאריך העברי — שואלים תאריך לועזי מלא כולל
+שנה (כי כדי להמיר ללועזי-עברי חייבים שנה), ואם ידועות גם שעה
+ודקות מבקשים אותן, עם בחירה אם זה היה לפני השקיעה או אחרי
+השקיעה. מכל אחת מהדרכים האלה המערכת מפיקה את התאריך העברי של
+הפטירה, ולפיו מחשבת את היארצייט השנתי הקבוע.
+
+חשוב: התאריך הלועזי והתאריך העברי לא נופלים על אותו יחס בין
+השנים — כל שנה עברית זזה ביחס ללועזי. לכן שומרים תמיד את
+התאריך המקורי המלא (כולל שנה) כרשומת מקור קבועה, ולצידו את
+התאריך העברי (יום וחודש) שנגזר ממנו. לחישוב היארצייט/יום
+ההולדת החוזר, בכל שנה (או כל יום, בבדיקה שוטפת) ממירים את
+התאריך העברי מחדש לתאריך הלועזי המתאים לאותה שנה עברית
+ספציפית — כדי לדעת בדיוק באיזה תאריך לועזי לשלוח את התזכורת
+השנה. התאריך המקורי לעולם לא נמחק ולא מוחלף.
+
+ברגע שמישהו ממלא בן משפחה (למשל: אמא = פלונית) — המערכת צריכה
+לאפשר לשלוח לאותו בן משפחה הודעה: "הבן/הבת שלך [שם] רשם אותך
+לתופס של הקהילה שלנו — תרצה/י גם להצטרף?" כך המאגר גדל בעצמו
+לאורך זמן, דור אחרי דור, בלי שאני מזין הכל ידנית.
+
+תוסיף גם דרך להזין נוכחות — מי הגיע בפועל לקהילה, כדי שאפשר
+יהיה לזהות בהמשך "מי לא נראה זמן רב". להתחלה תבנה את הדרך
+הכי פשוטה: סימון ידני מהיר (רשימת נוכחים שמסמנים אחרי כל
+שבת/אירוע). לזיהוי אוטומטי בעתיד (מצלמת זיהוי פנים, קורא NFC,
+או טביעת אצבע) — רק תשאיר את המבנה פתוח להרחבה, לא לבנות עכשיו.
+
+תבנה גם את הפרונט הבסיסי של המערכת הזאת, כולל הטופס שאפשר
+לשלוח לאנשים.
+
+תעבוד ללא הפסקה. תעבוד באנגלית — רק התשובות שלך בסוף בעברית.</pre>
+    </div>
+    <div class="foot-note content">מריצים את זה עכשיו ויוצאים להפסקה — המערכת נבנית ברקע, וכשחוזרים ממשיכים משם.</div>
+  </section>
+
+  <!-- 23 — BREAK -->
+  <section class="slide dark" data-clock="19:45–19:52">
+    <span class="slide-index">29 / 47</span>
+    <div class="divider-wrap">
+      <div class="divider-num">☕</div>
+      <div>
+        <span class="eyebrow">אנחנו יוצאים להפסקה — הוא לא</span>
+        <h1 style="margin-top:10px;">הפסקה<br><span class="accent" style="font-weight:100;font-size:0.5em;">קלוד קוד ממשיך לעבוד בשבילנו</span></h1>
+      </div>
+    </div>
+    <div class="foot-note content" style="text-align:center;">אין לו תלונות על שעות נוספות. תיהנו מהקפה.</div>
+  </section>
+
+  <!-- PART F DIVIDER -->
+  <section class="slide dark" data-clock="19:52–19:52">
+    <span class="slide-index">30 / 47</span>
+    <span class="slide-track">חלק ו'</span>
+    <div class="divider-wrap">
+      <div class="divider-num">ו'</div>
+      <div>
+        <span class="eyebrow">עובדים חכם יותר</span>
+        <h1 style="margin-top:10px;">ייעול עבודה<br><span class="accent" style="font-weight:100;">עם קלוד</span></h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- 24 — DICTATION TOOLS (Whisper) -->
+  <section class="slide" data-clock="19:52–19:55">
+    <span class="slide-index">31 / 47</span>
+    <span class="eyebrow">כלי דיבור לקלוד קוד</span>
+    <h2>מדברים במקום להקליד</h2>
+    <div class="lede content">כלי שממיר דיבור לטקסט בזמן אמת — מקישים על קיצור מקלדת, מדברים, משחררים, והטקסט מוקלד לבד בדיוק במקום שהסמן נמצא. עובד בכל מקום שיש שדה טקסט — כולל בתוך הצ'אט עם קלוד קוד.</div>
+    <div class="content grid grid-2">
+      <div class="card"><h3>Mac — MacWhisper</h3><p><a href="https://goodsnooze.gumroad.com/l/macwhisper" style="color:var(--lavender);">goodsnooze.gumroad.com/l/macwhisper</a><br>מורידים, פותחים, מחזיקים את קיצור המקלדת שהוגדר, מדברים, משחררים — הטקסט מופיע איפה שהסמן נמצא.</p></div>
+      <div class="card" style="border-color:var(--gold);"><h3>Windows — Wispr Flow</h3><p><a href="https://wisprflow.ai/downloads" style="color:var(--lavender);">wisprflow.ai/downloads</a><br>מורידים, פותחים, מחזיקים את קיצור המקלדת שהוגדר, מדברים, משחררים — הטקסט מופיע איפה שהסמן נמצא.</p></div>
+    </div>
+    <div class="foot-note content">קישורים נוספים ישלחו בקבוצת הסדנה.</div>
+  </section>
+
+  <!-- 25 — SCREENSHOTS (Mac + Windows, reused from session1 end-of-session slide) -->
+  <section class="slide dark" data-clock="19:55–19:58">
+    <span class="slide-index">32 / 47</span>
+    <span class="eyebrow">מצלמים מסך לקלוד קוד</span>
+    <h2>כשמשהו שבור על המסך — מראים לו, לא מתארים במילים</h2>
+    <div class="content grid grid-2">
+      <div class="card" style="border-color:var(--gold);"><h3>Screenshot ל-Claude Code — Mac</h3><p><strong>Cmd+Shift+4</strong> — בוחרים אזור במסך, התמונה נשמרת לשולחן העבודה. <strong>Cmd+Ctrl+Shift+4</strong> — אותו דבר, אבל ישר ללוח (Clipboard) — אפשר להדביק ישירות בצ'אט עם <strong>Cmd+V</strong>.</p></div>
+      <div class="card" style="border-color:var(--gold);"><h3>Screenshot ל-Claude Code — Windows</h3><p><strong>Win+Shift+S</strong> — פותח כלי בחירת אזור, התמונה נשמרת ללוח (Clipboard). מדביקים ישירות בצ'אט עם <strong>Ctrl+V</strong>.</p></div>
+    </div>
+    <div class="foot-note content">זו הדרך המהירה ביותר להראות לקלוד קוד בדיוק מה קורה, בלי לתאר במילים.</div>
+  </section>
+
+  <!-- PART G DIVIDER -->
+  <section class="slide dark" data-clock="19:58–19:59">
+    <span class="slide-index">33 / 47</span>
+    <span class="slide-track">חלק ז'</span>
+    <div class="divider-wrap">
+      <div class="divider-num">ז'</div>
+      <div>
+        <span class="eyebrow">לא לבד בעולם</span>
+        <h1 style="margin-top:10px;">חיבור מערכות</h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- 26 — CONNECT TO EMAIL -->
+  <section class="slide" data-clock="19:59–20:05">
+    <span class="slide-index">34 / 47</span>
+    <span class="eyebrow">מחברים למייל</span>
+    <h2>המערכת מדברת עם המייל שלכם — Gmail או Hotmail/Outlook</h2>
+    <div class="content card" style="max-width:820px;border-color:var(--gold);">
+      <h3>איפה מחברים — שלב אחד לפני הכל</h3>
+      <p>ב-Claude (claude.ai או Desktop): <strong dir="ltr" style="unicode-bidi:isolate;display:inline-block;">Settings → Connectors</strong>. שם מחפשים את שירות המייל הרלוונטי ולוחצים <strong>Connect</strong>.</p>
+    </div>
+    <div class="content grid grid-2">
+      <div class="card"><h3>Gmail</h3><p>מחפשים "Gmail" ברשימת ה-Connectors, לוחצים Connect — נפתח חלון של Google, מתחברים עם החשבון ואישרים הרשאות. זהו, בלי טוקן, בלי סיסמה בצ'אט.</p></div>
+      <div class="card"><h3>Hotmail / Outlook</h3><p>מחפשים "Outlook" או "Microsoft" ברשימת ה-Connectors, לוחצים Connect — נפתח חלון של Microsoft, מתחברים עם החשבון ואישרים הרשאות. אותו עיקרון בדיוק.</p></div>
+    </div>
+    <div class="content checklist">
+      <div class="check-item"><span class="check-mark">1</span> מתחברים פעם אחת דרך הדפדפן — לא מדביקים סיסמה או טוקן בצ'אט</div>
+      <div class="check-item"><span class="check-mark">2</span> מרגע שמחובר — קלוד קוד יכול לקרוא, לחפש ולשלוח מיילים בשמכם, לפי מה שתבקשו</div>
+    </div>
+    <div class="content prompt">
+      <span class="prompt-label">פרומפט לדוגמה</span>
+      <pre>תבדוק אם הגיע מייל חדש מ[שם/נושא], ותסכם לי מה כתוב בו.</pre>
+    </div>
+  </section>
+
+  <!-- 27 — CONNECT TO CALENDAR -->
+  <section class="slide dark" data-clock="20:05–20:10">
+    <span class="slide-index">35 / 47</span>
+    <span class="eyebrow">מחברים גם את היומן</span>
+    <h2>Google Calendar או Outlook Calendar — אותו עיקרון בדיוק</h2>
+    <div class="content card" style="max-width:820px;border-color:var(--gold);">
+      <p>אותו מקום בדיוק: <strong dir="ltr" style="unicode-bidi:isolate;display:inline-block;">Settings → Connectors</strong>. מחפשים את שם היומן שלכם, לוחצים Connect, מתחברים בחלון שנפתח — ואישרים הרשאות.</p>
+    </div>
+    <div class="content grid grid-2">
+      <div class="card"><h3>Google Calendar</h3><p>מחפשים "Calendar" ברשימת ה-Connectors, מתחברים עם חשבון Google — אותו חשבון כמו ה-Gmail.</p></div>
+      <div class="card"><h3>Outlook Calendar</h3><p>מחפשים "Outlook" ברשימת ה-Connectors, מתחברים עם חשבון Microsoft — אותו חשבון כמו ה-Hotmail/Outlook.</p></div>
+    </div>
+    <div class="content checklist">
+      <div class="check-item"><span class="check-mark">1</span> מתחברים פעם אחת דרך הדפדפן — לא טוקן בצ'אט</div>
+      <div class="check-item"><span class="check-mark">2</span> מרגע שמחובר — קלוד קוד יכול לקרוא וליצור אירועים ביומן שלכם</div>
+    </div>
+    <div class="content prompt">
+      <span class="prompt-label">פרומפט לדוגמה</span>
+      <pre>תבדוק מה יש לי ביומן השבוע.</pre>
+    </div>
+    <div class="foot-note content">זה הבסיס לאוטומציית התזכורות שנבנה בעוד כמה דפים.</div>
+  </section>
+
+  <!-- 28 — SERVICES WITHOUT A CONNECTOR: PROJECT-LEVEL VS FULL ACCESS -->
+  <section class="slide" data-clock="20:10–20:15">
+    <span class="slide-index">36 / 47</span>
+    <span class="eyebrow">מה עם שירותים שלא ברשימה?</span>
+    <h2>אין Connector ל-Green API וכדומה — אז מה עושים?</h2>
+    <div class="content grid grid-2">
+      <div class="card" style="border-color:var(--gold);">
+        <h3>שירות בלי Connector רשמי</h3>
+        <p>פותחים חשבון בשירות עצמו (למשל Green API), מוציאים משם מפתח API, שומרים אותו ב-<code>.env</code> <strong>של הפרויקט הספציפי</strong>. קלוד קוד כותב קוד שקורא לשירות דרך המפתח הזה. הגישה נשארת אוטומטית ברמת הפרויקט בלבד — פרויקט אחר לא רואה את הטוקן הזה, אלא אם מעתיקים אליו את ה-.env בעצמכם.</p>
+      </div>
+      <div class="card">
+        <h3>Connector רשמי (Gmail/Calendar/וכו')</h3>
+        <p>מחובר ברמת כל חשבון ה-Claude שלכם, לא רק לפרויקט אחד — ברגע שמחברים, זמין בכל שיחה ובכל פרויקט. נוח יותר, אבל רחב יותר. רוצים לצמצם? מנתקים אותו ב-<strong dir="ltr" style="unicode-bidi:isolate;display:inline-block;">Settings → Connectors → Disconnect</strong> כשלא בשימוש.</p>
+      </div>
+    </div>
+    <div class="content checklist">
+      <div class="check-item"><span class="check-mark">1</span> יש Connector רשמי לשירות? עדיפות ראשונה — אין בכלל טוקן שעובר דרך הצ'אט</div>
+      <div class="check-item"><span class="check-mark">2</span> אין Connector? הולכים על <code>.env</code> בפרויקט הספציפי — זה ממילא נשאר מוגבל לפרויקט</div>
+      <div class="check-item"><span class="check-mark">3</span> Connector שנפתח רחב מדי? מנתקים אותו כשלא צריך, במקום להשאיר גישה פתוחה</div>
+    </div>
+  </section>
+
+  <!-- PART H DIVIDER -->
+  <section class="slide dark" data-clock="20:15–20:15">
+    <span class="slide-index">37 / 47</span>
+    <span class="slide-track">חלק ח'</span>
+    <div class="divider-wrap">
+      <div class="divider-num">ח'</div>
+      <div>
+        <span class="eyebrow">לתקשר עם הקהילה</span>
+        <h1 style="margin-top:10px;">וואטסאפ <span class="accent" style="font-weight:100;">מול</span> SMS</h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- 29 — WHATSAPP OFFICIAL VS UNOFFICIAL + SMS -->
+  <section class="slide dark" data-clock="20:15–20:20">
+    <span class="slide-index">38 / 47</span>
+    <span class="eyebrow">וואטסאפ</span>
+    <h2>רשמי מול לא-רשמי — ולמה זה משנה</h2>
+    <div class="content grid grid-2">
+      <div class="card"><h3>רשמי (WhatsApp Business API)</h3><p>ערוץ מאושר על ידי Meta, יציב ובטוח — אבל דורש תהליך אישור עסקי, ולעיתים עלות לכל הודעה ואישור מראש לתבניות שיווקיות.</p></div>
+      <div class="card" style="border-color:#ef4444;"><h3>לא-רשמי (חיבור מספר אישי)</h3><p>מתחברים במספר סריקת QR, מהיר וזול — אבל וואטסאפ יכול לזהות ולחסום (yellowCard) שימוש שנראה אוטומטי, במיוחד שליחה המונית או פנייה למספרים חדשים בכמות.</p></div>
+    </div>
+    <div class="foot-note content">מי שבוחר בכל זאת בלא-רשמי — מתחברים דרך שירות תיווך (כמו Green API) בסריקת QR חד-פעמית, ואז שולחים בקצב איטי ומדוד, לא בהמון בבת אחת.</div>
+    <div class="content card" style="max-width:820px;border-color:var(--gold);"><h3>אלטרנטיבה — SMS</h3><p>בהרבה מדינות שירות SMS יציב יותר מוואטסאפ לא-רשמי, בלי סיכון חסימה. הזמינות והמחיר משתנים ממדינה למדינה — כדאי לבדוק מה קיים אצלכם.</p></div>
+  </section>
+
+  <!-- PART I DIVIDER -->
+  <section class="slide dark" data-clock="20:20–20:21">
+    <span class="slide-index">39 / 47</span>
+    <span class="slide-track">חלק ט'</span>
+    <div class="divider-wrap">
+      <div class="divider-num">ט'</div>
+      <div>
+        <span class="eyebrow">עוד אפשרויות</span>
+        <h1 style="margin-top:10px;">תוספות פיצ'רים<br><span class="accent" style="font-weight:100;">למערכת</span></h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- 28 — DASHBOARD -->
+  <section class="slide" data-clock="20:21–20:27">
+    <span class="slide-index">40 / 47</span>
+    <span class="eyebrow">דשבורד</span>
+    <h2>מסך אחד שמראה הכל בבוקר</h2>
+    <div class="content grid grid-3">
+      <div class="card"><h3>מה יש היום</h3><p>ימי הולדת, יארצייטים, פגישות</p></div>
+      <div class="card"><h3>מה יש השבוע</h3><p>תצוגה קדימה, לא רק להיום</p></div>
+      <div class="card" style="border-color:var(--gold);"><h3>מי לא נראה זמן רב</h3><p>"כדאי ליצור קשר" — מזהה קשר שנחלש</p></div>
+    </div>
+    <div class="content prompt">
+      <span class="prompt-label">פרומפט לדוגמה</span>
+      <pre>בנה לי עמוד דשבורד שמראה כל בוקר: מי חוגג היום, למי יש
+יארצייט השבוע, ומי מהקהילה לא היה בקשר הרבה זמן.</pre>
+    </div>
+  </section>
+
+  <!-- 29 — CALENDAR EVENT REMINDER AUTOMATION -->
+  <section class="slide dark" data-clock="20:27–20:33">
+    <span class="slide-index">41 / 47</span>
+    <span class="eyebrow">אוטומציה</span>
+    <h2>תזכורות אוטומטיות לפני אירוע</h2>
+    <div class="content prompt">
+      <span class="prompt-label">פרומפט — בונים ביחד</span>
+      <pre>בנה לי אוטומציה שבודקת כל יום את היומן, ולכל אירוע קרוב
+שולחת הודעה מראש לכל מי שרלוונטי — כולל תזכורת מה צריך
+להביא או להכין, לפי סוג האירוע.</pre>
+    </div>
+    <div class="foot-note content">כך כל אחד מקבל תזכורת בזמן, בלי שאתם צריכים לזכור לשלוח ידנית.</div>
+  </section>
+
+  <!-- PART J DIVIDER -->
+  <section class="slide dark" data-clock="20:33–20:33">
+    <span class="slide-index">42 / 47</span>
+    <span class="slide-track">חלק י'</span>
+    <div class="divider-wrap">
+      <div class="divider-num">י'</div>
+      <div>
+        <span class="eyebrow">סוף הדרך</span>
+        <h1 style="margin-top:10px;">סיכום<br><span class="accent" style="font-weight:100;">וסגירה</span></h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- 32 — END OF WORKSHOP OUTPUT / TAKEAWAY (both sessions) -->
+  <section class="slide" data-clock="20:33–20:37">
+    <span class="slide-index">43 / 47</span>
+    <span class="eyebrow">תוצר סוף הסדנה</span>
+    <h2>מה הרב לוקח הביתה</h2>
+    <div class="content checklist">
+      <div class="check-item"><span class="check-mark">✓</span> Claude Code מותקן ועובד, כולל RTL ו-Plan Mode מול Bypass</div>
+      <div class="check-item"><span class="check-mark">✓</span> מילון מושגים מלא — API, טוקן, .env, Backend, Frontend, Database, MCP, CLI</div>
+      <div class="check-item"><span class="check-mark">✓</span> חשבונות GitHub · Vercel · Supabase מחוברים ופעילים</div>
+      <div class="check-item"><span class="check-mark">✓</span> כללי אבטחה מוטמעים לתמיד בעוזר האישי — קונטקסט נקי, טוקנים לא בצ'אט</div>
+      <div class="check-item"><span class="check-mark">✓</span> מנהל המשרד האישי בנוי (CLAUDE.md / BRAIN.md / TASKS.md)</div>
+      <div class="check-item"><span class="check-mark">✓</span> מערכת ניהול קהילה חיה בענן — אנשי קהילה, תאריכים עברי/לועזי, יארצייט, קשרי משפחה, נוכחות</div>
+      <div class="check-item"><span class="check-mark">✓</span> טופס מילוי עצמי לבני הקהילה + מנגנון גדילה אורגני של המאגר</div>
+      <div class="check-item"><span class="check-mark">✓</span> מייל ויומן מחוברים למערכת</div>
+      <div class="check-item"><span class="check-mark">✓</span> כלי דיבור-לטקסט ו-screenshot לעבודה יומיומית מהירה</div>
+      <div class="check-item"><span class="check-mark">✓</span> דשבורד יומי + אוטומציית תזכורות לפני אירועים</div>
+      <div class="check-item"><span class="check-mark">✓</span> ידע לתקן, להרחיב ולבנות עוד לבד — בלי לחכות למפתח</div>
+    </div>
+  </section>
+
+  <!-- 33 — QUESTIONS DIVIDER -->
+  <section class="slide dark" data-clock="20:37–20:52">
+    <span class="slide-index">44 / 47</span>
+    <div class="divider-wrap">
+      <div class="divider-num">?</div>
+      <div>
+        <h1 style="margin-top:10px;">שאלות?</h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- 33 — FEEDBACK -->
+  <section class="slide" data-clock="20:52–20:56">
+    <span class="slide-index">45 / 47</span>
+    <span class="eyebrow">משוב</span>
+    <h2>תגידו לי — מה החוויות שלכם?</h2>
+    <div class="quote content">נהנתם? איך היה?</div>
+  </section>
+
+  <!-- 34 — CLOSING -->
+  <section class="slide dark" data-clock="20:56–20:59">
+    <span class="slide-index">46 / 47</span>
+    <span class="eyebrow">סגירה</span>
+    <h1>לא לפחד —<br><span class="accent" style="font-weight:100;">להמשיך לעבוד</span></h1>
+    <div class="quote content">"הכלי הזה לא מושלם. גם אתם לא מושלמים. אבל כל שאלה שתשאלו — תלמדו. כל טעות — תתקנו. ככה זה עובד."</div>
+    <div class="content" style="margin-top:10px;">
+      <h3 style="margin:0 0 14px;font-size:19px;color:var(--white);">שלושה דברים לעשות מחר בבוקר</h3>
+      <div class="checklist">
+        <div class="check-item"><span class="check-mark">1</span> לפתוח Claude Code</div>
+        <div class="check-item"><span class="check-mark">2</span> לשאול "מה יש היום?"</div>
+        <div class="check-item"><span class="check-mark">3</span> לנסות דבר אחד חדש</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 35 — THANK YOU -->
+  <section class="slide" data-clock="20:59–21:00">
+    <span class="slide-index">47 / 47</span>
+    <div style="display:flex;flex-direction:column;align-items:flex-start;gap:24px;">
+      <div class="logo"><span class="dot"></span> אל אוטומט · תוכנית הדרכה</div>
+      <h1>תודה <span class="accent" style="font-weight:100;">ובהצלחה</span></h1>
+    </div>
+  </section>
+
+</div>
+
+<div class="navbar">
+  <button id="prevBtn" aria-label="הקודם">‹</button>
+  <span class="counter" id="counter">1 / 47</span>
+  <button id="nextBtn" aria-label="הבא">›</button>
+</div>
+
+<div class="clockstrip" id="clockstrip">18:00</div>
+
+<script>
+  (function(){
+    var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+    var counter = document.getElementById('counter');
+    var clockstrip = document.getElementById('clockstrip');
+    function currentIndex(){
+      var mid = window.scrollY + window.innerHeight/2;
+      var idx = 0;
+      slides.forEach(function(s,i){ if (s.offsetTop <= mid) idx = i; });
+      return idx;
+    }
+    function update(){
+      var i = currentIndex();
+      counter.textContent = (i+1) + ' / ' + slides.length;
+      clockstrip.textContent = slides[i].getAttribute('data-clock') || '';
+    }
+    function goTo(i){ i = Math.max(0, Math.min(slides.length-1, i)); slides[i].scrollIntoView({behavior:'smooth'}); }
+    document.getElementById('nextBtn').addEventListener('click', function(){ goTo(currentIndex()+1); });
+    document.getElementById('prevBtn').addEventListener('click', function(){ goTo(currentIndex()-1); });
+    window.addEventListener('scroll', update, {passive:true});
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowDown' || e.key === 'PageDown'){ goTo(currentIndex()+1); e.preventDefault(); }
+      if (e.key === 'ArrowUp' || e.key === 'PageUp'){ goTo(currentIndex()-1); e.preventDefault(); }
+    });
+    update();
+  })();
+</script>
+<script>
+/* ===== BRAIN DECK · EDIT MODE v2 (additive, self-contained) =====
+   v2 adds: clipboard image paste (Cmd+V) + file drag-drop, internal element
+   copy/paste (Cmd+C/Cmd+V), brand color swatches (whole element OR selected
+   word while editing), center snap-guides while dragging, arrow-key nudge,
+   z-order, center buttons, redo, autosave to localStorage with restore bar,
+   blur intensity/opaque controls, proportional image resize, Cmd+S save. */
+(function(){
+  if(window.__brainEdInit) return; window.__brainEdInit=true;
+  var deck=document.getElementById('deck');
+  if(!deck) return;
+  var edOn=false, selected=null, undoStack=[], redoStack=[], editState=null;
+  var clipInternal=null, pasteCount=0, zTop=60, lastNudge={el:null,t:0};
+  var touched={}, persistTimer=null, persistWarned=false;
+  var LS_KEY='brainEd:'+(location.pathname.split('/').pop()||'deck');
+  var MARKER='__brain-ed-copy__';
+
+  var ADDED='.ed-img,.ed-blur,.ed-shape,.ed-textbox,.ed-clone';
+  /* DENY = full-bleed backgrounds, slide-filling wrappers, deck chrome, editor UI */
+  var DENY='#deck,.slide,.bg-img,.foot,.pg,#nav,.nav-btn,#slide-counter,#btn-fs,#progress-bar,#ed-toolbar,#ed-fab,#ed-hint,#ed-toast,#ed-ctx,#ed-restore,#ed-guide-v,#ed-guide-h,.wrap,.div-wrap,.show-wrap,.bs-wrap,.applayer,.hero-image-content,.hero-image-vignette,.lay-side,.lay-wrap,.tower,.tower-inner,.hero-image,.hero-ring,.hero-ring2,.loop-wrap,.loop-content',.navbar,.navbar button,.counter,.slide-index,.slide-track,.clockstrip';
+  /* TEXTY = elements that may be inline-edited on double-click */
+  var TEXTY='h1,h2,h3,h4,h5,h6,p,li,span,.div-word,.s-title,.eyebrow,.bp-text,.bs-context,.hero-title,.hero-sub,.div-sub,.div-eyebrow,.ed-textbox,.vl-name,.vl-val,.lay-tx,.pl-tx,.card,.chip,.engine,.step-name,.price-num,.vt-num,.hbar-lbl,.hbar-val,.vs-name,.vs-item,.bs-number,.bs-label',.lede,.cover-sub,.quote,.foot-note,.tag,.badge,.tl-time,.tl-bar,.flow-box,pre';
+
+  function scale(){ var r=deck.getBoundingClientRect(); return (r.width/1920)||1; }
+  function activeSlide(){
+    var slides=document.querySelectorAll('.slide'), mid=window.innerHeight/2, best=null, bestD=Infinity;
+    for(var i=0;i<slides.length;i++){
+      var r=slides[i].getBoundingClientRect();
+      if(r.top<=mid && r.bottom>=mid) return slides[i];
+      var d=Math.min(Math.abs(r.top-mid),Math.abs(r.bottom-mid));
+      if(d<bestD){ bestD=d; best=slides[i]; }
+    }
+    return best||document.querySelector('.slide');
+  }
+  function slideIndex(s){ return [].slice.call(document.querySelectorAll('.slide')).indexOf(s); }
+  function matches(el,sel){ return el && el.matches && el.matches(sel); }
+  function deckXY(cx,cy){ var d=deck.getBoundingClientRect(), s=scale(); return {x:(cx-d.left)/s, y:(cy-d.top)/s}; }
+
+  /* Permissive: deepest element under the cursor that is NOT a denied wrapper.
+     Clicking inside an ADDED element (image/clone/...) grabs the whole unit. */
+  function eligible(el){
+    if(el && el.closest){ var ad=el.closest(ADDED); if(ad) return ad; }
+    var cur=el;
+    while(cur && cur!==deck){
+      if(matches(cur,ADDED)) return cur;
+      if(cur.classList && cur.classList.contains('slide')) return null;
+      if(matches(cur,DENY)){ cur=cur.parentElement; continue; }
+      if(cur.closest && cur.closest('.slide')) return cur;
+      cur=cur.parentElement;
+    }
+    return null;
+  }
+  /* For double-click text editing: deepest texty element (also inside clones) */
+  function eligibleText(el){
+    var cur=el;
+    while(cur && cur!==deck){
+      if(matches(cur,'.ed-textbox')) return cur;
+      if(cur.classList && cur.classList.contains('slide')) return null;
+      if(!matches(cur,DENY) && matches(cur,TEXTY) && cur.closest && cur.closest('.slide')) return cur;
+      cur=cur.parentElement;
+    }
+    return null;
+  }
+  function selectParent(){
+    if(!selected){ toast('בחר אלמנט קודם'); return; }
+    var p=selected.parentElement;
+    while(p && p!==deck){
+      if(p.classList && p.classList.contains('slide')) break;
+      if(!matches(p,DENY) && p.closest('.slide')){ select(p); toast('נבחרה המסגרת'); return; }
+      p=p.parentElement;
+    }
+    toast('אין מסגרת אב');
+  }
+
+  /* ---------- undo / redo (per-slide innerHTML snapshots) ---------- */
+  function snap(){
+    var s=activeSlide(); if(!s) return;
+    var idx=slideIndex(s);
+    undoStack.push({slide:s, idx:idx, html:s.innerHTML});
+    if(undoStack.length>80) undoStack.shift();
+    redoStack.length=0;
+    touched[idx]=1; schedulePersist();
+    toast('');
+  }
+  function undo(){
+    var last=undoStack.pop(); if(!last){ toast('אין מה לבטל'); return; }
+    deselect();
+    if(last.slide!==activeSlide() && last.idx>=0 && typeof show==='function'){ show(last.idx); }
+    redoStack.push({slide:last.slide, idx:last.idx, html:last.slide.innerHTML});
+    last.slide.innerHTML=last.html;
+    touched[last.idx]=1; schedulePersist();
+    toast('בוטל');
+  }
+  function redo(){
+    var nx=redoStack.pop(); if(!nx){ toast('אין מה להחזיר'); return; }
+    deselect();
+    if(nx.slide!==activeSlide() && nx.idx>=0 && typeof show==='function'){ show(nx.idx); }
+    undoStack.push({slide:nx.slide, idx:nx.idx, html:nx.slide.innerHTML});
+    nx.slide.innerHTML=nx.html;
+    touched[nx.idx]=1; schedulePersist();
+    toast('הוחזר');
+  }
+
+  /* ---------- autosave (localStorage, debounced, normalized compare) ---------- */
+  function cleanSlideHTML(slide){
+    var c=slide.cloneNode(true), i, n;
+    n=c.querySelectorAll('.ed-runtime,.ed-handle,.ed-del'); for(i=0;i<n.length;i++) n[i].remove();
+    n=c.querySelectorAll('.ed-hover,.ed-selected'); for(i=0;i<n.length;i++){ n[i].classList.remove('ed-hover'); n[i].classList.remove('ed-selected'); }
+    n=c.querySelectorAll('[contenteditable]'); for(i=0;i<n.length;i++) n[i].removeAttribute('contenteditable');
+    n=c.querySelectorAll('.on'); for(i=0;i<n.length;i++) n[i].classList.remove('on');
+    n=c.querySelectorAll('.anim'); for(i=0;i<n.length;i++) n[i].style.animationDelay='';
+    n=c.querySelectorAll('[data-w]'); for(i=0;i<n.length;i++) n[i].style.width='';
+    var fmt; try{ fmt=new Intl.NumberFormat('he-IL'); }catch(e){ fmt=null; }
+    n=c.querySelectorAll('[data-count]');
+    for(i=0;i<n.length;i++){ var v=parseInt(n[i].getAttribute('data-count'),10); if(isNaN(v)) continue;
+      var out=n[i].querySelector('.cval')||n[i]; out.textContent= fmt?fmt.format(v):(''+v); }
+    n=c.querySelectorAll('[style=""]'); for(i=0;i<n.length;i++) n[i].removeAttribute('style');
+    return c.innerHTML;
+  }
+  function persist(){
+    try{
+      var data; try{ data=JSON.parse(localStorage.getItem(LS_KEY)||'{}'); }catch(e){ data={}; }
+      data.ts=Date.now(); data.slides=data.slides||{};
+      var list=document.querySelectorAll('.slide');
+      for(var k in touched){ if(list[k]) data.slides[k]=cleanSlideHTML(list[k]); }
+      localStorage.setItem(LS_KEY,JSON.stringify(data));
+    }catch(err){
+      if(!persistWarned){ persistWarned=true; toast('גיבוי אוטומטי נכשל - הקובץ גדול, שמור ידנית'); }
+    }
+  }
+  function schedulePersist(){ clearTimeout(persistTimer); persistTimer=setTimeout(persist,800); }
+  function checkRestore(){
+    var data; try{ data=JSON.parse(localStorage.getItem(LS_KEY)||'null'); }catch(e){ return; }
+    if(!data || !data.slides) return;
+    var list=document.querySelectorAll('.slide'), diff=[];
+    for(var k in data.slides){ var i=+k; if(list[i] && cleanSlideHTML(list[i])!==data.slides[k]) diff.push(i); }
+    if(!diff.length) return;
+    var bar=document.createElement('div'); bar.id='ed-restore';
+    var when=new Date(data.ts||Date.now());
+    var hh=('0'+when.getHours()).slice(-2)+':'+('0'+when.getMinutes()).slice(-2);
+    var lbl=document.createElement('span'); lbl.textContent='🕘 נמצאו שינויים לא שמורים ('+hh+') - '+diff.length+' שקפים';
+    var b1=document.createElement('button'); b1.className='ed-btn primary'; b1.textContent='שחזר';
+    var b2=document.createElement('button'); b2.className='ed-btn'; b2.textContent='התעלם ומחק';
+    b1.onclick=function(){
+      for(var j=0;j<diff.length;j++){ list[diff[j]].innerHTML=data.slides[diff[j]]; touched[diff[j]]=1; }
+      var cur=slideIndex(activeSlide());
+      if(typeof activate==='function' && cur>=0) activate(cur);
+      bar.remove(); toast('שוחזר ✓');
+    };
+    b2.onclick=function(){ try{ localStorage.removeItem(LS_KEY); }catch(e){} bar.remove(); };
+    bar.appendChild(lbl); bar.appendChild(b1); bar.appendChild(b2);
+    document.body.appendChild(bar);
+  }
+
+  /* ---------- selection + handles ---------- */
+  function deselect(){
+    if(selected){
+      selected.classList.remove('ed-selected');
+      if(selected.__edRel && !selected.style.zIndex){ selected.style.position=''; selected.__edRel=false; }
+    }
+    var rt=document.querySelectorAll('.ed-runtime'); for(var i=0;i<rt.length;i++) rt[i].remove();
+    selected=null; refreshTb();
+  }
+  function select(el){
+    deselect();
+    selected=el; el.classList.add('ed-selected');
+    if(!matches(el,ADDED) && getComputedStyle(el).position==='static'){ el.style.position='relative'; el.__edRel=true; }
+    var del=document.createElement('div'); del.className='ed-del ed-runtime'; del.textContent='×';
+    del.addEventListener('mousedown',function(e){ e.stopPropagation(); e.preventDefault(); });
+    del.addEventListener('click',function(e){ e.stopPropagation(); snap(); var t=selected; deselect(); if(t) t.remove(); schedulePersist(); });
+    el.appendChild(del);
+    if(matches(el,ADDED)){
+      var h=document.createElement('div'); h.className='ed-handle br ed-runtime';
+      h.addEventListener('mousedown',function(e){ startResize(e,el); });
+      el.appendChild(h);
+    }
+    refreshTb();
+  }
+
+  /* ---------- generic move helper (nudge/center share it) ---------- */
+  function moveBy(el,dx,dy){
+    if(matches(el,ADDED)){
+      el.style.left=((parseFloat(el.style.left)||el.offsetLeft)+dx)+'px';
+      el.style.top=((parseFloat(el.style.top)||el.offsetTop)+dy)+'px';
+    }else{
+      el.style.animation='none';
+      var m=(el.style.transform||'').match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+      var tx=m?parseFloat(m[1]):0, ty=m?parseFloat(m[2]):0;
+      var base=(el.style.transform||'').replace(/translate\([^)]*\)/,'').trim();
+      el.style.transform=(base+' translate('+(tx+dx)+'px,'+(ty+dy)+'px)').trim();
+    }
+  }
+
+  /* ---------- drag move with center snap-guides ---------- */
+  var drag=null, gV=null, gH=null;
+  function hideGuides(){ if(gV) gV.style.display='none'; if(gH) gH.style.display='none'; }
+  function onDown(e){
+    if(!edOn) return;
+    if(e.target.closest && e.target.closest('#ed-toolbar,#ed-fab,#ed-hint,#ed-toast,#ed-restore')) return;
+    if(e.target.classList && (e.target.classList.contains('ed-handle')||e.target.classList.contains('ed-del'))) return;
+    var el;
+    if(selected && selected.contains(e.target)){
+      /* clicking within the current selection drags THAT element (e.g. a group
+         you escalated to with "⤴ מסגרת"), instead of re-grabbing a child */
+      el=selected;
+    } else {
+      el=eligible(e.target);
+      if(!el){ deselect(); return; }
+      if(el.isContentEditable) return;
+      select(el);
+    }
+    var s=scale(), d=deck.getBoundingClientRect();
+    drag={el:el,x:e.clientX,y:e.clientY,moved:false,added:matches(el,ADDED),s:s};
+    var r0=el.getBoundingClientRect();
+    if(drag.added){
+      drag.l=parseFloat(el.style.left)||el.offsetLeft; drag.t=parseFloat(el.style.top)||el.offsetTop;
+      drag.w2=el.offsetWidth/2; drag.h2=el.offsetHeight/2;
+    }else{
+      var m=(el.style.transform||'').match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+      drag.tx=m?parseFloat(m[1]):0; drag.ty=m?parseFloat(m[2]):0;
+      drag.base=(el.style.transform||'').replace(/translate\([^)]*\)/,'').trim();
+      /* element center in deck coords EXCLUDING current translate (for snapping) */
+      drag.cx0=((r0.left-d.left)+r0.width/2)/s - drag.tx;
+      drag.cy0=((r0.top-d.top)+r0.height/2)/s - drag.ty;
+    }
+    e.preventDefault();
+    window.addEventListener('mousemove',onMove);
+    window.addEventListener('mouseup',onUp);
+  }
+  function onMove(e){
+    if(!drag) return;
+    var dx=(e.clientX-drag.x)/drag.s, dy=(e.clientY-drag.y)/drag.s;
+    if(!drag.moved){ if((Math.abs(dx)+Math.abs(dy))>2){ drag.moved=true; snap();
+        /* neutralise the entry animation (fadeUp, fill:both) which otherwise
+           pins `transform` and blocks our inline translate */
+        if(!drag.added) drag.el.style.animation='none';
+      } else return; }
+    var SN=7, offX=null, offY=null;
+    if(drag.added){
+      var lx=drag.l+dx, ty=drag.t+dy;
+      if(!e.altKey){
+        var cx=lx+drag.w2, cy=ty+drag.h2;
+        if(Math.abs(960-cx)<SN){ lx+=(960-cx); offX=true; }
+        if(Math.abs(540-cy)<SN){ ty+=(540-cy); offY=true; }
+      }
+      drag.el.style.left=lx+'px'; drag.el.style.top=ty+'px';
+    }else{
+      var txr=drag.tx+dx, tyr=drag.ty+dy;
+      if(!e.altKey){
+        var ecx=drag.cx0+txr, ecy=drag.cy0+tyr;
+        if(Math.abs(960-ecx)<SN){ txr+=(960-ecx); offX=true; }
+        if(Math.abs(540-ecy)<SN){ tyr+=(540-ecy); offY=true; }
+      }
+      drag.el.style.transform=(drag.base+' translate('+txr+'px,'+tyr+'px)').trim();
+    }
+    if(gV) gV.style.display=offX?'block':'none';
+    if(gH) gH.style.display=offY?'block':'none';
+  }
+  function onUp(){
+    window.removeEventListener('mousemove',onMove); window.removeEventListener('mouseup',onUp);
+    hideGuides(); if(drag&&drag.moved) schedulePersist(); drag=null;
+  }
+
+  /* ---------- resize (images keep aspect ratio; Shift = free) ---------- */
+  function startResize(e,el){
+    e.preventDefault(); e.stopPropagation();
+    var s=scale(), w=el.offsetWidth, h=el.offsetHeight, x=e.clientX, y=e.clientY, moved=false;
+    var isImg=matches(el,'.ed-img'), ratio=(h/w)||1;
+    function mv(ev){ var dx=(ev.clientX-x)/s, dy=(ev.clientY-y)/s; if(!moved){moved=true;snap();}
+      var nw=Math.max(40,w+dx), nh=Math.max(28,h+dy);
+      if(isImg && !ev.shiftKey) nh=Math.max(28,Math.round(nw*ratio));
+      el.style.width=nw+'px'; el.style.height=nh+'px'; }
+    function up(){ window.removeEventListener('mousemove',mv); window.removeEventListener('mouseup',up); schedulePersist(); }
+    window.addEventListener('mousemove',mv); window.addEventListener('mouseup',up);
+  }
+
+  /* ---------- inline text edit ---------- */
+  /* if an edited element drives a [data-count] counter, sync the attribute so the
+     deck's re-animation (activate()) lands on the NEW number instead of reverting */
+  function bakeCountFromEdit(el){
+    var dc=el.closest ? el.closest('[data-count]') : null;
+    if(!dc) return;
+    var cv=dc.querySelector('.cval')||dc;
+    var n=parseInt((cv.textContent||'').replace(/[^0-9]/g,''),10);
+    if(!isNaN(n)) dc.setAttribute('data-count', n);
+  }
+  function onDbl(e){
+    if(!edOn) return;
+    var el=eligibleText(e.target)||eligible(e.target);
+    if(!el) return;
+    if(matches(el,ADDED) && !matches(el,'.ed-textbox')) return;
+    if(!matches(el,TEXTY)){ toast('האלמנט הזה לא טקסט לעריכה'); return; }
+    deselect(); snap();
+    editState={el:el, orig:el.innerHTML, cancelled:false};
+    refreshTb();
+    el.setAttribute('contenteditable','true'); el.focus();
+    el.addEventListener('blur',function h(){
+      el.removeAttribute('contenteditable'); el.removeEventListener('blur',h);
+      if(!(editState && editState.cancelled)) bakeCountFromEdit(el);
+      if(editState && editState.el===el) editState=null;
+      refreshTb(); schedulePersist();
+    });
+    e.preventDefault();
+  }
+
+  /* ---------- add elements ---------- */
+  function insertImageFile(f, pos){
+    if(!f || !/^image\//.test(f.type)) return;
+    var rd=new FileReader();
+    rd.onload=function(){ var im=new Image(); im.onload=function(){
+      snap(); var s=activeSlide();
+      var w=560, h=Math.round(560*im.naturalHeight/im.naturalWidth);
+      if(h>820){ h=820; w=Math.round(820*im.naturalWidth/im.naturalHeight); }
+      var box=document.createElement('div'); box.className='ed-img';
+      var lx=pos? Math.round(pos.x-w/2) : Math.round(960-w/2);
+      var ly=pos? Math.round(pos.y-h/2) : Math.round(540-h/2);
+      box.style.left=lx+'px'; box.style.top=ly+'px'; box.style.width=w+'px'; box.style.height=h+'px';
+      var img=document.createElement('img'); img.src=rd.result; box.appendChild(img);
+      s.appendChild(box); select(box); toast('תמונה נוספה'); schedulePersist();
+    }; im.src=rd.result; };
+    rd.readAsDataURL(f);
+  }
+  function addImage(){
+    var inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+    inp.onchange=function(){ insertImageFile(inp.files[0], null); };
+    inp.click();
+  }
+  function addBlur(){ snap(); var s=activeSlide(); var b=document.createElement('div'); b.className='ed-blur'; b.style.cssText='left:760px;top:460px;width:400px;height:150px;'; s.appendChild(b); select(b); toast('טשטוש - גרור מעל נתון'); schedulePersist(); }
+  function addShape(){ snap(); var s=activeSlide(); var b=document.createElement('div'); b.className='ed-shape'; b.style.cssText='left:760px;top:450px;width:420px;height:200px;'; s.appendChild(b); select(b); schedulePersist(); }
+  function mkTextbox(text,x,y){
+    var s=activeSlide(); var t=document.createElement('div'); t.className='ed-textbox';
+    t.style.left=(x!=null?x:720)+'px'; t.style.top=(y!=null?y:480)+'px';
+    t.textContent=text||'טקסט חדש'; s.appendChild(t); select(t); return t;
+  }
+  function addText(){ snap(); mkTextbox('טקסט חדש'); toast('לחץ פעמיים לעריכה'); schedulePersist(); }
+
+  /* ---------- copy / paste (Cmd+C / Cmd+V) ---------- */
+  function cleanOuter(el){
+    var c=el.cloneNode(true), i, n;
+    n=c.querySelectorAll('.ed-runtime,.ed-handle,.ed-del'); for(i=0;i<n.length;i++) n[i].remove();
+    c.classList.remove('ed-selected'); c.classList.remove('ed-hover');
+    c.removeAttribute('contenteditable');
+    n=c.querySelectorAll('[contenteditable]'); for(i=0;i<n.length;i++) n[i].removeAttribute('contenteditable');
+    /* strip our positioning so the stored copy is pristine */
+    if(c.style && c.style.transform) c.style.transform=c.style.transform.replace(/translate\([^)]*\)/,'').trim()||'';
+    if(el.__edRel) c.style.position='';
+    return c.outerHTML;
+  }
+  function copySel(){
+    if(!selected) return false;
+    var d=deck.getBoundingClientRect(), s=scale(), r=selected.getBoundingClientRect();
+    clipInternal={
+      html:cleanOuter(selected),
+      added:matches(selected,ADDED),
+      left:(r.left-d.left)/s, top:(r.top-d.top)/s, width:r.width/s
+    };
+    pasteCount=0;
+    try{ navigator.clipboard.writeText(MARKER).catch(function(){}); }catch(e){}
+    toast('הועתק ✓ (Cmd+V להדבקה)');
+    return true;
+  }
+  function pasteInternal(){
+    if(!clipInternal) return;
+    snap(); pasteCount++;
+    var off=24*pasteCount, s=activeSlide(), el;
+    var tmp=document.createElement('div'); tmp.innerHTML=clipInternal.html;
+    var src=tmp.firstElementChild; if(!src) return;
+    if(clipInternal.added){
+      el=src;
+      el.style.left=Math.round((parseFloat(el.style.left)||clipInternal.left)+off)+'px';
+      el.style.top=Math.round((parseFloat(el.style.top)||clipInternal.top)+off)+'px';
+    }else{
+      el=document.createElement('div'); el.className='ed-clone';
+      el.style.left=Math.round(clipInternal.left+off)+'px';
+      el.style.top=Math.round(clipInternal.top+off)+'px';
+      el.style.width=Math.round(clipInternal.width)+'px';
+      el.appendChild(src);
+    }
+    s.appendChild(el); select(el); toast('הודבק'); schedulePersist();
+  }
+  document.addEventListener('paste',function(e){
+    if(!edOn) return;
+    var ae=document.activeElement;
+    if(ae && ae.isContentEditable) return; /* normal paste inside a text edit */
+    var items=(e.clipboardData&&e.clipboardData.items)||[];
+    for(var i=0;i<items.length;i++){
+      if(items[i].type && items[i].type.indexOf('image')===0){
+        var f=items[i].getAsFile();
+        if(f){ e.preventDefault(); insertImageFile(f,null); return; }
+      }
+    }
+    var txt=''; try{ txt=e.clipboardData.getData('text/plain')||''; }catch(err){}
+    if(clipInternal && (txt===MARKER || txt==='')){ e.preventDefault(); pasteInternal(); return; }
+    if(txt){ e.preventDefault(); snap(); mkTextbox(txt); toast('טקסט הודבק כתיבה חדשה'); schedulePersist(); }
+  });
+  /* drag & drop image files from Finder/desktop */
+  deck.addEventListener('dragover',function(e){ if(edOn){ e.preventDefault(); } });
+  deck.addEventListener('drop',function(e){
+    if(!edOn) return; e.preventDefault();
+    var fs=e.dataTransfer && e.dataTransfer.files;
+    if(!fs || !fs.length) return;
+    for(var i=0;i<fs.length;i++){
+      if(/^image\//.test(fs[i].type)){ insertImageFile(fs[i], deckXY(e.clientX,e.clientY)); return; }
+    }
+  });
+
+  /* ---------- colors (whole element, or selected word while editing) ---------- */
+  var GRAD='linear-gradient(135deg,#71b9c3,#549cbc,#2d70aa,#6556d0,#9c4ed7)';
+  var COLORS=[['לבן','#ffffff'],['טורקיז','#62aabf'],['סגול','#8f4fd7'],['אדום','#ef4444'],['ירוק','#22c55e'],['אפור','#8f8f9b']];
+  function applyColor(c){
+    var ae=document.activeElement, sel=window.getSelection();
+    if(ae && ae.isContentEditable && sel && !sel.isCollapsed){
+      document.execCommand('styleWithCSS',false,true);
+      document.execCommand('foreColor',false,c);
+      return;
+    }
+    if(!selected){ toast('בחר אלמנט או סמן מילה'); return; }
+    snap();
+    if(matches(selected,'.ed-shape')){
+      selected.style.background=c+'33'; selected.style.borderColor=c; schedulePersist(); return;
+    }
+    selected.style.background='none';
+    selected.style.webkitBackgroundClip=''; selected.style.backgroundClip='';
+    selected.style.webkitTextFillColor=c; selected.style.color=c;
+    schedulePersist();
+  }
+  function applyGradient(){
+    var ae=document.activeElement, sel=window.getSelection();
+    if(ae && ae.isContentEditable && sel && !sel.isCollapsed){
+      var t=sel.toString();
+      document.execCommand('insertHTML',false,'<span class="grad">'+t.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</span>');
+      return;
+    }
+    if(!selected){ toast('בחר אלמנט או סמן מילה'); return; }
+    snap();
+    selected.style.background=GRAD;
+    selected.style.webkitBackgroundClip='text'; selected.style.backgroundClip='text';
+    selected.style.webkitTextFillColor='transparent'; selected.style.color='';
+    schedulePersist();
+  }
+
+  /* ---------- z-order / center / nudge / blur controls ---------- */
+  function zOrder(front){
+    if(!selected){ toast('בחר אלמנט קודם'); return; }
+    snap();
+    if(getComputedStyle(selected).position==='static'){ selected.style.position='relative'; selected.__edRel=true; }
+    selected.style.zIndex= front? (++zTop) : 0;
+    toast(front?'הובא לקדמה':'נשלח לאחור'); schedulePersist();
+  }
+  function centerSel(axis){
+    if(!selected){ toast('בחר אלמנט קודם'); return; }
+    snap();
+    var d=deck.getBoundingClientRect(), s=scale(), r=selected.getBoundingClientRect();
+    var cx=((r.left-d.left)+r.width/2)/s, cy=((r.top-d.top)+r.height/2)/s;
+    if(axis==='h') moveBy(selected, 960-cx, 0); else moveBy(selected, 0, 540-cy);
+    schedulePersist();
+  }
+  function nudge(dx,dy){
+    if(!selected) return false;
+    var now=Date.now();
+    if(lastNudge.el!==selected || now-lastNudge.t>1200) snap();
+    lastNudge={el:selected,t:now};
+    moveBy(selected,dx,dy); schedulePersist();
+    return true;
+  }
+  function blurDelta(d){
+    if(!selected || !matches(selected,'.ed-blur')) return;
+    snap();
+    var cur=parseFloat(((selected.style.backdropFilter||'').match(/[\d.]+/)||[15])[0])||15;
+    var v=Math.min(40,Math.max(2,cur+d));
+    selected.style.backdropFilter='blur('+v+'px)'; selected.style.webkitBackdropFilter='blur('+v+'px)';
+    toast('עוצמת טשטוש: '+v); schedulePersist();
+  }
+  function toggleOpaque(){
+    if(!selected || !matches(selected,'.ed-blur')) return;
+    snap(); selected.classList.toggle('ed-opaque');
+    toast(selected.classList.contains('ed-opaque')?'אטום (מסתיר לגמרי)':'טשטוש שקוף'); schedulePersist();
+  }
+  function imgCorners(){
+    if(!selected || !matches(selected,'.ed-img')) return;
+    snap(); var img=selected.querySelector('img'); if(!img) return;
+    img.style.borderRadius=(img.style.borderRadius==='18px')?'0px':'18px'; schedulePersist();
+  }
+  function cycleOpacity(){
+    if(!selected){ toast('בחר אלמנט קודם'); return; }
+    snap();
+    var cur=parseFloat(selected.style.opacity||'1');
+    var next= cur>0.85?0.75 : cur>0.6?0.5 : cur>0.35?0.25 : 1;
+    selected.style.opacity=(next===1)?'':String(next);
+    toast('שקיפות: '+Math.round(next*100)+'%'); schedulePersist();
+  }
+
+  function fontDelta(d){ if(!selected){ toast('בחר טקסט קודם'); return; } snap();
+    var cs=parseFloat(getComputedStyle(selected).fontSize)||30; selected.style.fontSize=Math.max(10,cs+d)+'px'; schedulePersist(); }
+  function deleteSel(){ if(!selected){ toast('בחר אלמנט קודם'); return; } snap(); var el=selected; deselect(); el.remove(); schedulePersist(); }
+
+  /* ---------- navigation (reuse deck) ---------- */
+  function go(dir){
+    deselect();
+    var list=[].slice.call(document.querySelectorAll('.slide'));
+    var i=list.indexOf(activeSlide());
+    var n=Math.max(0,Math.min(list.length-1,i+dir));
+    if(typeof show==='function') show(n);
+    else { list[i].classList.remove('active'); list[n].classList.add('active'); }
+  }
+
+  /* ---------- export ---------- */
+  /* rewrite every relative url (img src, font/href, css url()) to an absolute
+     file:// path so the saved file keeps its background + fonts from any folder */
+  function absolutizeURLs(root){
+    var base=location.href, keep=/^(data:|https?:|file:|blob:|#)/i;
+    function abs(u){ try{ return new URL(u, base).href; }catch(e){ return u; } }
+    function fixCss(t){ return t.replace(/url\((['"]?)([^'")]+)\1\)/g,function(m,q,u){ return keep.test(u)?m:('url('+q+abs(u)+q+')'); }); }
+    var s=root.querySelectorAll('[src]'); for(var i=0;i<s.length;i++){ var v=s[i].getAttribute('src'); if(v&&!keep.test(v)) s[i].setAttribute('src',abs(v)); }
+    var h=root.querySelectorAll('[href]'); for(var j=0;j<h.length;j++){ var w=h[j].getAttribute('href'); if(w&&!keep.test(w)) h[j].setAttribute('href',abs(w)); }
+    var st=root.querySelectorAll('style'); for(var k=0;k<st.length;k++){ st[k].textContent=fixCss(st[k].textContent); }
+    var il=root.querySelectorAll('[style]'); for(var l=0;l<il.length;l++){ var sv=il[l].getAttribute('style'); if(sv&&sv.indexOf('url(')>-1) il[l].setAttribute('style',fixCss(sv)); }
+  }
+  /* bake every [data-count] to its final formatted number so un-visited stat
+     slides aren't frozen at 0 in the saved file */
+  function bakeCounters(root){
+    var fmt; try{ fmt=new Intl.NumberFormat('he-IL'); }catch(e){ fmt=null; }
+    var n=root.querySelectorAll('[data-count]');
+    for(var i=0;i<n.length;i++){ var v=parseInt(n[i].getAttribute('data-count'),10); if(isNaN(v)) continue;
+      var out=n[i].querySelector('.cval')||n[i]; out.textContent= fmt?fmt.format(v):(''+v); }
+  }
+  function exportHTML(){
+    deselect(); var was=edOn; setEdit(false);
+    var clone=document.documentElement.cloneNode(true);
+    var kill=clone.querySelectorAll('#ed-toolbar,#ed-fab,#ed-hint,#ed-toast,#ed-restore,#ed-guide-v,#ed-guide-h,.ed-runtime,.ed-handle,.ed-del');
+    for(var i=0;i<kill.length;i++) kill[i].remove();
+    var cl=clone.querySelectorAll('.ed-hover,.ed-selected'); for(var j=0;j<cl.length;j++){ cl[j].classList.remove('ed-hover'); cl[j].classList.remove('ed-selected'); }
+    var ce=clone.querySelectorAll('[contenteditable]'); for(var k=0;k<ce.length;k++) ce[k].removeAttribute('contenteditable');
+    var sl=clone.querySelectorAll('.slide'); for(var m=0;m<sl.length;m++){ if(m===0) sl[m].classList.add('active'); else sl[m].classList.remove('active'); }
+    var b=clone.querySelector('body'); if(b) b.classList.remove('ed-on');
+    absolutizeURLs(clone);
+    bakeCounters(clone);
+    var html='<!DOCTYPE html>\n'+clone.outerHTML;
+    var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    var fname=(location.pathname.split('/').pop()||'deck.html').replace(/\.html?$/i,'');
+    try{ fname=decodeURIComponent(fname); }catch(e){}
+    a.download=fname+'-edited.html'; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); },3000);
+    if(was) setEdit(true);
+    toast('נשמר! החלף את הקובץ המקורי בקובץ שירד');
+  }
+
+  /* ---------- toolbar UI ---------- */
+  var fab=document.createElement('button'); fab.id='ed-fab'; fab.type='button'; fab.textContent='✏️ עריכה';
+  fab.addEventListener('click',function(){ setEdit(true); });
+  document.body.appendChild(fab);
+
+  var tb=document.createElement('div'); tb.id='ed-toolbar';
+  var toast_el, ctx;
+  function mkBtn(label,fn,cls){ var b=document.createElement('button'); b.type='button'; b.className='ed-btn'+(cls?(' '+cls):''); b.textContent=label;
+    b.addEventListener('mousedown',function(e){e.preventDefault();}); b.addEventListener('click',function(e){e.stopPropagation();fn();}); return b; }
+  function mkSep(){ var s=document.createElement('span'); s.className='ed-sep'; return s; }
+  function mkDot(name,color){ var d=document.createElement('button'); d.type='button'; d.className='ed-dot'; d.title=name; d.style.background=color;
+    d.addEventListener('mousedown',function(e){e.preventDefault();}); d.addEventListener('click',function(e){e.stopPropagation();applyColor(color);}); return d; }
+
+  var row=document.createElement('div'); row.id='ed-row';
+  row.appendChild(mkBtn('› הקודם',function(){go(-1);}));
+  row.appendChild(mkBtn('הבא ‹',function(){go(1);}));
+  row.appendChild(mkSep());
+  row.appendChild(mkBtn('🖼️ תמונה',addImage));
+  row.appendChild(mkBtn('🌫️ טשטוש',addBlur));
+  row.appendChild(mkBtn('▭ צורה',addShape));
+  row.appendChild(mkBtn('🔤 טקסט',addText));
+  row.appendChild(mkSep());
+  row.appendChild(mkBtn('⤴ מסגרת',selectParent));
+  row.appendChild(mkBtn('⬆ קדימה',function(){zOrder(true);}));
+  row.appendChild(mkBtn('⬇ אחורה',function(){zOrder(false);}));
+  row.appendChild(mkBtn('↔ מרכז',function(){centerSel('h');}));
+  row.appendChild(mkBtn('↕ מרכז',function(){centerSel('v');}));
+  row.appendChild(mkSep());
+  row.appendChild(mkBtn('A+',function(){fontDelta(4);}));
+  row.appendChild(mkBtn('A−',function(){fontDelta(-4);}));
+  row.appendChild(mkBtn('🗑️ מחק',deleteSel,'danger'));
+  row.appendChild(mkBtn('↶ ביטול',undo));
+  row.appendChild(mkBtn('↷ חזרה',redo));
+  row.appendChild(mkSep());
+  row.appendChild(mkBtn('💾 שמור',exportHTML,'primary'));
+  row.appendChild(mkBtn('✖ סגור',function(){ setEdit(false); }));
+  tb.appendChild(row);
+
+  ctx=document.createElement('div'); ctx.id='ed-ctx'; tb.appendChild(ctx);
+  document.body.appendChild(tb);
+
+  function buildColors(forShape){
+    var lbl=document.createElement('span'); lbl.className='ed-ctx-lbl'; lbl.textContent= forShape?'צבע צורה:':'צבע:';
+    ctx.appendChild(lbl);
+    if(!forShape){
+      var g=document.createElement('button'); g.type='button'; g.className='ed-dot grad-dot'; g.title='גרדיאנט';
+      g.addEventListener('mousedown',function(e){e.preventDefault();});
+      g.addEventListener('click',function(e){e.stopPropagation();applyGradient();});
+      ctx.appendChild(g);
+    }
+    for(var i=0;i<COLORS.length;i++) ctx.appendChild(mkDot(COLORS[i][0],COLORS[i][1]));
+    if(!forShape && editState){
+      var tip=document.createElement('span'); tip.className='ed-ctx-lbl'; tip.textContent='(סמן מילה כדי לצבוע רק אותה)';
+      ctx.appendChild(tip);
+    }
+  }
+  function refreshTb(){
+    if(!ctx) return;
+    ctx.innerHTML='';
+    var show=false;
+    if(editState){ buildColors(); show=true; }
+    else if(selected){
+      if(matches(selected,'.ed-blur')){
+        ctx.appendChild(mkBtn('עוצמה −',function(){blurDelta(-5);}));
+        ctx.appendChild(mkBtn('עוצמה +',function(){blurDelta(5);}));
+        ctx.appendChild(mkBtn('אטום ◼',toggleOpaque));
+        show=true;
+      } else if(matches(selected,'.ed-img')){
+        ctx.appendChild(mkBtn('פינות ◰',imgCorners));
+        ctx.appendChild(mkBtn('שקיפות 👻',cycleOpacity));
+        show=true;
+      } else if(matches(selected,'.ed-shape')){
+        buildColors(true);
+        ctx.appendChild(mkBtn('שקיפות 👻',cycleOpacity));
+        show=true;
+      } else {
+        buildColors();
+        show=true;
+      }
+    }
+    ctx.style.display=show?'flex':'none';
+  }
+
+  var hint=document.createElement('div'); hint.id='ed-hint';
+  hint.innerHTML='לחיצה = בחירה · גרירה = הזזה (Alt = בלי הצמדה) · לחיצה כפולה = עריכת טקסט · חצים = הזזה עדינה (Shift=10) · Cmd+C/V = העתק/הדבק · Cmd+S = שמור';
+  document.body.appendChild(hint);
+
+  toast_el=document.createElement('div'); toast_el.id='ed-toast'; document.body.appendChild(toast_el);
+  var toastTimer;
+  function toast(msg){ if(!toast_el) return; toast_el.textContent=msg||''; toast_el.classList.toggle('on',!!msg);
+    clearTimeout(toastTimer); if(msg) toastTimer=setTimeout(function(){ toast_el.classList.remove('on'); },2600); }
+
+  /* center snap guide lines (live inside #deck so they scale with it) */
+  gV=document.createElement('div'); gV.id='ed-guide-v'; deck.appendChild(gV);
+  gH=document.createElement('div'); gH.id='ed-guide-h'; deck.appendChild(gH);
+
+  function setEdit(on){
+    edOn=on; document.body.classList.toggle('ed-on',on);
+    tb.classList.toggle('on',on); fab.style.display=on?'none':'block';
+    hideGuides();
+    if(!on){ deselect(); toast(''); }
+    else toast('מצב עריכה פעיל');
+  }
+
+  /* ---------- hover outline ---------- */
+  document.addEventListener('mouseover',function(e){ if(!edOn) return; var el=eligible(e.target);
+    var hv=document.querySelectorAll('.ed-hover'); for(var i=0;i<hv.length;i++){ if(hv[i]!==el) hv[i].classList.remove('ed-hover'); }
+    if(el && el!==selected) el.classList.add('ed-hover'); });
+  document.addEventListener('mouseout',function(e){ if(!edOn) return; var el=eligible(e.target); if(el) el.classList.remove('ed-hover'); });
+
+  /* ---------- bind ---------- */
+  deck.addEventListener('mousedown',onDown);
+  deck.addEventListener('dblclick',onDbl);
+
+  document.addEventListener('keydown',function(e){
+    if(!edOn) return;
+    var editing=document.activeElement && document.activeElement.isContentEditable;
+    var meta=e.metaKey||e.ctrlKey;
+    if(e.key==='ArrowLeft'||e.key==='ArrowRight'||e.key==='ArrowUp'||e.key==='ArrowDown'){
+      if(!editing && selected){
+        e.preventDefault();
+        var st=e.shiftKey?10:1;
+        nudge(e.key==='ArrowLeft'?-st:e.key==='ArrowRight'?st:0, e.key==='ArrowUp'?-st:e.key==='ArrowDown'?st:0);
+      }
+      e.stopImmediatePropagation(); return;
+    }
+    if(meta && (e.key==='z'||e.key==='Z')){
+      e.preventDefault(); e.stopImmediatePropagation();
+      if(e.shiftKey) redo(); else undo();
+      return;
+    }
+    if(meta && (e.key==='s'||e.key==='S')){ e.preventDefault(); e.stopImmediatePropagation(); exportHTML(); return; }
+    if(meta && (e.key==='c'||e.key==='C') && !editing && selected){ copySel(); return; }
+    if(meta && (e.key==='d'||e.key==='D') && !editing && selected){ e.preventDefault(); e.stopImmediatePropagation(); if(copySel()) pasteInternal(); return; }
+    if((e.key==='Delete'||e.key==='Backspace') && !editing){
+      if(selected){ e.preventDefault(); deleteSel(); }
+      return;
+    }
+    if(e.key==='Escape'){
+      if(editing){
+        if(editState && editState.el){ editState.cancelled=true; editState.el.innerHTML=editState.orig; if(undoStack.length) undoStack.pop(); editState.el.blur(); }
+        else document.activeElement.blur();
+      } else deselect();
+    }
+  },true);
+
+  /* optional: auto-enter for screenshot testing via ?edtest */
+  if(location.search.indexOf('edtest')>-1){ setEdit(true); }
+  /* offer to restore unsaved work (after deck init settles) */
+  setTimeout(checkRestore,400);
+})();
+
+</script>
+</body>
+</html>
