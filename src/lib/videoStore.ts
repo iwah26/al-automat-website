@@ -24,6 +24,7 @@ async function writeConfig(data: Record<string, VideoData>) {
   await put(CONFIG_FILENAME, JSON.stringify(data), {
     access: "private",
     addRandomSuffix: false,
+    allowOverwrite: true,
   });
 }
 
