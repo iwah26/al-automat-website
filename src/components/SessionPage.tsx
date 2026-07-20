@@ -6,6 +6,7 @@ import type { Session } from "@/data/sessions";
 
 interface PlayerJsPlayer {
   setCurrentTime: (seconds: number) => void;
+  on: (event: string, cb: () => void) => void;
 }
 
 declare global {
@@ -32,17 +33,29 @@ export function SessionPage({ session }: { session: Session }) {
   const [copied, setCopied] = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const playerRef = useRef<PlayerJsPlayer | null>(null);
+  const playerReadyRef = useRef(false);
+  const pendingSeekRef = useRef<number | null>(null);
 
-  function ensurePlayer(): PlayerJsPlayer | null {
-    if (!iframeRef.current || !window.playerjs) return null;
-    if (!playerRef.current) {
-      playerRef.current = new window.playerjs.Player(iframeRef.current);
-    }
-    return playerRef.current;
+  function initPlayer() {
+    if (!iframeRef.current || !window.playerjs || playerRef.current) return;
+    const player = new window.playerjs.Player(iframeRef.current);
+    playerRef.current = player;
+    player.on("ready", () => {
+      playerReadyRef.current = true;
+      if (pendingSeekRef.current !== null) {
+        player.setCurrentTime(pendingSeekRef.current);
+        pendingSeekRef.current = null;
+      }
+    });
   }
 
   function seekTo(seconds: number) {
-    ensurePlayer()?.setCurrentTime(seconds);
+    initPlayer();
+    if (playerReadyRef.current && playerRef.current) {
+      playerRef.current.setCurrentTime(seconds);
+    } else {
+      pendingSeekRef.current = seconds;
+    }
   }
 
   function copyText(text: string, key: string) {
@@ -68,6 +81,7 @@ export function SessionPage({ session }: { session: Session }) {
             <Script
               src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js"
               strategy="afterInteractive"
+              onLoad={initPlayer}
             />
             <iframe
               ref={iframeRef}
@@ -75,7 +89,7 @@ export function SessionPage({ session }: { session: Session }) {
               className="w-full h-full"
               allow="autoplay; fullscreen"
               allowFullScreen
-              onLoad={() => ensurePlayer()}
+              onLoad={initPlayer}
             />
           </>
         ) : (
