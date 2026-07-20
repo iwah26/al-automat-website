@@ -4,7 +4,7 @@ import { sendWhatsApp } from "@/lib/greenApi";
 
 const OWN_PARTICIPANT = "972526266419@c.us";
 const STATUS_REPLY_TYPES = new Set(["reactionMessage", "textMessage", "extendedTextMessage"]);
-const REG_LINK = "https://www.al-automat.co.il/api/webinar/join";
+const REG_LINK = "https://al-automat.co.il/webinar";
 
 // One-off: Isaac wants this only active for the 24h after posting a status
 // on 2026-07-19 09:53 UTC (to invite reactors to the 21.7 webinar), not for
@@ -37,7 +37,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ skipped: "expired", expiresAt: EXPIRES_AT.toISOString() });
   }
 
-  const minutes = Number(req.nextUrl.searchParams.get("minutes") ?? "15");
+  // GitHub Actions scheduled cron drifts a lot in practice (gaps up to ~90min
+  // observed between "every 10 min" runs on 2026-07-19) — a short lookback
+  // means a reaction landing in a gap is permanently missed once it ages out.
+  const minutes = Number(req.nextUrl.searchParams.get("minutes") ?? "180");
 
   const url = process.env.GREEN_API_URL;
   const instance = process.env.GREEN_API_INSTANCE;
