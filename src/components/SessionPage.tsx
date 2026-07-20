@@ -1,7 +1,18 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Script from "next/script";
 import type { Session } from "@/data/sessions";
+
+interface PlayerJsPlayer {
+  setCurrentTime: (seconds: number) => void;
+}
+
+declare global {
+  interface Window {
+    playerjs?: { Player: new (iframe: HTMLIFrameElement) => PlayerJsPlayer };
+  }
+}
 
 const CATEGORY_COLORS: Record<string, string> = {
   למידה: "bg-blue-50 text-blue-700 border-blue-200",
@@ -20,12 +31,18 @@ export function SessionPage({ session }: { session: Session }) {
   const [transcriptOpen, setTranscriptOpen] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const playerRef = useRef<PlayerJsPlayer | null>(null);
+
+  function ensurePlayer(): PlayerJsPlayer | null {
+    if (!iframeRef.current || !window.playerjs) return null;
+    if (!playerRef.current) {
+      playerRef.current = new window.playerjs.Player(iframeRef.current);
+    }
+    return playerRef.current;
+  }
 
   function seekTo(seconds: number) {
-    iframeRef.current?.contentWindow?.postMessage(
-      JSON.stringify({ key: "seek", seconds }),
-      "*"
-    );
+    ensurePlayer()?.setCurrentTime(seconds);
   }
 
   function copyText(text: string, key: string) {
@@ -47,13 +64,20 @@ export function SessionPage({ session }: { session: Session }) {
       {/* וידאו */}
       <div className="aspect-video rounded-2xl overflow-hidden bg-course-card border border-course-border">
         {hasVideo ? (
-          <iframe
-            ref={iframeRef}
-            src={`https://iframe.mediadelivery.net/embed/${session.bunnyLibraryId}/${session.bunnyVideoId}?autoplay=false&responsive=true&captions=false`}
-            className="w-full h-full"
-            allow="autoplay; fullscreen"
-            allowFullScreen
-          />
+          <>
+            <Script
+              src="https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js"
+              strategy="afterInteractive"
+            />
+            <iframe
+              ref={iframeRef}
+              src={`https://iframe.mediadelivery.net/embed/${session.bunnyLibraryId}/${session.bunnyVideoId}?autoplay=false&responsive=true&captions=false`}
+              className="w-full h-full"
+              allow="autoplay; fullscreen"
+              allowFullScreen
+              onLoad={() => ensurePlayer()}
+            />
+          </>
         ) : (
           <div className="w-full h-full flex flex-col items-center justify-center gap-3">
             <div className="text-5xl">🎬</div>
