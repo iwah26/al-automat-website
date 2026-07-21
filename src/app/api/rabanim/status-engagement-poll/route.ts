@@ -7,10 +7,10 @@ const STATUS_REPLY_TYPES = new Set(["reactionMessage", "textMessage", "extendedT
 const REG_LINK = "https://al-automat.co.il/webinar";
 
 // One-off: Isaac wants this only active for the 24h after posting a status
-// on 2026-07-19 09:53 UTC (to invite reactors to the 21.7 webinar), not for
+// on 2026-07-21 05:17 UTC (to invite reactors to the 21.7 webinar), not for
 // every status he posts going forward. Hard expiry so it self-disarms even
 // if nobody remembers to `gh workflow disable` it.
-const EXPIRES_AT = new Date("2026-07-20T09:53:49Z");
+const EXPIRES_AT = new Date("2026-07-22T05:17:52Z");
 
 /**
  * Green API never fires a webhook for WhatsApp Status replies/reactions —
