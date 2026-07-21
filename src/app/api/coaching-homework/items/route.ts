@@ -14,7 +14,7 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { homework_id, text } = body;
+  const { homework_id, text, parent_item_id } = body;
 
   if (!homework_id || !text) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
   const supabase = getRabanimSupabase();
   const { data, error } = await supabase
     .from("coaching_homework_items")
-    .insert([{ homework_id, text }])
+    .insert([{ homework_id, text, parent_item_id: parent_item_id ?? null }])
     .select()
     .single();
 

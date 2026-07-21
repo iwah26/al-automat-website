@@ -12,6 +12,7 @@ interface Homework {
 interface Item {
   id: string;
   homework_id: string;
+  parent_item_id: string | null;
   text: string;
   done: boolean;
 }
@@ -30,8 +31,16 @@ export default function HomeworkList({
 
   const itemsByHomework = new Map<string, Item[]>();
   for (const item of items) {
+    if (item.parent_item_id) continue;
     if (!itemsByHomework.has(item.homework_id)) itemsByHomework.set(item.homework_id, []);
     itemsByHomework.get(item.homework_id)!.push(item);
+  }
+
+  const subItemsByParent = new Map<string, Item[]>();
+  for (const item of items) {
+    if (!item.parent_item_id) continue;
+    if (!subItemsByParent.has(item.parent_item_id)) subItemsByParent.set(item.parent_item_id, []);
+    subItemsByParent.get(item.parent_item_id)!.push(item);
   }
 
   return (
@@ -100,23 +109,43 @@ export default function HomeworkList({
                     </table>
                   </div>
                 ) : (
-                  hwItems.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center gap-3 px-3 py-2 rounded-lg bg-slate-50"
-                    >
-                      <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
-                        {item.done ? "✅" : "⬜"}
-                      </span>
-                      <span
-                        className={`flex-1 text-sm ${
-                          item.done ? "text-slate-400 line-through" : "text-black"
-                        }`}
-                      >
-                        {item.text}
-                      </span>
-                    </div>
-                  ))
+                  hwItems.map((item) => {
+                    const subItems = subItemsByParent.get(item.id) ?? [];
+                    return (
+                      <div key={item.id} className="rounded-lg bg-slate-50 overflow-hidden">
+                        <div className="flex items-center gap-3 px-3 py-2">
+                          <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
+                            {item.done ? "✅" : "⬜"}
+                          </span>
+                          <span
+                            className={`flex-1 text-sm ${
+                              item.done ? "text-slate-400 line-through" : "text-black"
+                            }`}
+                          >
+                            {item.text}
+                          </span>
+                        </div>
+                        {subItems.length > 0 && (
+                          <div className="px-3 pb-2 mr-6 border-r-2 border-slate-200 space-y-1">
+                            {subItems.map((sub) => (
+                              <div key={sub.id} className="flex items-center gap-3 px-3 py-1 rounded-lg bg-white">
+                                <span className="w-4 h-4 shrink-0 flex items-center justify-center text-xs">
+                                  {sub.done ? "✅" : "⬜"}
+                                </span>
+                                <span
+                                  className={`flex-1 text-sm ${
+                                    sub.done ? "text-slate-400 line-through" : "text-black"
+                                  }`}
+                                >
+                                  {sub.text}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })
                 )}
               </div>
             )}

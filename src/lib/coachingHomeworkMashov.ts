@@ -14,6 +14,7 @@ export async function buildMashovItems(supabase: SupabaseClient, homeworkId: str
   return data.map((r) => ({
     id: `mashov-${r.id}`,
     homework_id: homeworkId,
+    parent_item_id: null,
     text: [
       r.respondent_name,
       r.q1_strengths ?? "",

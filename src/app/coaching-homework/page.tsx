@@ -13,6 +13,7 @@ interface Homework {
 interface Item {
   id: string;
   homework_id: string;
+  parent_item_id: string | null;
   text: string;
   done: boolean;
   created_at: string;
@@ -31,6 +32,8 @@ export default function CoachingHomeworkPage() {
   const [openId, setOpenId] = useState<string | null>(null);
   const [newTitle, setNewTitle] = useState("");
   const [newItemText, setNewItemText] = useState<Record<string, string>>({});
+  const [newSubItemText, setNewSubItemText] = useState<Record<string, string>>({});
+  const [openItemId, setOpenItemId] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
@@ -48,8 +51,19 @@ export default function CoachingHomeworkPage() {
   const itemsByHomework = useMemo(() => {
     const map = new Map<string, Item[]>();
     for (const it of items) {
+      if (it.parent_item_id) continue;
       if (!map.has(it.homework_id)) map.set(it.homework_id, []);
       map.get(it.homework_id)!.push(it);
+    }
+    return map;
+  }, [items]);
+
+  const subItemsByParent = useMemo(() => {
+    const map = new Map<string, Item[]>();
+    for (const it of items) {
+      if (!it.parent_item_id) continue;
+      if (!map.has(it.parent_item_id)) map.set(it.parent_item_id, []);
+      map.get(it.parent_item_id)!.push(it);
     }
     return map;
   }, [items]);
@@ -95,6 +109,21 @@ export default function CoachingHomeworkPage() {
     });
     if (res.ok) {
       setNewItemText((prev) => ({ ...prev, [homeworkId]: "" }));
+      load();
+    }
+  }
+
+  async function addSubItem(homeworkId: string, parentItemId: string, e: React.FormEvent) {
+    e.preventDefault();
+    const text = (newSubItemText[parentItemId] ?? "").trim();
+    if (!text) return;
+    const res = await fetch("/api/coaching-homework/items", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ homework_id: homeworkId, text, parent_item_id: parentItemId }),
+    });
+    if (res.ok) {
+      setNewSubItemText((prev) => ({ ...prev, [parentItemId]: "" }));
       load();
     }
   }
@@ -222,32 +251,94 @@ export default function CoachingHomeworkPage() {
                         </table>
                       </div>
                     ) : (
-                      hwItems.map((item) => (
-                        <div
-                          key={item.id}
-                          className="flex items-center gap-3 px-3 py-2 rounded-lg bg-brand-bg"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={item.done}
-                            onChange={() => toggleItemDone(item)}
-                            className="w-4 h-4 accent-brand-accent shrink-0"
-                          />
-                          <span
-                            className={`flex-1 text-sm ${
-                              item.done ? "text-slate-500 line-through" : "text-slate-200"
-                            }`}
-                          >
-                            {item.text}
-                          </span>
-                          <button
-                            onClick={() => removeItem(item)}
-                            className="text-slate-500 hover:text-red-400 text-xs shrink-0"
-                          >
-                            מחיקה
-                          </button>
-                        </div>
-                      ))
+                      hwItems.map((item) => {
+                        const subItems = subItemsByParent.get(item.id) ?? [];
+                        const isSubOpen = openItemId === item.id;
+                        const isRealItem = !item.id.startsWith("mashov-");
+                        return (
+                          <div key={item.id} className="rounded-lg bg-brand-bg overflow-hidden">
+                            <div className="flex items-center gap-3 px-3 py-2">
+                              <input
+                                type="checkbox"
+                                checked={item.done}
+                                onChange={() => toggleItemDone(item)}
+                                className="w-4 h-4 accent-brand-accent shrink-0"
+                              />
+                              <span
+                                className={`flex-1 text-sm ${
+                                  item.done ? "text-slate-500 line-through" : "text-slate-200"
+                                }`}
+                              >
+                                {item.text}
+                              </span>
+                              {isRealItem && (
+                                <button
+                                  onClick={() => setOpenItemId(isSubOpen ? null : item.id)}
+                                  className="text-slate-500 hover:text-brand-accent text-xs shrink-0"
+                                >
+                                  {isSubOpen ? "סגירה ▲" : `תתי-סעיפים (${subItems.length}) ▼`}
+                                </button>
+                              )}
+                              <button
+                                onClick={() => removeItem(item)}
+                                className="text-slate-500 hover:text-red-400 text-xs shrink-0"
+                              >
+                                מחיקה
+                              </button>
+                            </div>
+
+                            {isRealItem && isSubOpen && (
+                              <div className="px-3 pb-3 pt-1 mr-6 border-r-2 border-brand-accent/20 space-y-2">
+                                {subItems.map((sub) => (
+                                  <div
+                                    key={sub.id}
+                                    className="flex items-center gap-3 px-3 py-1.5 rounded-lg bg-brand-card"
+                                  >
+                                    <input
+                                      type="checkbox"
+                                      checked={sub.done}
+                                      onChange={() => toggleItemDone(sub)}
+                                      className="w-4 h-4 accent-brand-accent shrink-0"
+                                    />
+                                    <span
+                                      className={`flex-1 text-sm ${
+                                        sub.done ? "text-slate-500 line-through" : "text-slate-300"
+                                      }`}
+                                    >
+                                      {sub.text}
+                                    </span>
+                                    <button
+                                      onClick={() => removeItem(sub)}
+                                      className="text-slate-500 hover:text-red-400 text-xs shrink-0"
+                                    >
+                                      מחיקה
+                                    </button>
+                                  </div>
+                                ))}
+                                <form
+                                  onSubmit={(e) => addSubItem(hw.id, item.id, e)}
+                                  className="flex gap-2"
+                                >
+                                  <input
+                                    value={newSubItemText[item.id] ?? ""}
+                                    onChange={(e) =>
+                                      setNewSubItemText((prev) => ({ ...prev, [item.id]: e.target.value }))
+                                    }
+                                    placeholder="תת-סעיף חדש..."
+                                    className={`${inputClass} py-1.5 text-sm`}
+                                  />
+                                  <button
+                                    type="submit"
+                                    className="px-3 py-1.5 rounded-lg bg-gradient-to-l from-brand-accent-2 to-brand-accent text-white font-bold text-xs hover:opacity-90 transition-opacity whitespace-nowrap"
+                                  >
+                                    הוספה
+                                  </button>
+                                </form>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })
                     )}
 
                     {!isMashovSynced && (
