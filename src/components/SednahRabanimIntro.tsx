@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getPriceILS } from "@/lib/rabanimPricing";
 
 const COHORT_COPY: Record<string, { dates: string; formPath: string }> = {
   round1: { dates: "12.7 (כ״ז תמוז) + 19.7 (ה׳ אב)", formPath: "/sednah-rabanim/form" },
@@ -16,6 +17,7 @@ export function SednahRabanimIntro({
   const formHref = referralCode
     ? `${formPath}?c=${encodeURIComponent(referralCode)}`
     : formPath;
+  const price = getPriceILS(cohort);
 
   return (
     <div className="max-w-2xl mx-auto text-right mb-16">
@@ -112,7 +114,7 @@ export function SednahRabanimIntro({
 
       <div className="text-center mt-12">
         <p className="text-3xl font-black text-white mb-8">
-          כל זה רק ב-950₪
+          כל זה רק ב-{price}₪
         </p>
         <Link
           href={formHref}

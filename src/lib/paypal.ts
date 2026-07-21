@@ -1,5 +1,4 @@
 const API_BASE = "https://api-m.paypal.com";
-const PRICE_ILS = "950.00";
 
 async function getAccessToken(): Promise<string> {
   const clientId = process.env.PAYPAL_CLIENT_ID;
@@ -26,6 +25,7 @@ export async function createOrder(params: {
   email: string;
   returnUrl: string;
   cancelUrl: string;
+  priceILS: number;
 }): Promise<{ orderId: string; approveUrl: string }> {
   const token = await getAccessToken();
 
@@ -43,7 +43,7 @@ export async function createOrder(params: {
           description: `הרשמה לסדנת קלוד קוד לרבנים — ${params.firstName} ${params.lastName}`,
           amount: {
             currency_code: "ILS",
-            value: PRICE_ILS,
+            value: params.priceILS.toFixed(2),
           },
         },
       ],

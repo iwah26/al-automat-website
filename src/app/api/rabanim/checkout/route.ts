@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getRabanimSupabase } from "@/lib/rabanimSupabase";
 import { createOrder } from "@/lib/paypal";
+import { getPriceILS } from "@/lib/rabanimPricing";
 
 export async function POST(req: NextRequest) {
   try {
@@ -41,6 +42,7 @@ export async function POST(req: NextRequest) {
       email,
       returnUrl: `${origin}/api/rabanim/paypal-return`,
       cancelUrl: `${origin}${cohort === "round2" ? "/sednah-rabanim-round2/form" : "/sednah-rabanim/form"}`,
+      priceILS: getPriceILS(cohort || "round1"),
     });
 
     return NextResponse.json({ url: approveUrl });
