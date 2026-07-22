@@ -1,0 +1,19 @@
+name: Atomic Habits one-off reminder
+
+# One-off nudge for Isaac (requested 22.7.26) about the new Atomic Habits
+# project. Fires daily but the endpoint itself only acts on 2026-07-29
+# (Asia/Jerusalem) — see src/app/api/personal/habits-reminder/route.ts.
+# Safe to leave enabled; it self-disarms after the target date passes.
+on:
+  schedule:
+    - cron: "13 6 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call habits-reminder endpoint
+        run: |
+          curl -sf -X GET "https://www.al-automat.co.il/api/personal/habits-reminder" \
+            -H "Authorization: Bearer ${{ secrets.RABANIM_CRON_SECRET }}"
