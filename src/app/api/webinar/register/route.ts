@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   try {
     await sendMail(
       email,
-      'פרטי הזום לוובינר "קלוד קוד לרבנים" — 21.7',
+      'פרטי הזום לוובינר "אל תישאר מאחור" — 20.8',
       buildWebinarConfirmationEmail(fullName || null)
     );
   } catch (err) {

@@ -1,10 +1,9 @@
 import { NextResponse } from "next/server";
 
-const ZOOM_JOIN_URL =
-  "https://us02web.zoom.us/j/86183821803?pwd=WxGDuKyu2aXIyDw42RRrxlKC5X5AnU.1";
+const ZOOM_JOIN_URL = "https://us02web.zoom.us/j/88563676021";
 
-// שלישי 21.7, 21:00 שעון ישראל + 30 דקות חסד = 18:30 UTC
-const CUTOFF = new Date("2026-07-21T18:30:00Z");
+// חמישי 20.8, 21:00 שעון ישראל (18:00 UTC) + 90 דקות = עד סוף הוובינר
+const CUTOFF = new Date("2026-08-20T19:30:00Z");
 
 export async function GET() {
   const now = new Date();

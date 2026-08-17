@@ -8,7 +8,7 @@ function escapeICS(text: string): string {
 
 export async function GET() {
   const description = escapeICS(
-    `וובינר פתוח "קלוד קוד לרבנים". קישור הזום: ${JOIN_URL}`
+    `וובינר פתוח "אל תישאר מאחור" - הטמעת AI בארגון. קישור הזום: ${JOIN_URL}`
   );
 
   const ics = [
@@ -17,11 +17,11 @@ export async function GET() {
     "PRODID:-//Al Automat//Webinar//HE",
     "CALSCALE:GREGORIAN",
     "BEGIN:VEVENT",
-    "UID:rabanim-webinar-21-7-2026@al-automat.co.il",
-    "DTSTAMP:20260718T000000Z",
-    "DTSTART:20260721T180000Z",
-    "DTEND:20260721T190000Z",
-    `SUMMARY:${escapeICS('וובינר פתוח - קלוד קוד לרבנים')}`,
+    "UID:webinar-20-8-2026@al-automat.co.il",
+    "DTSTAMP:20260817T000000Z",
+    "DTSTART:20260820T180000Z",
+    "DTEND:20260820T193000Z",
+    `SUMMARY:${escapeICS('וובינר פתוח - אל תישאר מאחור')}`,
     `DESCRIPTION:${description}`,
     `LOCATION:${escapeICS(JOIN_URL)}`,
     "BEGIN:VALARM",
