@@ -1,6 +1,8 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { WebinarRegisterForm } from "@/components/WebinarRegisterForm";
+import { getRabanimSupabase } from "@/lib/rabanimSupabase";
+import { headers } from "next/headers";
 
 export const metadata = {
   title: "וובינר חינם: אל תישאר מאחור | על אוטומט",
@@ -25,12 +27,25 @@ const TAKEAWAYS = [
   "מה בן אדם בלי רקע טכני באמת יכול לבנות לעצמו — ומה לא.",
 ];
 
+// מעקב מקור: ?c=<קוד> — מתעד כל כניסה, גם של מי שלא נרשם בסוף.
+// הקוד עצמו נשמר גם על הליד עצמו (referral_code) דרך WebinarRegisterForm.
+async function logClickIfPresent(code: string | undefined) {
+  if (!code) return;
+  try {
+    const ua = (await headers()).get("user-agent") ?? undefined;
+    await getRabanimSupabase().from("rabanim_link_clicks").insert({ code, user_agent: ua });
+  } catch {
+    // מעקב בלבד — לא אמור לשבור את טעינת הדף בשום מקרה
+  }
+}
+
 export default async function WebinarPage({
   searchParams,
 }: {
   searchParams: Promise<{ c?: string }>;
 }) {
   const { c } = await searchParams;
+  await logClickIfPresent(c);
   return (
     <>
       <Navbar />
