@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     await sendMail(
       email,
       'פרטי הזום לוובינר "אל תישאר מאחור" — 20.8',
-      buildWebinarConfirmationEmail(fullName || null)
+      buildWebinarConfirmationEmail(fullName || null, email)
     );
   } catch (err) {
     console.error("webinar/register: failed to send confirmation email", err);

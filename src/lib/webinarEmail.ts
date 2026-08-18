@@ -19,8 +19,24 @@ const OUTLOOK_CAL_URL =
   `&body=${encodeURIComponent(EVENT_DETAILS)}` +
   `&location=${encodeURIComponent(JOIN_URL)}`;
 
-export function buildWebinarConfirmationEmail(fullName: string | null) {
+/**
+ * לינק הצטרפות אישי — נושא את שם הנרשם והמייל שלו, כדי שדוח המשתתפים של זום
+ * יזהה אותו. בלי זה זום מדווח על שם המכשיר ("Samsung SM-S948B") ובלי מייל.
+ */
+function personalJoinUrl(fullName: string | null, email: string | null): string {
+  const params = new URLSearchParams();
+  if (fullName) params.set("u", fullName);
+  if (email) params.set("e", email);
+  const qs = params.toString();
+  return qs ? `${JOIN_URL}?${qs}` : JOIN_URL;
+}
+
+export function buildWebinarConfirmationEmail(
+  fullName: string | null,
+  email: string | null = null
+) {
   const greeting = fullName ? `שלום ${fullName} 🙏` : "שלום 🙏";
+  const joinUrl = personalJoinUrl(fullName, email);
   return `
     <div dir="rtl" style="font-family: Arial, sans-serif; line-height: 1.6;">
       <p>${greeting}</p>
@@ -36,7 +52,10 @@ export function buildWebinarConfirmationEmail(fullName: string | null) {
       </ul>
       <p><strong>פרטי הזום:</strong></p>
       <p>
-        קישור: <a href="${JOIN_URL}">${JOIN_URL}</a><br />
+        <a href="${joinUrl}" style="display:inline-block; padding:12px 28px; background:#412a62; color:#fff; border-radius:8px; text-decoration:none; font-weight:bold;">כניסה לוובינר</a>
+      </p>
+      <p style="font-size:13px; color:#666;">
+        אם הכפתור לא עובד: <a href="${joinUrl}">${JOIN_URL}</a><br />
         Meeting ID: ${ZOOM_MEETING_ID}
       </p>
       <p style="color:#888; font-size: 13px;">הקישור פעיל מהתחלת הוובינר ועד שעה וחצי אחריו. אם תלחץ עליו מאוחר יותר, תופנה לדף הרשמה לסדנה.</p>
