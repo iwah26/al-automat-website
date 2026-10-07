@@ -2,8 +2,8 @@ const JOIN_URL = "https://www.al-automat.co.il/api/webinar/join";
 const ZOOM_MEETING_ID = "865 9025 5880";
 const ICS_URL = "https://www.al-automat.co.il/api/webinar/calendar";
 
-const EVENT_TITLE = "וובינר חינם - AI כמו מקצוען";
-const EVENT_DETAILS = `וובינר חינם: איך בונים מערכות ואפליקציות בלי לדעת קוד. קישור הזום: ${JOIN_URL}`;
+const EVENT_TITLE = "קלוד קוד לחרדים - וובינר חינם";
+const EVENT_DETAILS = `קלוד קוד לחרדים: איך בונים מערכות ואפליקציות בלי לדעת קוד. קישור הזום: ${JOIN_URL}`;
 
 const GOOGLE_CAL_URL =
   "https://calendar.google.com/calendar/render?action=TEMPLATE" +
@@ -40,7 +40,8 @@ export function buildWebinarConfirmationEmail(
   return `
     <div dir="rtl" style="font-family: Arial, sans-serif; line-height: 1.6;">
       <p>${greeting}</p>
-      <p>תודה שנרשמת לוובינר החינמי <strong>"אם לא תדע AI כמו מקצוען — תישאר מאחור"</strong>.</p>
+      <h2 style="margin:0 0 8px; color:#412a62;">קלוד קוד לחרדים</h2>
+      <p>תודה שנרשמת לוובינר החינמי <strong>"קלוד קוד לחרדים"</strong> — איך בונים מערכות ואפליקציות לעבודה, בלי לדעת קוד.</p>
       <p><strong>יום חמישי, 8.10 · 21:00 · בזום</strong></p>
       <p><strong>פרטי הזום:</strong></p>
       <p>

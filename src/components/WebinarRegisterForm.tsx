@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const inputClass =
   "w-full px-4 py-3 rounded-xl bg-brand-card border border-brand-accent/30 text-white placeholder-slate-400 focus:outline-none focus:border-brand-accent transition-colors text-right";
@@ -10,6 +10,12 @@ export function WebinarRegisterForm({ referralCode }: { referralCode?: string })
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
+  const doneRef = useRef<HTMLDivElement>(null);
+
+  // בטלפון הטופס בתחתית המסך — מגללים להודעה כדי שלא יפספסו אותה
+  useEffect(() => {
+    if (status === "done") doneRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [status]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -29,8 +35,18 @@ export function WebinarRegisterForm({ referralCode }: { referralCode?: string })
 
   if (status === "done") {
     return (
-      <div className="text-center text-white text-xl font-bold">
-        נרשמת בהצלחה! פרטי הזום נשלחו למייל שלך 🙏
+      <div
+        ref={doneRef}
+        className="max-w-md mx-auto p-8 rounded-2xl bg-brand-card border-2 border-brand-accent text-center"
+      >
+        <div className="text-5xl mb-4">✅</div>
+        <p className="text-white text-3xl font-black mb-3">נרשמת בהצלחה!</p>
+        <p className="text-slate-200 text-lg leading-relaxed">
+          תקבל מייל עם פרטי הזום בדקות הקרובות.
+        </p>
+        <p className="text-slate-400 text-sm mt-4">
+          לא הגיע? כדאי להציץ בתיקיית הספאם או &quot;קידומי מכירות&quot;.
+        </p>
       </div>
     );
   }

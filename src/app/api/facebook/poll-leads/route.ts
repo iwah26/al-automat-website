@@ -76,7 +76,7 @@ export async function GET(req: NextRequest) {
         try {
           await sendMail(
             email,
-            'פרטי הזום לוובינר החינמי — חמישי 8.10, 21:00',
+            'קלוד קוד לחרדים — פרטי הזום לוובינר, חמישי 8.10 21:00',
             buildWebinarConfirmationEmail(fullName, email)
           );
           await supabase.from("webinar_leads").update({ email_sent: true }).eq("fb_lead_id", lead.id);
