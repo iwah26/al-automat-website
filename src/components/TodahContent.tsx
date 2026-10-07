@@ -7,8 +7,14 @@ const ROLE_LABELS: Record<string, string> = {
   "rav-kehila": "רב קהילה",
   "rav-rashi": "הרב הראשי",
   menahel: "מנהל מוסד",
+  sachir: "שכיר",
+  atzmai: "עצמאי / בעל עסק",
+  "menahel-tzevet": "מנהל / ראש צוות",
   other: "",
 };
+
+// מחזור ד׳ (10.2026) — חרדים עובדים, לא רבנים
+const WORKER_COHORTS = new Set(["round4"]);
 
 const LINKS = {
   claudeUpgrade: "https://claude.ai/upgrade",
@@ -71,6 +77,7 @@ export function TodahContent() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [role, setRole] = useState("");
+  const [forWorkers, setForWorkers] = useState(false);
   const [needsClaude, setNeedsClaude] = useState(true);
   const [needsAPI, setNeedsAPI] = useState(true);
   const [checked, setChecked] = useState<Record<string, boolean>>({});
@@ -79,12 +86,13 @@ export function TodahContent() {
     setFirstName(localStorage.getItem("rabanim_firstName") ?? "");
     setLastName(localStorage.getItem("rabanim_lastName") ?? "");
     setRole(localStorage.getItem("rabanim_role") ?? "");
+    setForWorkers(WORKER_COHORTS.has(localStorage.getItem("rabanim_cohort") ?? ""));
     setNeedsClaude(localStorage.getItem("rabanim_paysForClaude") === "לא, רק גרסה חינמית");
     setNeedsAPI(localStorage.getItem("rabanim_usesClaudeAPI") === "לא");
     ["claude", "vscode", "claudeDesktop", "api", "whatsapp", "recordings"].forEach((k) =>
       localStorage.removeItem(`rabanim_${k}`)
     );
-    ["rabanim_firstName", "rabanim_lastName", "rabanim_role", "rabanim_paysForClaude", "rabanim_usesClaudeAPI"].forEach(
+    ["rabanim_firstName", "rabanim_lastName", "rabanim_role", "rabanim_cohort", "rabanim_paysForClaude", "rabanim_usesClaudeAPI"].forEach(
       (k) => localStorage.removeItem(k)
     );
   }, []);
@@ -101,12 +109,14 @@ export function TodahContent() {
       <div className="text-center mb-12">
         <div className="text-6xl mb-6">🎉</div>
         <h1 className="text-4xl font-black text-white leading-snug">
-          ברוך הבא{fullName && ", הרב "}
+          ברוך הבא{fullName && (forWorkers ? ", " : ", הרב ")}
           {fullName && <span className="text-brand-accent">{fullName}</span>}
-          {fullName && " שליט״א"}
+          {fullName && !forWorkers && " שליט״א"}
         </h1>
         {roleLabel && <p className="text-brand-accent/80 font-semibold text-lg mt-1">{roleLabel}</p>}
-        <p className="text-xl text-white font-bold mt-3">לסדנת Claude Code לרבנים</p>
+        <p className="text-xl text-white font-bold mt-3">
+          {forWorkers ? "לסדנת AI כמו מקצוען" : "לסדנת Claude Code לרבנים"}
+        </p>
         <p className="text-slate-400 mt-2">
           כדי לנצל את הזמן בצורה המירבית — אנא ודא שיש לך את כל הדברים הבאים לפני תחילת הסדנה
         </p>
@@ -154,6 +164,7 @@ export function TodahContent() {
           <DownloadLink href={LINKS.claudeAPI} label="פתח גישה כאן" />
         </CheckItem>
 
+        {!forWorkers && (
         <CheckItem
           label="הצטרפות לקבוצת WhatsApp"
           done={!!checked["whatsapp"]}
@@ -168,6 +179,7 @@ export function TodahContent() {
             label="הצטרפות לקבוצה"
           />
         </CheckItem>
+        )}
 
         <CheckItem
           label="גישה לאתר ההקלטות"

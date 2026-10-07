@@ -5,25 +5,16 @@ import { getRabanimSupabase } from "@/lib/rabanimSupabase";
 import { headers } from "next/headers";
 
 export const metadata = {
-  title: "וובינר חינם: אל תישאר מאחור | על אוטומט",
+  title: "וובינר חינם: אם לא תדע AI כמו מקצוען — תישאר מאחור | על אוטומט",
   description:
-    "וובינר פתוח וחינמי — איך מטמיעים AI בארגון, בלי ידע טכני. חמישי 20.8, 21:00 שעון ישראל.",
+    "וובינר פתוח וחינמי לחרדים עובדים — איך בונים מערכות ואפליקציות בלי לדעת קוד. חמישי 8.10, 21:00.",
 };
 
-const TIMEZONES = [
-  { flag: "🇮🇱", label: "ישראל", time: "21:00" },
-  { flag: "🇪🇸🇫🇷", label: "ספרד / צרפת", time: "20:00" },
-  { flag: "🇬🇧", label: "אנגליה", time: "19:00" },
-  { flag: "🇦🇷", label: "ארגנטינה", time: "15:00" },
-  { flag: "🇺🇸🇻🇪", label: "ארה״ב (מזרח) / ונצואלה", time: "14:00" },
-  { flag: "🇲🇽", label: "מקסיקו", time: "12:00" },
-];
-
 const TAKEAWAYS = [
-  "תבין שכדי לעבוד עם AI צריך רק יצירתיות ורעיונות — שום ידע טכני.",
-  "מה ההבדל בפועל בין לשוחח עם AI לבין להעסיק אותו.",
+  "למה לשאול את ChatGPT זה לא לדעת AI — ומה ההבדל בין חובבן למקצוען.",
+  "איך בונים מערכת או אפליקציה לעבודה שלך — בלי לכתוב שורת קוד אחת.",
+  "דוגמאות אמיתיות שנבנו מאפס: אתר, מערכת לניהול לקוחות, דוחות שמכינים את עצמם, ועוד.",
   "הכלים שעובדים איתם — ומה ההבדל בין הגרסה החינמית לזו שבאמת עובדת.",
-  "דוגמאות אמיתיות שנבנו: אתר אינטרנט, מערכת ניהול קהילה, לוח אינטראקטיבי לבית הכנסת, ועוד.",
   "מה בן אדם בלי רקע טכני באמת יכול לבנות לעצמו — ומה לא.",
 ];
 
@@ -51,31 +42,28 @@ export default async function WebinarPage({
       <Navbar />
       <main className="min-h-screen pt-28 pb-20 px-6">
         <div className="max-w-2xl mx-auto text-center mb-10">
-          <h1 className="text-5xl font-black text-white leading-tight mb-4">
-            אל תישאר מאחור
+          <p className="text-xl text-slate-300 mb-3">תכניס את זה טוב טוב לראש:</p>
+          <h1 className="text-5xl font-black text-white leading-tight mb-6">
+            אם לא תדע AI כמו מקצוען —{" "}
+            <span className="text-brand-accent">תישאר מאחור.</span>
           </h1>
           <p className="text-xl text-slate-200 leading-relaxed mb-6">
-            99.9% מהאנשים משתמשים ב-AI כמו חובבנים. תהיה מאלו שכבר מטמיעים AI
-            בארגונים שלהם, כמקצוענים.
+            תשמע טוב: לשאול את ChatGPT זה לא לדעת AI. מי שלא יודע AI באמת,
+            נשאר מאחור.
           </p>
           <p className="text-slate-400 leading-relaxed mb-8">
-            לרבנים · מנהלי מוסדות · גבאי צדקה · גבאי בתי כנסת · מנהלי תלמודי תורה
+            לחרדים עובדים · בלי ידע בתכנות · בלי רקע טכני
             <br />
-            בלי ידע טכני. בלי מתכנת.
+            לבנות מערכות ואפליקציות לעבודה — בלי לדעת קוד.
           </p>
 
           <div className="inline-block w-full p-6 rounded-2xl bg-brand-card border border-brand-accent/20 text-right mb-8">
             <p className="font-bold text-white text-lg mb-1">
-              יום חמישי 20.8 · וובינר בזום · ללא עלות
+              יום חמישי 8.10 · 21:00 · וובינר בזום · ללא עלות
             </p>
-            <p className="text-slate-400 text-sm mb-4">שעות לפי אזור</p>
-            <ul className="space-y-1 text-slate-300">
-              {TIMEZONES.map((tz) => (
-                <li key={tz.label}>
-                  {tz.flag} {tz.label} — {tz.time}
-                </li>
-              ))}
-            </ul>
+            <p className="text-slate-400 text-sm">
+              כשעה וחצי. הקישור לזום יישלח אליך במייל מיד אחרי ההרשמה.
+            </p>
           </div>
 
           <div className="w-full p-6 rounded-2xl bg-brand-card border border-brand-accent/20 text-right mb-10">
@@ -100,9 +88,9 @@ export default async function WebinarPage({
             הוובינר הוא גם מפגש הכנה לסדנה המעשית
           </p>
           <p className="text-slate-300 leading-relaxed">
-            שני מפגשים — יום שישי 21.8 ויום שישי 28.8, בשעות 9:30–12:30 בבוקר
-            (שעון ישראל), בזום. בסדנה לא מסתכלים, בונים. כל משתתף יוצא עם מערכת
-            משלו.
+            שני מפגשים — יום שישי 9.10 ויום שישי 16.10, בשעות 9:30–12:30 בבוקר,
+            בזום. בסדנה לא מסתכלים, בונים. כל משתתף יוצא עם מערכת משלו, לעבודה
+            שלו.
           </p>
           <p className="text-slate-400 text-sm mt-3">
             מספר המקומות מוגבל. כל הפרטים יינתנו בוובינר.

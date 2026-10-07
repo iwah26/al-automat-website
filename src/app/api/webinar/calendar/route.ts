@@ -8,7 +8,7 @@ function escapeICS(text: string): string {
 
 export async function GET() {
   const description = escapeICS(
-    `וובינר פתוח "אל תישאר מאחור" - הטמעת AI בארגון. קישור הזום: ${JOIN_URL}`
+    `וובינר חינם: איך בונים מערכות ואפליקציות בלי לדעת קוד. קישור הזום: ${JOIN_URL}`
   );
 
   const ics = [
@@ -17,11 +17,11 @@ export async function GET() {
     "PRODID:-//Al Automat//Webinar//HE",
     "CALSCALE:GREGORIAN",
     "BEGIN:VEVENT",
-    "UID:webinar-20-8-2026@al-automat.co.il",
-    "DTSTAMP:20260817T000000Z",
-    "DTSTART:20260820T180000Z",
-    "DTEND:20260820T193000Z",
-    `SUMMARY:${escapeICS('וובינר פתוח - אל תישאר מאחור')}`,
+    "UID:webinar-8-10-2026@al-automat.co.il",
+    "DTSTAMP:20261007T000000Z",
+    "DTSTART:20261008T180000Z",
+    "DTEND:20261008T193000Z",
+    `SUMMARY:${escapeICS('וובינר חינם - AI כמו מקצוען')}`,
     `DESCRIPTION:${description}`,
     `LOCATION:${escapeICS(JOIN_URL)}`,
     "BEGIN:VALARM",
@@ -37,7 +37,7 @@ export async function GET() {
     status: 200,
     headers: {
       "Content-Type": "text/calendar; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="webinar-rabanim.ics"',
+      "Content-Disposition": 'attachment; filename="webinar-al-automat.ics"',
     },
   });
 }

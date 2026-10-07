@@ -8,3 +8,10 @@ export function getRound2PriceILS(): number {
 export function getPriceILS(cohort: string): number {
   return cohort === "round2" ? getRound2PriceILS() : 950;
 }
+
+// נתיב טופס ההרשמה לכל מחזור — לחזרה מ-PayPal אחרי ביטול
+export const COHORT_FORM_PATH: Record<string, string> = {
+  round1: "/sednah-rabanim/form",
+  round2: "/sednah-rabanim-round2/form",
+  round4: "/sadna/form",
+};

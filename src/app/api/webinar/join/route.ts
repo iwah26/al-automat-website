@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const ZOOM_JOIN_URL = "https://us02web.zoom.us/j/88563676021";
+const ZOOM_JOIN_URL = "https://us02web.zoom.us/j/86590255880";
 
-// חמישי 20.8, 21:00 שעון ישראל (18:00 UTC) + 90 דקות = עד סוף הוובינר
-const CUTOFF = new Date("2026-08-20T19:30:00Z");
+// חמישי 8.10, 21:00 שעון ישראל (18:00 UTC) + 90 דקות = עד סוף הוובינר
+const CUTOFF = new Date("2026-10-08T19:30:00Z");
 
 /**
  * מזהה את הנכנס בדוח המשתתפים של זום.

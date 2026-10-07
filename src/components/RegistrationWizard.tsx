@@ -18,7 +18,16 @@ const ROLE_LABELS: Record<string, string> = {
   "menahel-beit-sefer": "מנהל בית ספר",
   "melamed-beit-sefer": "מלמד בבית ספר",
   other: "",
+  sachir: "שכיר",
+  atzmai: "עצמאי / בעל עסק",
+  "menahel-tzevet": "מנהל / ראש צוות",
 };
+
+// מחזור ד׳ (10.2026) פונה לחרדים עובדים — אותו טופס, נוסח אחר.
+const WORKER_COHORTS = new Set(["round4"]);
+
+const RABBI_ROLES = ["avreich", "rav-kehila", "rav-rashi", "rav-yeshiva", "menahel", "menahel-beit-sefer", "melamed-beit-sefer", "other"];
+const WORKER_ROLES = ["sachir", "atzmai", "menahel-tzevet", "avreich", "other"];
 
 interface FormData {
   firstName: string;
@@ -90,6 +99,7 @@ export function RegistrationWizard({
   referralCode?: string;
   cohort?: string;
 }) {
+  const forWorkers = WORKER_COHORTS.has(cohort);
   const [step, setStep] = useState(1);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [countries, setCountries] = useState<string[]>([]);
@@ -193,7 +203,7 @@ export function RegistrationWizard({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify([
           {
-            source: "rabanim-registration",
+            source: forWorkers ? "workers-registration" : "rabanim-registration",
             ...data,
             aiTools: data.aiTools.join(", "),
             timestamp: new Date().toISOString(),
@@ -204,6 +214,7 @@ export function RegistrationWizard({
       localStorage.setItem("rabanim_firstName", data.firstName);
       localStorage.setItem("rabanim_lastName", data.lastName);
       localStorage.setItem("rabanim_role", data.role);
+      localStorage.setItem("rabanim_cohort", cohort);
       localStorage.setItem("rabanim_paysForClaude", data.paysForClaude);
       localStorage.setItem("rabanim_usesClaudeAPI", data.usesClaudeAPI);
 
@@ -259,13 +270,13 @@ export function RegistrationWizard({
           >
             <div className="mb-8 text-right">
               <h1 className="text-3xl font-black text-white leading-snug">
-                שלום כבוד הרב{" "}
+                {forWorkers ? "שלום" : "שלום כבוד הרב"}{" "}
                 {(data.firstName || data.lastName) && (
                   <span className="text-brand-accent">
                     {`${data.firstName} ${data.lastName}`.trim()}{" "}
                   </span>
                 )}
-                שליט״א
+                {!forWorkers && "שליט״א"}
               </h1>
               {(ROLE_LABELS[data.role] || data.communityName) && (
                 <p className="text-brand-accent/80 font-semibold text-lg mt-1">
@@ -331,19 +342,16 @@ export function RegistrationWizard({
                 onChange={(e) => set("role", e.target.value)}
                 className={inputClass}
               >
-                <option value="">תפקיד</option>
-                <option value="avreich">אברך</option>
-                <option value="rav-kehila">רב קהילה</option>
-                <option value="rav-rashi">רב ראשי</option>
-                <option value="rav-yeshiva">רב בישיבה</option>
-                <option value="menahel">מנהל מוסד</option>
-                <option value="menahel-beit-sefer">מנהל בית ספר</option>
-                <option value="melamed-beit-sefer">מלמד בבית ספר</option>
-                <option value="other">אחר</option>
+                <option value="">{forWorkers ? "מה אתה עושה היום?" : "תפקיד"}</option>
+                {(forWorkers ? WORKER_ROLES : RABBI_ROLES).map((key) => (
+                  <option key={key} value={key}>
+                    {key === "other" ? "אחר" : key === "rav-rashi" ? "רב ראשי" : ROLE_LABELS[key]}
+                  </option>
+                ))}
               </select>
               {data.role && (
                 <input
-                  placeholder="שם הקהילה / המוסד"
+                  placeholder={forWorkers ? "תחום / מקום העבודה" : "שם הקהילה / המוסד"}
                   value={data.communityName}
                   onChange={(e) => set("communityName", e.target.value)}
                   className={inputClass}
@@ -561,17 +569,25 @@ export function RegistrationWizard({
             exit={{ opacity: 0, x: -40 }}
             transition={{ duration: 0.3 }}
           >
-            <h2 className="text-3xl font-black text-white mb-1">הקהילה שלך</h2>
+            <h2 className="text-3xl font-black text-white mb-1">
+              {forWorkers ? "העבודה שלך" : "הקהילה שלך"}
+            </h2>
             <p className="text-slate-400 mb-8">שלב 3 מתוך 3 — כמה שאלות אחרונות</p>
 
             <div className="space-y-6">
               <div>
                 <label className="block text-white font-semibold mb-2">
-                  מה לוקח לך הכי הרבה זמן בניהול הקהילה?
+                  {forWorkers
+                    ? "מה לוקח לך הכי הרבה זמן בעבודה?"
+                    : "מה לוקח לך הכי הרבה זמן בניהול הקהילה?"}
                 </label>
                 <textarea
                   rows={3}
-                  placeholder="לדוגמה: כתיבת דרשות, מענה לשאלות, תיאום אירועים..."
+                  placeholder={
+                    forWorkers
+                      ? "לדוגמה: דוחות, אקסלים, מענה למיילים, הצעות מחיר..."
+                      : "לדוגמה: כתיבת דרשות, מענה לשאלות, תיאום אירועים..."
+                  }
                   value={data.communityChallenge}
                   onChange={(e) => set("communityChallenge", e.target.value)}
                   className={inputClass + " resize-none"}
@@ -579,11 +595,17 @@ export function RegistrationWizard({
               </div>
               <div>
                 <label className="block text-white font-semibold mb-2">
-                  מה מאתגר אותך בתקשורת עם הקהל?
+                  {forWorkers
+                    ? "איזו מערכת או כלי היית רוצה שיהיו לך בעבודה?"
+                    : "מה מאתגר אותך בתקשורת עם הקהל?"}
                 </label>
                 <textarea
                   rows={3}
-                  placeholder="לדוגמה: כתיבת עלונים, הודעות, תוכן לרשתות..."
+                  placeholder={
+                    forWorkers
+                      ? "לדוגמה: מערכת לניהול לקוחות, דוח שמתעדכן לבד, אפליקציה לצוות..."
+                      : "לדוגמה: כתיבת עלונים, הודעות, תוכן לרשתות..."
+                  }
                   value={data.communicationChallenge}
                   onChange={(e) => set("communicationChallenge", e.target.value)}
                   className={inputClass + " resize-none"}

@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
   try {
     await sendMail(
       email,
-      'פרטי הזום לוובינר "אל תישאר מאחור" — 20.8',
+      'פרטי הזום לוובינר החינמי — חמישי 8.10, 21:00',
       buildWebinarConfirmationEmail(fullName || null, email)
     );
   } catch (err) {
