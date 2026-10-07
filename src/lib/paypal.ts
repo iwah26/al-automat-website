@@ -40,7 +40,7 @@ export async function createOrder(params: {
       purchase_units: [
         {
           custom_id: params.registrationId,
-          description: `הרשמה לסדנת קלוד קוד לרבנים — ${params.firstName} ${params.lastName}`,
+          description: `הרשמה לסדנה — על אוטומט — ${params.firstName} ${params.lastName}`,
           amount: {
             currency_code: "ILS",
             value: params.priceILS.toFixed(2),

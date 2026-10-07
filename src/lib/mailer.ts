@@ -15,7 +15,7 @@ export function getMailer() {
 export async function sendMail(to: string, subject: string, html: string) {
   const transporter = getMailer();
   await transporter.sendMail({
-    from: `"קלוד קוד לרבנים" <${process.env.SMTP_USER}>`,
+    from: `"על אוטומט" <${process.env.SMTP_USER}>`,
     to,
     subject,
     html,

@@ -89,7 +89,7 @@ export async function GET(req: NextRequest) {
         try {
           await sendWhatsAppToChatId(
             YO_ANI_GROUP_ID,
-            `🔔 נרשם חדש לוובינר "קלוד קוד לרבנים":\n${fullName ?? "ללא שם"}\n${email ?? "ללא מייל"}\n${phone ?? ""}`
+            `🔔 נרשם חדש לוובינר "קלוד קוד לחרדים":\n${fullName ?? "ללא שם"}\n${email ?? "ללא מייל"}\n${phone ?? ""}`
           );
         } catch (err) {
           console.error("poll-leads: owner notify failed", err);
