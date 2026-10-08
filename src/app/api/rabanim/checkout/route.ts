@@ -54,6 +54,8 @@ export async function POST(req: NextRequest) {
         method,
         origin,
         failurePath: COHORT_FORM_PATH[cohort] ?? COHORT_FORM_PATH.round1,
+        // אחרי התשלום — לטופס השאלות המלא, עם הפרטים שכבר מולאו
+        successPath: (rid, sig) => `/sadna/details?rid=${encodeURIComponent(rid)}&sig=${sig}`,
       });
       return NextResponse.json({ url });
     }

@@ -57,6 +57,8 @@ export async function createPaymentForm(params: {
   method: PaymentMethod;
   origin: string;
   failurePath: string;
+  /** לאן לחזור אחרי תשלום מוצלח. ברירת מחדל: /todah. מקבל rid+sig חתומים */
+  successPath?: (rid: string, sig: string) => string;
 }): Promise<string> {
   const token = await getToken();
   const pluginId = await getClearingPluginId(token);
@@ -79,7 +81,7 @@ export async function createPaymentForm(params: {
       group: METHOD_GROUP[params.method],
       client: { name: params.name, emails: [params.email], phone: params.phone, add: true },
       income: [{ description: params.description, quantity: 1, price: params.amount, currency: "ILS", vatType: 1 }],
-      successUrl: `${params.origin}/todah`,
+      successUrl: `${params.origin}${params.successPath ? params.successPath(rid, signRegistrationId(rid)) : "/todah"}`,
       failureUrl: `${params.origin}${params.failurePath}`,
       notifyUrl,
       custom: rid,

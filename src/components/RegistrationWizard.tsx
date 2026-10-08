@@ -3,6 +3,16 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DIAL_CODES } from "@/lib/dialCodes";
+import { CITIES_HE, COUNTRIES_HE } from "@/lib/citiesHe";
+
+export interface RegistrationDetails {
+  rid: string;
+  sig: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+}
 
 const WEBHOOK_URL =
   "https://hook.integrator.boost.space/otgpr8yi5mzx38k4n76s3d97wzq3wjp0";
@@ -98,25 +108,30 @@ function RadioGroup({
 export function RegistrationWizard({
   referralCode,
   cohort = "round1",
+  details,
 }: {
   referralCode?: string;
   cohort?: string;
+  /** מצב "השלמת פרטים אחרי תשלום" — הפרטים הבסיסיים כבר קיימים */
+  details?: RegistrationDetails;
 }) {
   const forWorkers = WORKER_COHORTS.has(cohort);
+  const [countryIso, setCountryIso] = useState(forWorkers ? "IL" : "");
+  const heCountries = COUNTRIES_HE;
   const [step, setStep] = useState(1);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [countries, setCountries] = useState<string[]>([]);
   const [cities, setCities] = useState<string[]>([]);
   const [citiesLoading, setCitiesLoading] = useState(false);
   const [data, setData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
+    firstName: details?.firstName ?? "",
+    lastName: details?.lastName ?? "",
     phoneDialCode: "972",
-    phone: "",
-    email: "",
+    phone: details?.phone ?? "",
+    email: details?.email ?? "",
     role: "",
     communityName: "",
-    country: "",
+    country: forWorkers ? "ישראל" : "",
     city: "",
     usesAI: "",
     aiTools: [],
@@ -131,6 +146,7 @@ export function RegistrationWizard({
   });
 
   useEffect(() => {
+    if (forWorkers) return; // עברית — רשימה מקומית, בלי API חיצוני
     fetch("https://countriesnow.space/api/v0.1/countries/positions")
       .then((r) => r.json())
       .then((json) => {
@@ -140,7 +156,13 @@ export function RegistrationWizard({
         setCountries(names.sort((a, b) => a.localeCompare(b)));
       })
       .catch(() => setCountries([]));
-  }, []);
+  }, [forWorkers]);
+
+  function setHebrewCountry(iso: string) {
+    setCountryIso(iso);
+    const name = heCountries.find((c) => c.iso === iso)?.name ?? "";
+    setData((prev) => ({ ...prev, country: name, city: "" }));
+  }
 
   function set(key: keyof FormData, value: string) {
     setData((prev) => ({ ...prev, [key]: value }));
@@ -174,10 +196,8 @@ export function RegistrationWizard({
   const emailValid = EMAIL_REGEX.test(data.email);
 
   const step1Valid =
-    data.firstName &&
-    data.lastName &&
-    data.phone &&
-    emailValid &&
+    (details ||
+      (data.firstName && data.lastName && data.phone && emailValid)) &&
     data.role &&
     data.country &&
     data.city;
@@ -197,7 +217,46 @@ export function RegistrationWizard({
   const step3Valid =
     data.communityChallenge && data.communicationChallenge && data.expectations;
 
+  async function handleDetailsSubmit(d: RegistrationDetails) {
+    setStatus("loading");
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify([
+          { source: "workers-registration-details", ...data, aiTools: data.aiTools.join(", "), timestamp: new Date().toISOString() },
+        ]),
+      }).catch(() => undefined);
+      const res = await fetch("/api/rabanim/details", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          rid: d.rid,
+          sig: d.sig,
+          role: data.role,
+          communityName: data.communityName,
+          location: `${data.city}, ${data.country}`,
+        }),
+      });
+      if (!res.ok) throw new Error("details failed");
+      try {
+        localStorage.setItem("rabanim_firstName", data.firstName);
+        localStorage.setItem("rabanim_lastName", data.lastName);
+        localStorage.setItem("rabanim_role", data.role);
+        localStorage.setItem("rabanim_cohort", cohort);
+        localStorage.setItem("rabanim_paysForClaude", data.paysForClaude);
+        localStorage.setItem("rabanim_usesClaudeAPI", data.usesClaudeAPI);
+      } catch {
+        // רק לנוחות בדף התודה
+      }
+      window.location.href = "/todah";
+    } catch {
+      setStatus("error");
+    }
+  }
+
   async function handleSubmit(paymentMethod?: "credit" | "bit") {
+    if (details) return handleDetailsSubmit(details);
     setStatus("loading");
     try {
       // שליחת נתונים ל-Boost.space
@@ -290,11 +349,14 @@ export function RegistrationWizard({
                 </p>
               )}
               <p className="text-slate-400 mt-2 text-base">
-                אנא מלא את הפרטים הבאים כדי להשלים את הרשמתך לסדנה
+                {details
+                  ? "🎉 התשלום התקבל! עוד כמה שאלות קצרות — כדי שנתאים את הסדנה בדיוק לעבודה שלך"
+                  : "אנא מלא את הפרטים הבאים כדי להשלים את הרשמתך לסדנה"}
               </p>
             </div>
 
             <div className="space-y-4">
+              {!details && (<>
               <div className="grid grid-cols-2 gap-4">
                 <input
                   placeholder="שם פרטי"
@@ -341,6 +403,7 @@ export function RegistrationWizard({
                   <p className="text-red-400 text-sm mt-1">כתובת מייל לא תקינה</p>
                 )}
               </div>
+              </>)}
               <select
                 value={data.role}
                 onChange={(e) => set("role", e.target.value)}
@@ -361,6 +424,35 @@ export function RegistrationWizard({
                   className={inputClass}
                 />
               )}
+              {forWorkers ? (
+                <>
+                  <select
+                    value={countryIso}
+                    onChange={(e) => setHebrewCountry(e.target.value)}
+                    className={inputClass}
+                  >
+                    {heCountries.map((c) => (
+                      <option key={c.iso} value={c.iso}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                  <input
+                    list={CITIES_HE[countryIso] ? "cities-he" : undefined}
+                    placeholder="עיר / יישוב"
+                    value={data.city}
+                    onChange={(e) => set("city", e.target.value)}
+                    className={inputClass}
+                  />
+                  {CITIES_HE[countryIso] && (
+                    <datalist id="cities-he">
+                      {CITIES_HE[countryIso].map((c) => (
+                        <option key={c} value={c} />
+                      ))}
+                    </datalist>
+                  )}
+                </>
+              ) : (<>
               <select
                 value={data.country}
                 onChange={(e) => setCountry(e.target.value)}
@@ -388,6 +480,7 @@ export function RegistrationWizard({
                   </option>
                 ))}
               </select>
+              </>)}
             </div>
 
             <button
@@ -636,7 +729,15 @@ export function RegistrationWizard({
               >
                 → חזור
               </button>
-              {MORNING_COHORTS.has(cohort) ? (
+              {details ? (
+                <button
+                  onClick={() => handleSubmit()}
+                  disabled={status === "loading" || !step3Valid}
+                  className="flex-1 py-4 rounded-xl bg-gradient-to-l from-brand-accent-2 to-brand-accent text-white font-bold text-lg hover:opacity-90 transition-opacity disabled:opacity-40"
+                >
+                  {status === "loading" ? "שומר..." : "סיום ←"}
+                </button>
+              ) : MORNING_COHORTS.has(cohort) ? (
                 <div className="flex-1 grid grid-cols-2 gap-3">
                   <button
                     onClick={() => handleSubmit("credit")}

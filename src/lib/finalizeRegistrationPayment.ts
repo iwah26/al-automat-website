@@ -1,5 +1,6 @@
 import { getRabanimSupabase } from "@/lib/rabanimSupabase";
 import { sendWhatsApp, RABANIM_GROUP_INVITE_LINK } from "@/lib/greenApi";
+import { signRegistrationId } from "@/lib/morning";
 
 interface Registration {
   id: string;
@@ -19,6 +20,8 @@ interface CohortDetails {
   workshopName: string;
   // null = אין עדיין קבוצת וואטסאפ למחזור, לא שולחים הזמנה
   group: { name: string; link: string } | null;
+  // טופס השאלות שממלאים אחרי התשלום (מחזור ד׳)
+  detailsPath?: string;
 }
 
 const RABBIS_GROUP = { name: "סדנת Claude Code לרבנים 🧠", link: RABANIM_GROUP_INVITE_LINK };
@@ -47,6 +50,7 @@ const COHORT_DETAILS: Record<string, CohortDetails> = {
     greeting: "שלום",
     workshopName: "Claude Code לחרדים",
     group: { name: "סדנת Claude Code לחרדים 🧠", link: "https://chat.whatsapp.com/HZtXYzt0bRg22cgSYOBYb7" },
+    detailsPath: "/sadna/details",
   },
 };
 
@@ -79,7 +83,7 @@ export async function finalizeRegistrationPayment(registration: Registration) {
 🔗 לינק זום (לשני המפגשים):
 ${cohort.zoomLink}
 
-✅ גישה להקלטות: https://www.al-automat.co.il/course
+${cohort.detailsPath ? `📝 עוד כמה שאלות קצרות כדי שנתאים לך את הסדנה:\nhttps://www.al-automat.co.il${cohort.detailsPath}?rid=${registration.id}&sig=${signRegistrationId(registration.id)}\n\n` : ""}✅ גישה להקלטות: https://www.al-automat.co.il/course
 🔑 סיסמת הכניסה שלך: ${password}
 (הסיסמה אישית — עד 2 מכשירים)
 

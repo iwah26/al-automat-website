@@ -87,8 +87,8 @@ export function TodahContent() {
     setLastName(localStorage.getItem("rabanim_lastName") ?? "");
     setRole(localStorage.getItem("rabanim_role") ?? "");
     setForWorkers(WORKER_COHORTS.has(localStorage.getItem("rabanim_cohort") ?? ""));
-    setNeedsClaude(localStorage.getItem("rabanim_paysForClaude") === "לא, רק גרסה חינמית");
-    setNeedsAPI(localStorage.getItem("rabanim_usesClaudeAPI") === "לא");
+    setNeedsClaude(localStorage.getItem("rabanim_paysForClaude") !== "כן, יש לי Pro");
+    setNeedsAPI(localStorage.getItem("rabanim_usesClaudeAPI") !== "כן, יש לי גישה");
     ["claude", "vscode", "claudeDesktop", "api", "whatsapp", "recordings"].forEach((k) =>
       localStorage.removeItem(`rabanim_${k}`)
     );
@@ -115,7 +115,7 @@ export function TodahContent() {
         </h1>
         {roleLabel && <p className="text-brand-accent/80 font-semibold text-lg mt-1">{roleLabel}</p>}
         <p className="text-xl text-white font-bold mt-3">
-          {forWorkers ? "לסדנת AI כמו מקצוען" : "לסדנת Claude Code לרבנים"}
+          {forWorkers ? "לסדנת Claude Code לחרדים" : "לסדנת Claude Code לרבנים"}
         </p>
         <p className="text-slate-400 mt-2">
           כדי לנצל את הזמן בצורה המירבית — אנא ודא שיש לך את כל הדברים הבאים לפני תחילת הסדנה
@@ -164,7 +164,18 @@ export function TodahContent() {
           <DownloadLink href={LINKS.claudeAPI} label="פתח גישה כאן" />
         </CheckItem>
 
-        {!forWorkers && (
+        {forWorkers ? (
+          <CheckItem
+            label="הצטרפות לקבוצת WhatsApp"
+            done={!!checked["whatsapp"]}
+            onToggle={() => toggle("whatsapp")}
+          >
+            <p className="text-slate-400 text-sm mb-1">
+              קבוצת המשתתפים <span className="text-white">&quot;סדנת Claude Code לחרדים 🧠&quot;</span> — עדכונים, שאלות ובוט שעונה מיד
+            </p>
+            <DownloadLink href="https://chat.whatsapp.com/HZtXYzt0bRg22cgSYOBYb7" label="הצטרפות לקבוצה" />
+          </CheckItem>
+        ) : (
         <CheckItem
           label="הצטרפות לקבוצת WhatsApp"
           done={!!checked["whatsapp"]}
