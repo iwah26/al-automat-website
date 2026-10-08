@@ -26,6 +26,9 @@ const ROLE_LABELS: Record<string, string> = {
 // מחזור ד׳ (10.2026) פונה לחרדים עובדים — אותו טופס, נוסח אחר.
 const WORKER_COHORTS = new Set(["round4"]);
 
+// מחזורים שמשלמים דרך מורנינג — אשראי וביט הם שני דפי תשלום נפרדים
+const MORNING_COHORTS = new Set(["round4"]);
+
 const RABBI_ROLES = ["avreich", "rav-kehila", "rav-rashi", "rav-yeshiva", "menahel", "menahel-beit-sefer", "melamed-beit-sefer", "other"];
 const WORKER_ROLES = ["sachir", "atzmai", "menahel-tzevet", "avreich", "other"];
 
@@ -194,7 +197,7 @@ export function RegistrationWizard({
   const step3Valid =
     data.communityChallenge && data.communicationChallenge && data.expectations;
 
-  async function handleSubmit() {
+  async function handleSubmit(paymentMethod?: "credit" | "bit") {
     setStatus("loading");
     try {
       // שליחת נתונים ל-Boost.space
@@ -234,6 +237,7 @@ export function RegistrationWizard({
           location,
           referralCode,
           cohort,
+          paymentMethod,
         }),
       });
 
@@ -632,13 +636,32 @@ export function RegistrationWizard({
               >
                 → חזור
               </button>
-              <button
-                onClick={handleSubmit}
-                disabled={status === "loading" || !step3Valid}
-                className="flex-1 py-4 rounded-xl bg-gradient-to-l from-brand-accent-2 to-brand-accent text-white font-bold text-lg hover:opacity-90 transition-opacity disabled:opacity-40"
-              >
-                {status === "loading" ? "שולח..." : "לתשלום ←"}
-              </button>
+              {MORNING_COHORTS.has(cohort) ? (
+                <div className="flex-1 grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => handleSubmit("credit")}
+                    disabled={status === "loading" || !step3Valid}
+                    className="py-4 rounded-xl bg-gradient-to-l from-brand-accent-2 to-brand-accent text-white font-bold text-lg hover:opacity-90 transition-opacity disabled:opacity-40"
+                  >
+                    {status === "loading" ? "שולח..." : "💳 אשראי"}
+                  </button>
+                  <button
+                    onClick={() => handleSubmit("bit")}
+                    disabled={status === "loading" || !step3Valid}
+                    className="py-4 rounded-xl bg-[#00a3a6] text-white font-bold text-lg hover:opacity-90 transition-opacity disabled:opacity-40"
+                  >
+                    {status === "loading" ? "שולח..." : "bit"}
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => handleSubmit()}
+                  disabled={status === "loading" || !step3Valid}
+                  className="flex-1 py-4 rounded-xl bg-gradient-to-l from-brand-accent-2 to-brand-accent text-white font-bold text-lg hover:opacity-90 transition-opacity disabled:opacity-40"
+                >
+                  {status === "loading" ? "שולח..." : "לתשלום ←"}
+                </button>
+              )}
             </div>
             {status === "error" && (
               <p className="text-red-400 text-center mt-4">

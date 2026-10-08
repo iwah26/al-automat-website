@@ -45,8 +45,8 @@ const COHORT_DETAILS: Record<string, CohortDetails> = {
     hours: "9:30–12:30 בבוקר",
     zoomLink: "https://us02web.zoom.us/j/85992619266",
     greeting: "שלום",
-    workshopName: "AI כמו מקצוען — בונים מערכות ואפליקציות בלי קוד",
-    group: null,
+    workshopName: "Claude Code לחרדים",
+    group: { name: "סדנת Claude Code לחרדים 🧠", link: "https://chat.whatsapp.com/HZtXYzt0bRg22cgSYOBYb7" },
   },
 };
 

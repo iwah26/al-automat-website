@@ -2,11 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { getRabanimSupabase } from "@/lib/rabanimSupabase";
 import { createOrder } from "@/lib/paypal";
 import { getPriceILS, COHORT_FORM_PATH } from "@/lib/rabanimPricing";
+import { createPaymentForm, type PaymentMethod } from "@/lib/morning";
+
+// מחזורים שמשלמים דרך מורנינג (אשראי/ביט) במקום PayPal
+const MORNING_COHORTS = new Set(["round4"]);
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { firstName, lastName, phone, email, role, communityName, location, referralCode, cohort } = body;
+    const { firstName, lastName, phone, email, role, communityName, location, referralCode, cohort, paymentMethod } = body;
 
     if (!firstName || !lastName || !phone || !email) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -35,6 +39,25 @@ export async function POST(req: NextRequest) {
     }
 
     const origin = req.nextUrl.origin;
+
+    if (MORNING_COHORTS.has(cohort)) {
+      const method: PaymentMethod = paymentMethod === "bit" ? "bit" : "credit";
+      // ביט שולח SMS למספר הזה — פורמט מקומי 05X
+      const localPhone = String(phone).replace(/^\+?972/, "0");
+      const url = await createPaymentForm({
+        registrationId: registration.id,
+        name: `${firstName} ${lastName}`.trim(),
+        email,
+        phone: localPhone,
+        amount: getPriceILS(cohort),
+        description: "סדנת Claude Code לחרדים — 9.10 + 16.10",
+        method,
+        origin,
+        failurePath: COHORT_FORM_PATH[cohort] ?? COHORT_FORM_PATH.round1,
+      });
+      return NextResponse.json({ url });
+    }
+
     const { approveUrl } = await createOrder({
       registrationId: registration.id,
       firstName,
