@@ -94,19 +94,31 @@ const transport = nodemailer.createTransport({
 let ok = 0, fail = 0;
 for (const r of list) {
   const first = r.full_name.split(/\s+/)[0] || "";
-  try {
-    await transport.sendMail({
-      from: `"על אוטומט" <${env.SMTP_USER}>`,
-      to: r.email,
-      subject: CONTENT[slot].subject,
-      html: CONTENT[slot].html(first, joinUrl(r.full_name, r.email)),
-    });
+  // שרת המייל מחזיר לפעמים 535 זמני — עד 3 ניסיונות
+  let lastErr = null;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      await transport.sendMail({
+        from: `"על אוטומט" <${env.SMTP_USER}>`,
+        to: r.email,
+        subject: CONTENT[slot].subject,
+        html: CONTENT[slot].html(first, joinUrl(r.full_name, r.email)),
+      });
+      lastErr = null;
+      break;
+    } catch (err) {
+      lastErr = err;
+      await new Promise((res) => setTimeout(res, 4000 * attempt));
+    }
+  }
+  if (lastErr) {
+    fail++;
+    console.error("send failed:", r.email.replace(/^(.).*@/, "$1***@"), lastErr.message);
+  } else {
     sent[r.email] = new Date().toISOString();
     ok++;
-  } catch (err) {
-    fail++;
-    console.error("send failed:", r.email.replace(/^(.).*@/, "$1***@"), err.message);
   }
+  await new Promise((res) => setTimeout(res, 800));
 }
 fs.mkdirSync(LOG_DIR, { recursive: true });
 fs.writeFileSync(logFile, JSON.stringify(sent, null, 1));
