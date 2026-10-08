@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getRabanimSupabase } from "@/lib/rabanimSupabase";
 import { createOrder } from "@/lib/paypal";
 import { getPriceILS, COHORT_FORM_PATH } from "@/lib/rabanimPricing";
-import { createPaymentForm, type PaymentMethod } from "@/lib/morning";
+import { createPaymentForm, priceTestCode, type PaymentMethod } from "@/lib/morning";
 
 // מחזורים שמשלמים דרך מורנינג (אשראי/ביט) במקום PayPal
 const MORNING_COHORTS = new Set(["round4"]);
@@ -10,7 +10,7 @@ const MORNING_COHORTS = new Set(["round4"]);
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { firstName, lastName, phone, email, role, communityName, location, referralCode, cohort, paymentMethod } = body;
+    const { firstName, lastName, phone, email, role, communityName, location, referralCode, cohort, paymentMethod, testCode } = body;
 
     if (!firstName || !lastName || !phone || !email) {
       return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -42,6 +42,8 @@ export async function POST(req: NextRequest) {
 
     if (MORNING_COHORTS.has(cohort)) {
       const method: PaymentMethod = paymentMethod === "bit" ? "bit" : "credit";
+      // קישור בדיקה של יצחק — ₪1 במקום המחיר המלא
+      const isPriceTest = typeof testCode === "string" && testCode === priceTestCode();
       // ביט שולח SMS למספר הזה — פורמט מקומי 05X
       const localPhone = String(phone).replace(/^\+?972/, "0");
       const url = await createPaymentForm({
@@ -49,8 +51,8 @@ export async function POST(req: NextRequest) {
         name: `${firstName} ${lastName}`.trim(),
         email,
         phone: localPhone,
-        amount: getPriceILS(cohort),
-        description: "סדנת Claude Code לחרדים — 9.10 + 16.10",
+        amount: isPriceTest ? 1 : getPriceILS(cohort),
+        description: `${isPriceTest ? "בדיקה — " : ""}סדנת Claude Code לחרדים — 9.10 + 16.10`,
         method,
         origin,
         failurePath: COHORT_FORM_PATH[cohort] ?? COHORT_FORM_PATH.round1,

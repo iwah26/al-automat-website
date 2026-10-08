@@ -9,7 +9,7 @@ const inputBase =
   "px-4 py-3 rounded-xl bg-brand-card border border-brand-accent/30 text-white placeholder-slate-400 focus:outline-none focus:border-brand-accent transition-colors text-right";
 const inputClass = "w-full " + inputBase;
 
-export function SadnaQuickForm({ referralCode, price }: { referralCode?: string; price: number }) {
+export function SadnaQuickForm({ referralCode, price, testCode }: { referralCode?: string; price: number; testCode?: string }) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [dial, setDial] = useState("972");
@@ -41,6 +41,7 @@ export function SadnaQuickForm({ referralCode, price }: { referralCode?: string;
           referralCode,
           cohort: "round4",
           paymentMethod,
+          testCode,
         }),
       });
       if (!res.ok) throw new Error("checkout failed");
@@ -53,6 +54,11 @@ export function SadnaQuickForm({ referralCode, price }: { referralCode?: string;
 
   return (
     <div className="max-w-xl mx-auto text-right">
+      {testCode && (
+        <p className="mb-6 p-3 rounded-xl border border-yellow-400/60 text-yellow-300 text-center font-bold">
+          🧪 מצב בדיקה — אם הקישור תקין, החיוב יהיה ₪1 בלבד
+        </p>
+      )}
       <h1 className="text-3xl font-black text-white leading-snug">
         שלום{" "}
         {(firstName || lastName) && (
@@ -105,7 +111,7 @@ export function SadnaQuickForm({ referralCode, price }: { referralCode?: string;
         </button>
       </div>
       <p className="text-slate-500 text-sm mt-3">
-        התשלום מאובטח דרך מורנינג (חשבונית ירוקה). החשבונית נשלחת אליך במייל.
+        באשראי אפשר לחלק לשני תשלומים. התשלום מאובטח דרך מורנינג (חשבונית ירוקה), והחשבונית נשלחת אליך במייל.
       </p>
       {status === "error" && <p className="text-red-400 text-center mt-4">משהו השתבש. נסה שוב.</p>}
     </div>

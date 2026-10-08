@@ -11,14 +11,14 @@ export const metadata = {
 export default async function SadnaFormPage({
   searchParams,
 }: {
-  searchParams: Promise<{ c?: string }>;
+  searchParams: Promise<{ c?: string; t?: string }>;
 }) {
-  const { c } = await searchParams;
+  const { c, t } = await searchParams;
   return (
     <>
       <Navbar />
       <main className="min-h-screen pt-28 pb-20 px-6">
-        <SadnaQuickForm referralCode={c} price={getPriceILS("round4")} />
+        <SadnaQuickForm referralCode={c} price={getPriceILS("round4")} testCode={t} />
       </main>
       <Footer />
     </>

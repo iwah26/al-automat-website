@@ -41,6 +41,11 @@ export function signRegistrationId(registrationId: string): string {
   return createHmac("sha256", process.env.MORNING_API_SECRET ?? "").update(registrationId).digest("hex").slice(0, 32);
 }
 
+/** קוד לקישור בדיקה (₪1) — נגזר מהסוד, אז אי אפשר לנחש אותו */
+export function priceTestCode(): string {
+  return createHmac("sha256", process.env.MORNING_API_SECRET ?? "").update("price-test").digest("hex").slice(0, 12);
+}
+
 export function verifyRegistrationSignature(registrationId: string, sig: string): boolean {
   const expected = Buffer.from(signRegistrationId(registrationId));
   const given = Buffer.from(sig);
@@ -76,7 +81,8 @@ export async function createPaymentForm(params: {
       currency: "ILS",
       vatType: 0,
       amount: params.amount,
-      maxPayments: 1,
+      // אשראי: עד 2 תשלומים (בקשת יצחק 8.10). ביט — תמיד תשלום אחד
+      maxPayments: params.method === "credit" ? 2 : 1,
       pluginId,
       group: METHOD_GROUP[params.method],
       client: { name: params.name, emails: [params.email], phone: params.phone, add: true },
