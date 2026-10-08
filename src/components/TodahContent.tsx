@@ -199,9 +199,9 @@ export function TodahContent() {
         >
           <p className="text-slate-400 text-sm mb-1">
             אחרי כל מפגש תעלה הקלטה לעמוד קורס ייעודי. הגישה מוגנת בסיסמה
-            אישית שקיבלת/תקבל בוואטסאפ — עד 2 מכשירים.
+            אישית {forWorkers ? "שנשלחה אליך במייל ובוואטסאפ" : "שקיבלת/תקבל בוואטסאפ"} — עד 2 מכשירים.
           </p>
-          <DownloadLink href="/course" label="מעבר לעמוד הקורס" />
+          <DownloadLink href={forWorkers ? "/sadna/course" : "/course"} label="מעבר לעמוד הקורס" />
         </CheckItem>
       </div>
 
@@ -210,13 +210,17 @@ export function TodahContent() {
         <section className="p-5 rounded-2xl bg-brand-card border border-brand-accent/20">
           <h2 className="text-xl font-bold text-white mb-3">📅 פרטי הסדנה</h2>
           <ul className="text-slate-300 space-y-1">
-            <li>מפגש ראשון: 12.7 (כ״ז תמוז)</li>
-            <li>מפגש שני: 19.7 (ה׳ אב)</li>
-            <li>שעה: 18:00–21:00 שעון ישראל</li>
+            <li>מפגש ראשון: {forWorkers ? "שישי 9.10" : "12.7 (כ״ז תמוז)"}</li>
+            <li>מפגש שני: {forWorkers ? "שישי 16.10" : "19.7 (ה׳ אב)"}</li>
+            <li>שעה: {forWorkers ? "9:30–12:30 בבוקר" : "18:00–21:00 שעון ישראל"}</li>
             <li>
               לינק זום (לשני המפגשים):{" "}
               <a
-                href="https://us02web.zoom.us/j/81000618945?pwd=hCmFZOH5MbK3B4FwwKSmBpVTLyB1Um.1"
+                href={
+                  forWorkers
+                    ? "https://us02web.zoom.us/j/85992619266"
+                    : "https://us02web.zoom.us/j/81000618945?pwd=hCmFZOH5MbK3B4FwwKSmBpVTLyB1Um.1"
+                }
                 className="text-brand-accent underline"
               >
                 לחץ כאן להצטרפות

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Session } from "@/data/sessions";
 
-export function CourseSidebar({ sessions }: { sessions: Session[] }) {
+export function CourseSidebar({ sessions, basePath = "/course" }: { sessions: Session[]; basePath?: string }) {
   const pathname = usePathname();
 
   return (
@@ -16,12 +16,12 @@ export function CourseSidebar({ sessions }: { sessions: Session[] }) {
         </div>
         <nav className="p-3 space-y-1">
           {sessions.map((session) => {
-            const isActive = pathname === `/course/${session.id}`;
+            const isActive = pathname === `${basePath}/${session.id}`;
             const hasVideo = !!(session.bunnyLibraryId && session.bunnyVideoId);
             return (
               <Link
                 key={session.id}
-                href={`/course/${session.id}`}
+                href={`${basePath}/${session.id}`}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                   isActive
                     ? "bg-course-accent/10 border border-course-accent/30"

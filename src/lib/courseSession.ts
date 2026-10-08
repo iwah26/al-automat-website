@@ -1,6 +1,8 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 export const COURSE_COOKIE = "rabanim_course_session";
+// מחזור ד׳ — אתר הקלטות נפרד (/sadna/course), עוגייה נפרדת
+export const COURSE_COOKIE_ROUND4 = "round4_course_session";
 export const DEVICE_COOKIE = "rabanim_device_id";
 
 interface SessionPayload {

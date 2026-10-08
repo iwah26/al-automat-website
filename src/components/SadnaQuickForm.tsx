@@ -94,29 +94,33 @@ export function SadnaQuickForm({ referralCode, price, testCode }: { referralCode
       </div>
 
       <p className="text-white font-bold text-xl mt-8 mb-3">לתשלום — {price}₪</p>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-3 gap-2">
         <button
           onClick={() => pay("credit")}
           disabled={!valid || status === "loading"}
-          className="py-4 rounded-xl bg-gradient-to-l from-brand-accent-2 to-brand-accent text-white font-bold text-lg hover:opacity-90 transition-opacity disabled:opacity-40"
+          className="py-4 px-2 rounded-xl text-white font-bold leading-tight hover:opacity-90 transition-opacity disabled:opacity-40 bg-gradient-to-l from-brand-accent-2 to-brand-accent"
         >
-          {status === "loading" ? "מעביר..." : "💳 אשראי"}
-        </button>
-        <button
-          onClick={() => pay("bit")}
-          disabled={!valid || status === "loading"}
-          className="py-4 rounded-xl bg-[#00a3a6] text-white font-bold text-lg hover:opacity-90 transition-opacity disabled:opacity-40"
-        >
-          {status === "loading" ? "מעביר..." : "bit"}
+          💳 אשראי
+          <span className="block text-sm font-normal opacity-90">תשלום אחד</span>
         </button>
         <button
           onClick={() => pay("credit2")}
           disabled={!valid || status === "loading"}
-          className="col-span-2 py-3 rounded-xl border border-brand-accent/50 text-white font-semibold hover:bg-brand-card transition-colors disabled:opacity-40"
+          className="py-4 px-2 rounded-xl text-white font-bold leading-tight hover:opacity-90 transition-opacity disabled:opacity-40 bg-gradient-to-l from-brand-accent-2 to-brand-accent"
         >
-          💳 אשראי ב-2 תשלומים ({price / 2}₪ × 2)
+          💳 אשראי
+          <span className="block text-sm font-normal opacity-90">2 תשלומים</span>
+        </button>
+        <button
+          onClick={() => pay("bit")}
+          disabled={!valid || status === "loading"}
+          className="py-4 px-2 rounded-xl text-white font-bold leading-tight hover:opacity-90 transition-opacity disabled:opacity-40 bg-[#00a3a6]"
+        >
+          bit
+          <span className="block text-sm font-normal opacity-90">תשלום אחד</span>
         </button>
       </div>
+      {status === "loading" && <p className="text-slate-300 text-center mt-3">מעביר לתשלום...</p>}
       <p className="text-slate-500 text-sm mt-3">
         התשלום מאובטח דרך מורנינג (חשבונית ירוקה), והחשבונית נשלחת אליך במייל.
       </p>
