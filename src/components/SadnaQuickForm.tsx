@@ -20,7 +20,7 @@ export function SadnaQuickForm({ referralCode, price, testCode }: { referralCode
   const emailValid = EMAIL_REGEX.test(email);
   const valid = firstName.trim() && lastName.trim() && phone.trim() && emailValid;
 
-  async function pay(paymentMethod: "credit" | "bit") {
+  async function pay(paymentMethod: "credit" | "credit2" | "bit") {
     setStatus("loading");
     try {
       try {
@@ -109,9 +109,16 @@ export function SadnaQuickForm({ referralCode, price, testCode }: { referralCode
         >
           {status === "loading" ? "מעביר..." : "bit"}
         </button>
+        <button
+          onClick={() => pay("credit2")}
+          disabled={!valid || status === "loading"}
+          className="col-span-2 py-3 rounded-xl border border-brand-accent/50 text-white font-semibold hover:bg-brand-card transition-colors disabled:opacity-40"
+        >
+          💳 אשראי ב-2 תשלומים ({price / 2}₪ × 2)
+        </button>
       </div>
       <p className="text-slate-500 text-sm mt-3">
-        באשראי אפשר לחלק לשני תשלומים. התשלום מאובטח דרך מורנינג (חשבונית ירוקה), והחשבונית נשלחת אליך במייל.
+        התשלום מאובטח דרך מורנינג (חשבונית ירוקה), והחשבונית נשלחת אליך במייל.
       </p>
       {status === "error" && <p className="text-red-400 text-center mt-4">משהו השתבש. נסה שוב.</p>}
     </div>

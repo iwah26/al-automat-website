@@ -41,7 +41,7 @@ export async function POST(req: NextRequest) {
     const origin = req.nextUrl.origin;
 
     if (MORNING_COHORTS.has(cohort)) {
-      const method: PaymentMethod = paymentMethod === "bit" ? "bit" : "credit";
+      const method: PaymentMethod = paymentMethod === "bit" || paymentMethod === "credit2" ? paymentMethod : "credit";
       // קישור בדיקה של יצחק — ₪1 במקום המחיר המלא
       const isPriceTest = typeof testCode === "string" && testCode === priceTestCode();
       // ביט שולח SMS למספר הזה — פורמט מקומי 05X

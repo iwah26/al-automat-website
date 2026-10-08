@@ -5,8 +5,10 @@ import { createHmac, timingSafeEqual } from "crypto";
 const API = "https://api.greeninvoice.co.il/api/v1";
 const CLEARING_PLUGIN_TYPE = 12200;
 
-export type PaymentMethod = "credit" | "bit";
-const METHOD_GROUP: Record<PaymentMethod, number> = { credit: 100, bit: 120 };
+// credit2 = אשראי עד 2 תשלומים. דף Grow בוחר תמיד את המקסימום כברירת מחדל ואין שדה API
+// שמשנה את זה (נבדק 8.10), לכן הבחירה בין 1 ל-2 נעשית אצלנו בכפתור נפרד.
+export type PaymentMethod = "credit" | "credit2" | "bit";
+const METHOD_GROUP: Record<PaymentMethod, number> = { credit: 100, credit2: 100, bit: 120 };
 
 async function morningFetch(path: string, init: RequestInit & { token?: string } = {}) {
   const res = await fetch(`${API}${path}`, {
@@ -81,8 +83,7 @@ export async function createPaymentForm(params: {
       currency: "ILS",
       vatType: 0,
       amount: params.amount,
-      // אשראי: עד 2 תשלומים (בקשת יצחק 8.10). ביט — תמיד תשלום אחד
-      maxPayments: params.method === "credit" ? 2 : 1,
+      maxPayments: params.method === "credit2" ? 2 : 1,
       pluginId,
       group: METHOD_GROUP[params.method],
       client: { name: params.name, emails: [params.email], phone: params.phone, add: true },
