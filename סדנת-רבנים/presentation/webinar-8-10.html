@@ -1,0 +1,1751 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>וובינר 8.10 — קלוד קוד לחרדים</title>
+<style>
+  @font-face{ font-family:'FB Basis'; src:url('file:///Library/Fonts/FbBasis-CondensedThin.otf'); font-weight:100; }
+  @font-face{ font-family:'FB Basis'; src:url('file:///Library/Fonts/FbBasis-CondensedLight.otf'); font-weight:300; }
+  @font-face{ font-family:'FB Basis'; src:url('file:///Library/Fonts/FbBasis-CondensedRegular.otf'); font-weight:400; }
+  @font-face{ font-family:'FB Basis'; src:url('file:///Library/Fonts/FbBasis-CondensedMedium.otf'); font-weight:500; }
+  @font-face{ font-family:'FB Basis'; src:url('file:///Library/Fonts/FbBasis-CondensedBold.otf'); font-weight:700; }
+  @font-face{ font-family:'FB Basis'; src:url('file:///Library/Fonts/FbBasis-CondensedBlack.otf'); font-weight:900; }
+
+  :root{
+    --ink:#160d26;
+    --purple-1:#2e1e45;
+    --purple-2:#3a2657;
+    --purple-3:#412a62;
+    --lavender:#c3b0e0;
+    --violet:#8a68b8;
+    --line:#8081be;
+    --paper:#e8e4f5;
+    --paper-dim:#b6aecb;
+    --white:#ffffff;
+    --gold:#e0b768;
+    --sess-a:#7a59a5;
+    --radius:18px;
+    --font:'FB Basis','Heebo',-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:var(--font);
+    font-weight:400;
+    background:var(--ink);
+    color:var(--white);
+    direction:rtl;
+  }
+  ::selection{ background:var(--violet); color:#fff; }
+  .deck{ width:100%; }
+
+  .slide{
+    position:relative;
+    min-height:100vh;
+    width:100%;
+    padding:70px 8vw 46px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:26px;
+    overflow:hidden;
+    background:
+      radial-gradient(1100px 620px at 88% -10%, rgba(122,89,165,0.30), transparent 60%),
+      radial-gradient(900px 560px at -10% 108%, rgba(103,67,154,0.28), transparent 60%),
+      linear-gradient(180deg,var(--purple-1) 0%, var(--purple-2) 55%, var(--purple-3) 100%);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+  }
+  .slide.dark{
+    background:
+      radial-gradient(900px 520px at 90% 0%, rgba(122,89,165,0.18), transparent 60%),
+      linear-gradient(180deg,#1a1130 0%, #201636 100%);
+  }
+
+  .slide-index{ position:absolute; top:26px; left:8vw; font-size:13px; font-weight:300; color:var(--paper-dim); letter-spacing:0.06em; font-variant-numeric:tabular-nums; }
+  .slide-track{ position:absolute; top:26px; right:8vw; font-size:13px; font-weight:500; letter-spacing:0.1em; padding:5px 14px; border-radius:999px; border:1px solid var(--sess-a); color:#d9c9f0; }
+
+  .eyebrow{ display:inline-flex; align-items:center; gap:10px; font-size:15px; font-weight:300; letter-spacing:0.12em; color:var(--lavender); }
+  .eyebrow::before{ content:""; display:inline-block; width:26px; height:2px; background:var(--lavender); }
+
+  h1{ font-family:var(--font); font-size:clamp(38px,5.2vw,72px); font-weight:900; line-height:1.06; letter-spacing:-0.005em; margin:0; text-wrap:balance; }
+  h1 .accent{ font-weight:100; background:linear-gradient(90deg,#ffffff 0%, var(--lavender) 100%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .pb-reveal-btn{ font-family:var(--font); font-weight:900; font-size:26px; background:linear-gradient(135deg,#8f4fd7,#5f3698); color:#fff; border:1px solid rgba(255,255,255,0.18); border-radius:16px; padding:16px 40px; cursor:pointer; box-shadow:0 12px 34px rgba(143,79,215,0.45); animation:vsPulse 2.2s ease-in-out infinite; }
+  .pb-reveal{ display:none; margin-top:10px; }
+  .pb-reveal.show{ display:block; }
+  .pb-reveal .lead{ font-size:17px; color:var(--paper-dim); margin-bottom:10px; }
+  .pb-costs{ max-width:600px; }
+  .pb-costs .row{ display:flex; justify-content:space-between; gap:20px; padding:5px 0; border-bottom:1px solid rgba(255,255,255,0.08); font-size:17px; color:var(--paper); opacity:0; }
+  .pb-costs .row span:last-child{ font-weight:700; color:#fff; white-space:nowrap; }
+  .pb-reveal.show .pb-costs .row{ animation:fadeUp 0.45s ease both; }
+  .pb-total{ display:flex; justify-content:space-between; gap:20px; max-width:600px; margin-top:10px; font-size:19px; color:var(--paper); }
+  .pb-strike{ position:relative; display:inline-block; font-weight:900; color:#fff; }
+  .pb-strike::after{ content:""; position:absolute; left:-4px; right:-4px; top:52%; height:3px; width:0; background:#ef4444; border-radius:2px; }
+  .pb-reveal.show .pb-strike::after{ animation:strikeIn 0.5s ease forwards; animation-delay:1.15s; }
+  @keyframes strikeIn{ to{ width:calc(100% + 8px); } }
+  .pb-final{ margin-top:22px; display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; opacity:0; }
+  .pb-reveal.show .pb-final{ animation:fadeUp 0.6s ease both; animation-delay:1.85s; }
+  .pb-final .lab{ font-size:22px; color:var(--paper); }
+  .pb-price{ font-family:var(--font); font-weight:900; font-size:clamp(56px,8vw,104px); line-height:0.9; background:linear-gradient(120deg,#ffffff,var(--gold)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 4px 34px rgba(224,183,104,0.55)); }
+  .pb-deadline{ margin-top:6px; font-size:15px; color:var(--gold); font-weight:700; opacity:0; }
+  .pb-reveal.show .pb-deadline{ animation:fadeUp 0.5s ease both; animation-delay:2.2s; }
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(14px); } to{ opacity:1; transform:translateY(0); } }
+  .si-label{ font-weight:900; font-size:20px; color:#22c55e; margin-bottom:10px; }
+  .no-label{ font-weight:900; font-size:20px; color:#ef4444; margin-bottom:10px; }
+  .no-item{ display:flex; align-items:flex-start; gap:13px; font-size:18px; color:var(--paper-dim); padding:4px 0; }
+  .no-item .x{ color:#ef4444; font-weight:900; flex-shrink:0; }
+  .no-item .txt{ text-decoration:line-through; text-decoration-color:rgba(239,68,68,0.75); }
+  .rs-line{ display:flex; align-items:center; gap:16px; font-size:23px; font-weight:500; color:#fff; padding:11px 0; opacity:0; transform:translateY(16px); }
+  .rs-line.on{ animation:rsPop 0.5s cubic-bezier(.2,.8,.3,1.25) forwards; }
+  @keyframes rsPop{ to{ opacity:1; transform:translateY(0); } }
+  .rs-num{ font-family:var(--font); font-weight:900; font-size:22px; width:46px; height:46px; flex-shrink:0; border-radius:12px; background:rgba(224,183,104,0.15); border:1px solid rgba(224,183,104,0.4); color:var(--gold); display:flex; align-items:center; justify-content:center; }
+  .pay-btn{ display:inline-flex; align-items:center; gap:12px; font-family:var(--font); font-weight:900; font-size:32px; background:linear-gradient(135deg,var(--gold),#c99226); color:#1a1130; border:none; border-radius:18px; padding:20px 46px; cursor:pointer; text-decoration:none; box-shadow:0 14px 40px rgba(224,183,104,0.45); animation:vsPulse 2.2s ease-in-out infinite; }
+  .check-item.hl-item{ background:rgba(224,183,104,0.12); border:1px solid rgba(224,183,104,0.38); border-radius:12px; padding:10px 14px; color:#fff; font-weight:500; break-inside:avoid; }
+  .check-item.hl-item .check-mark{ background:var(--gold); color:#1a1130; border-color:var(--gold); }
+  .hora-card{ background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); border-radius:12px; padding:13px 16px; display:flex; align-items:center; gap:13px; }
+  .hora-card.main{ border-color:var(--gold); background:rgba(224,183,104,0.1); }
+  .hora-card .flags{ font-size:25px; line-height:1; flex-shrink:0; }
+  .hora-card .pais{ font-size:15px; color:var(--paper); flex:1; }
+  .hora-card .hora{ font-family:var(--font); font-weight:700; font-size:20px; color:var(--gold); white-space:nowrap; direction:ltr; }
+  .cc-logo{ animation:ccGlow 2.8s ease-in-out infinite; }
+  @keyframes ccGlow{ 0%,100%{ box-shadow:0 10px 30px rgba(0,0,0,0.4); transform:translateY(0); } 50%{ box-shadow:0 0 46px 7px rgba(217,119,87,0.5), 0 10px 30px rgba(0,0,0,0.4); transform:translateY(-5px); } }
+  .cc-title{ font-family:var(--font); font-weight:900; line-height:0.95; background:linear-gradient(100deg,#ffffff 0%,#D97757 42%,#ffd9a0 66%,#ffffff 100%); background-size:250% 100%; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; filter:drop-shadow(0 4px 34px rgba(217,119,87,0.4)); animation:ccShine 5s linear infinite; }
+  @keyframes ccShine{ 0%{ background-position:150% 0; } 100%{ background-position:-50% 0; } }
+  @media (prefers-reduced-motion:reduce){ .cc-logo,.cc-title{ animation:none; } }
+  .agent-ic{ width:48px; height:48px; border-radius:13px; background:rgba(224,183,104,0.12); border:1px solid rgba(224,183,104,0.32); display:flex; align-items:center; justify-content:center; }
+  .agent-ic svg{ width:27px; height:27px; }
+  .card ul.blist{ margin:6px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:11px; }
+  .card ul.blist li{ position:relative; padding-inline-start:22px; font-size:16.5px; font-weight:300; line-height:1.45; color:var(--paper); }
+  .card ul.blist li::before{ content:""; position:absolute; inset-inline-start:0; top:8px; width:9px; height:9px; border-radius:50%; background:var(--gold); }
+  .logo-row{ display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+  .logo-chip{ display:inline-flex; align-items:center; gap:8px; padding:8px 14px; border-radius:13px; font-weight:700; font-size:15px; color:#fff; border:1px solid rgba(255,255,255,0.16); background:rgba(255,255,255,0.06); direction:ltr; }
+  .logo-chip svg{ width:21px; height:21px; flex-shrink:0; }
+  .vs-badge{ flex-shrink:0; width:86px; height:86px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:var(--font); font-weight:900; font-size:34px; background:radial-gradient(circle at 50% 38%, #33205a, #140c26); border:2px solid var(--gold); animation:vsPulse 2s ease-in-out infinite; }
+  .vs-badge span{ background:linear-gradient(120deg,#ffffff,var(--gold)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  @keyframes vsPulse{ 0%,100%{ transform:scale(1); box-shadow:0 0 0 0 rgba(224,183,104,0.45); } 50%{ transform:scale(1.12); box-shadow:0 0 30px 5px rgba(224,183,104,0.5); } }
+  @media (max-width:900px){ .vs-badge{ margin:6px auto; } }
+  .ia-fx{ display:inline-block; padding:0 0.12em; color:#e6d8ff; transform-origin:center; animation:iaNeon 2.6s ease-in-out infinite, iaGrow 2.6s ease-in-out infinite; }
+  @keyframes iaNeon{ 0%,100%{ text-shadow:0 0 8px #8f4fd7,0 0 22px #8f4fd7; color:#e6d8ff; } 50%{ text-shadow:0 0 12px #e0b768,0 0 34px #e0b768; color:#fff; } }
+  @keyframes iaGrow{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.09); } }
+  @media (prefers-reduced-motion:reduce){ .ia-fx{ animation:none; text-shadow:0 0 10px #8f4fd7; } }
+  h2{ font-family:var(--font); font-size:clamp(26px,3.4vw,44px); font-weight:700; line-height:1.14; margin:0; text-wrap:balance; }
+  .lede{ font-size:clamp(17px,1.6vw,22px); font-weight:300; color:var(--paper); max-width:62ch; line-height:1.6; }
+  .cover-sub{ font-size:clamp(19px,2vw,26px); font-weight:500; color:var(--white); max-width:640px; line-height:1.5; }
+
+  .content{ max-width:1180px; }
+  .grid{ display:grid; gap:18px; }
+  .grid-2{ grid-template-columns:1fr 1fr; }
+  .grid-3{ grid-template-columns:repeat(3,1fr); }
+  @media (max-width:900px){ .grid-2,.grid-3{ grid-template-columns:1fr; } }
+
+  .card{ background:rgba(255,255,255,0.055); border:1px solid rgba(255,255,255,0.14); border-radius:var(--radius); padding:24px 26px; display:flex; flex-direction:column; gap:10px; }
+  .card h3{ font-family:var(--font); font-size:19px; font-weight:700; margin:0; color:var(--white); }
+  .card p{ margin:0; font-size:15.5px; font-weight:300; line-height:1.6; color:var(--paper); }
+  .card .tag{ align-self:flex-start; font-size:12px; font-weight:500; letter-spacing:0.08em; color:var(--lavender); border:1px solid rgba(195,176,224,0.4); padding:3px 10px; border-radius:999px; }
+
+  .table-wrap{ overflow-x:auto; border-radius:var(--radius); border:1px solid rgba(255,255,255,0.14); }
+  table{ border-collapse:collapse; width:100%; min-width:480px; font-size:15.5px; }
+  th,td{ padding:14px 20px; text-align:right; border-bottom:1px solid rgba(255,255,255,0.1); }
+  th{ background:rgba(255,255,255,0.07); font-weight:500; color:var(--lavender); font-size:13px; letter-spacing:0.06em; }
+  td{ color:var(--paper); font-weight:300; }
+  tr:last-child td{ border-bottom:none; }
+  td.hl{ color:var(--white); font-weight:700; }
+
+  .timeline{ display:flex; flex-direction:column; gap:10px; }
+  .tl-row{ display:flex; align-items:center; gap:16px; }
+  .tl-time{ width:118px; flex-shrink:0; font-variant-numeric:tabular-nums; font-size:13.5px; font-weight:500; color:var(--paper-dim); text-align:left; }
+  .tl-bar-track{ flex:1; background:rgba(255,255,255,0.08); border-radius:10px; height:46px; position:relative; overflow:hidden; }
+  .tl-bar{ height:100%; border-radius:10px; display:flex; align-items:center; padding:0 18px; font-weight:700; font-size:14.5px; color:#1a1130; white-space:nowrap; }
+
+  .prompt{ background:#120b20; border:1px solid rgba(224,183,104,0.35); border-radius:var(--radius); padding:22px 24px; direction:rtl; }
+  .prompt .prompt-label{ font-size:12px; font-weight:700; letter-spacing:0.1em; color:var(--gold); margin-bottom:10px; display:block; }
+  .prompt pre{ margin:0; white-space:pre-wrap; word-break:break-word; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:15px; font-weight:400; line-height:1.65; color:#f3ecff; direction:rtl; text-align:right; }
+
+  .quote{ border-right:4px solid var(--gold); padding:6px 28px; font-size:clamp(22px,2.6vw,32px); font-weight:700; line-height:1.42; color:var(--white); max-width:900px; }
+
+  .checklist{ display:flex; flex-direction:column; gap:12px; }
+  .check-item{ display:flex; align-items:flex-start; gap:14px; font-size:17px; font-weight:400; color:var(--paper); }
+  .check-mark{ flex-shrink:0; width:26px; height:26px; border-radius:8px; background:rgba(195,176,224,0.18); border:1px solid var(--lavender); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:var(--lavender); }
+
+  .flow{ display:flex; flex-direction:column; gap:0; align-items:center; width:100%; max-width:520px; }
+  .flow-box{ width:100%; text-align:center; padding:16px 20px; border-radius:14px; background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.16); font-weight:700; font-size:16px; }
+  .flow-box small{ display:block; font-weight:300; font-size:13px; color:var(--paper-dim); margin-top:4px; }
+  .flow-arrow{ font-size:20px; color:var(--lavender); padding:6px 0; }
+
+  .divider-wrap{ display:flex; align-items:center; gap:40px; flex-wrap:wrap; }
+  .divider-num{ font-family:var(--font); font-size:clamp(90px,14vw,190px); font-weight:900; line-height:0.8; background:linear-gradient(160deg,#ffffff 0%, var(--lavender) 70%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+
+  .badge{ display:inline-block; background:rgba(122,89,165,0.25); border:1.5px solid var(--line); color:var(--paper); font-size:15px; font-weight:500; padding:8px 20px; border-radius:999px; }
+  .foot-note{ font-size:13.5px; color:var(--paper-dim); font-weight:300; }
+  .logo{ font-size:14px; font-weight:500; letter-spacing:0.06em; color:var(--paper-dim); display:flex; align-items:center; gap:8px; }
+  .logo .dot{ width:8px; height:8px; border-radius:50%; background:var(--gold); }
+
+  .navbar{ position:fixed; bottom:34px; left:50%; transform:translateX(-50%); display:flex; align-items:center; gap:10px; background:rgba(20,13,36,0.72); backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.15); border-radius:999px; padding:9px 14px; z-index:50; }
+  .navbar button{ all:unset; cursor:pointer; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--white); font-size:15px; font-weight:700; }
+  .navbar button:hover{ background:rgba(255,255,255,0.15); }
+  .navbar .counter{ font-size:13px; font-weight:500; color:var(--paper-dim); min-width:52px; text-align:center; font-variant-numeric:tabular-nums; }
+
+  /* presenter-only clock strip — thin, low-contrast, bottom edge */
+  .clockstrip{
+    position:fixed; bottom:0; left:0; right:0; height:20px;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,0.28);
+    font-size:10px; font-weight:300; letter-spacing:0.14em;
+    color:rgba(232,228,245,0.42);
+    font-variant-numeric:tabular-nums;
+    z-index:40; pointer-events:none;
+    font-family:var(--font);
+  }
+
+  @media print{
+    .navbar,.slide-index,.slide-track,.clockstrip{ display:none; }
+    .slide{ min-height:auto; page-break-after:always; }
+  }
+
+/* ===== BRAIN DECK · EDIT MODE UI v2 (additive) ===== */
+#ed-fab{position:fixed;bottom:24px;right:24px;z-index:9998;background:linear-gradient(135deg,#5f3698,#8f4fd7);border:1px solid rgba(255,255,255,.18);color:#fff;border-radius:50px;padding:13px 24px;font-size:16px;font-weight:900;cursor:pointer;box-shadow:0 14px 40px rgba(143,79,215,.45);font-family:'Futurism',sans-serif;transition:transform .15s;}
+#ed-fab:hover{transform:translateY(-2px);}
+#ed-toolbar{position:fixed;top:14px;right:14px;z-index:9999;display:none;flex-direction:column;gap:7px;background:rgba(13,15,36,.96);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:9px 11px;box-shadow:0 18px 50px rgba(0,0,0,.6);font-family:'Futurism',sans-serif;direction:rtl;max-width:96vw;}
+#ed-toolbar.on{display:flex;}
+#ed-row{display:flex;gap:7px;align-items:center;flex-wrap:wrap;}
+#ed-ctx{display:none;gap:7px;align-items:center;flex-wrap:wrap;border-top:1px solid rgba(255,255,255,.1);padding-top:8px;}
+.ed-ctx-lbl{font-size:13px;color:#9a9ba6;font-weight:700;}
+.ed-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#dfe0e6;border-radius:10px;padding:9px 13px;font-size:14px;font-weight:700;cursor:pointer;transition:all .14s;white-space:nowrap;font-family:inherit;}
+.ed-btn:hover{background:rgba(98,170,191,.18);border-color:rgba(98,170,191,.5);color:#fff;}
+.ed-btn.primary{background:linear-gradient(135deg,#5f3698,#8f4fd7);border-color:rgba(143,79,215,.5);color:#fff;}
+.ed-btn.danger:hover{background:rgba(239,68,68,.2);border-color:rgba(239,68,68,.5);color:#fff;}
+.ed-sep{width:1px;height:24px;background:rgba(255,255,255,.14);margin:0 3px;}
+.ed-dot{width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.25);cursor:pointer;padding:0;transition:transform .12s;}
+.ed-dot:hover{transform:scale(1.18);border-color:#fff;}
+.ed-dot.grad-dot{background:linear-gradient(135deg,#71b9c3,#549cbc,#2d70aa,#6556d0,#9c4ed7);}
+#ed-hint{position:fixed;bottom:24px;left:24px;z-index:9998;background:rgba(13,15,36,.92);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 16px;font-size:13px;color:#9a9ba6;font-family:'Futurism',sans-serif;display:none;direction:rtl;max-width:46vw;}
+body.ed-on #ed-hint{display:block;}
+#ed-toast{position:fixed;bottom:78px;left:50%;transform:translateX(-50%) translateY(12px);z-index:9999;background:rgba(143,79,215,.95);color:#fff;padding:11px 22px;border-radius:10px;font-size:15px;font-weight:700;font-family:'Futurism',sans-serif;opacity:0;pointer-events:none;transition:all .25s;box-shadow:0 12px 34px rgba(0,0,0,.5);direction:rtl;}
+#ed-toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+#ed-restore{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:10000;display:flex;gap:10px;align-items:center;background:rgba(13,15,36,.97);border:1px solid rgba(143,79,215,.5);border-radius:12px;padding:10px 18px;font-family:'Futurism',sans-serif;font-size:14px;color:#dfe0e6;direction:rtl;box-shadow:0 18px 50px rgba(0,0,0,.6);}
+#ed-guide-v{position:absolute;left:959px;top:0;width:2px;height:1080px;background:rgba(98,170,191,.85);z-index:9990;display:none;pointer-events:none;box-shadow:0 0 10px rgba(98,170,191,.7);}
+#ed-guide-h{position:absolute;top:539px;left:0;height:2px;width:1920px;background:rgba(98,170,191,.85);z-index:9990;display:none;pointer-events:none;box-shadow:0 0 10px rgba(98,170,191,.7);}
+body.ed-on .ed-hover{outline:1.5px dashed rgba(98,170,191,.6) !important;outline-offset:3px;cursor:move;}
+body.ed-on .ed-selected{outline:2px solid #8f4fd7 !important;outline-offset:3px;}
+[contenteditable=true]{cursor:text !important;outline:2px solid #62aabf !important;outline-offset:3px;user-select:text !important;-webkit-user-select:text !important;}
+.ed-img,.ed-blur,.ed-shape,.ed-textbox,.ed-clone{position:absolute;z-index:50;}
+.ed-img img{width:100%;height:100%;display:block;object-fit:cover;border-radius:6px;pointer-events:none;}
+.ed-blur{backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);background:rgba(20,22,48,.16);border-radius:10px;}
+.ed-blur.ed-opaque{background:#14163a !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;border:1px solid rgba(255,255,255,.06);}
+.ed-shape{background:rgba(143,79,215,.22);border:2px solid rgba(143,79,215,.6);border-radius:12px;}
+.ed-textbox{font-family:'Futurism',sans-serif;font-weight:900;font-size:40px;color:#fff;min-width:60px;line-height:1.1;}
+body.ed-on .ed-img,body.ed-on .ed-blur,body.ed-on .ed-shape,body.ed-on .ed-textbox,body.ed-on .ed-clone{cursor:move;}
+.ed-handle{position:absolute;z-index:60;width:20px;height:20px;border-radius:50%;background:#8f4fd7;border:2px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.5);}
+.ed-handle.br{cursor:nwse-resize;right:-10px;bottom:-10px;}
+.ed-del{position:absolute;z-index:61;top:-15px;right:-15px;width:28px;height:28px;border-radius:50%;background:#ef4444;color:#fff;border:2px solid #fff;font-size:17px;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;}
+
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- 0 — APERTURA / פתיחה -->
+  <section class="slide" data-clock="20:55" style="align-items:flex-start;justify-content:center;padding:70px 5vw 46px;background:linear-gradient(270deg,rgba(20,12,38,0.86) 0%,rgba(20,12,38,0.74) 34%,rgba(20,12,38,0.16) 58%,rgba(20,12,38,0.10) 100%),url('webinar-20-8-fondo.png') center/cover no-repeat;">
+    <span class="slide-index">01 / 38</span>
+    <div style="display:flex;flex-direction:column;align-items:flex-start;gap:20px;width:42%;text-align:right;">
+      <h1 style="font-size:clamp(38px,4.6vw,66px);line-height:1.05;"><span class="accent" style="font-weight:900;">קלוד קוד לחרדים.</span></h1>
+      <div style="font-size:clamp(17px,1.55vw,23px);font-weight:500;line-height:1.5;color:var(--white);">
+        תכניס את זה טוב טוב לראש: אם לא תדע AI <span style="color:var(--paper-dim);font-weight:300;">כמו מקצוען</span> —<br>
+        <span style="color:var(--gold);font-weight:900;">תישאר מאחור.</span>
+      </div>
+      <div style="height:2px;width:110px;background:var(--gold);border-radius:2px;"></div>
+      <div style="font-size:clamp(13px,1.1vw,16px);color:var(--paper);font-weight:400;line-height:1.65;">
+        לחרדים עובדים · בלי ידע בתכנות · בלי רקע טכני<br>
+        <span style="color:var(--lavender);">לבנות מערכות ואפליקציות לעבודה — בלי לדעת קוד.</span>
+      </div>
+      <span class="badge" style="margin-top:4px;">מתחילים בעוד רגע · חמישי 8.10 · 21:00</span>
+    </div>
+  </section>
+
+  <!-- 1 — COVER -->
+  <section class="slide" data-clock="21:00">
+    <span class="slide-index">02 / 38</span>
+    <div style="display:flex;flex-direction:column;align-items:flex-start;gap:26px;max-width:940px;">
+      <div class="logo"><span class="dot"></span> אל אוטומט · אוטומציה עסקית CRM ובוטים</div>
+      <span class="badge">וובינר חי · חינם · 45 דקות</span>
+      <h1 style="font-size:clamp(32px,4.4vw,60px);line-height:1.08;"><span class="accent" style="font-weight:100;">Claude Code</span> לחרדים<br><span style="color:var(--gold);font-weight:900;">בונים מערכות ואפליקציות לעבודה</span> — בלי לדעת קוד</h1>
+      <div class="cover-sub">היכרות עם הכלי — לקראת סדנת ההעמקה המעשית.</div>
+      <div class="foot-note" style="font-size:16px;color:var(--paper);">לחרדים עובדים · בלי ידע בתכנות · בלי רקע טכני</div>
+      <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-start;margin-top:4px;">
+        <span class="badge">יום חמישי · 8.10.26 · 21:00 · בזום</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 — PART A DIVIDER -->
+  <section class="slide dark" data-clock="21:00–21:01">
+    <span class="slide-index">03 / 38</span>
+    <div class="divider-wrap">
+      <div class="divider-num">א'</div>
+      <div>
+        <span class="eyebrow">פתיחה · מי אני · למי זה מיועד</span>
+        <h1 style="margin-top:10px;">הקדמה</h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 — MI ANI -->
+  <section class="slide" data-clock="21:01–21:03">
+    <span class="slide-index">04 / 38</span>
+    <span class="eyebrow">מי אני</span>
+    <h2>יצחק ווחנון</h2>
+    <div class="content" style="display:flex;gap:40px;flex-wrap:wrap;align-items:stretch;">
+      <img src="../profile-sm.png" alt="יצחק ווחנון" style="width:270px;align-self:stretch;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.14);object-fit:cover;flex-shrink:0;">
+      <div class="grid grid-2" style="flex:1;min-width:280px;">
+        <div class="card"><h3>הרקע</h3><ul class="blist"><li>בונה מערכות אוטומציה וסוכני AI</li><li>מ-0 לתוכנה עובדת</li><li>בלי רקע בתכנות</li><li>הכל נלמד לבד, עם AI</li></ul></div>
+        <div class="card" style="border-color:var(--gold);"><h3>הקשר לערב הזה</h3><ul class="blist"><li>שימשתי כרב קהילה במלגה</li><li>הכרתי מקרוב את אותם אתגרים — בלי כלים, בלי תקציב, בלי מי שיעזור</li><li>למדתי אוטומציות ומערכות CRM</li><li>מנהל היום גם את שירותי קודש</li><li>כל מה שתראו הערב — בניתי לבד</li></ul></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 — AUDIENCE -->
+  <section class="slide" data-clock="21:03–21:05">
+    <span class="slide-index">05 / 38</span>
+    <span class="eyebrow">למי זה מיועד</span>
+    <h2>מי שעושה לבד את העבודה של צוות שלם</h2>
+    <img src="one-man-show-he.png" alt="עושה הכל לבד" class="content" style="width:100%;max-width:860px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.12);display:block;">
+    <div class="foot-note content" style="font-size:16px;color:var(--paper);">שכירים · עצמאים · מנהלים · אנשי משרד — כל מי שעובד</div>
+    <div class="grid grid-2 content" style="margin-top:2px;">
+      <div class="card"><span class="tag">לא נדרש</span><h3>ידע בתכנות</h3></div>
+      <div class="card"><span class="tag">כן נדרש</span><h3>מחשב, אינטרנט, רצון ללמוד</h3></div>
+    </div>
+  </section>
+
+  <!-- 5 — POLL QUESTION -->
+  <section class="slide dark poll-slide" data-clock="21:05–21:07" data-poll-key="מי מכם משתמש">
+    <span class="slide-index">06 / 38</span>
+    <span class="eyebrow">שאלה לקהל</span>
+    <h1>מי מכם משתמש<br>בכלי&nbsp;<span class="ia-fx">AI</span>&nbsp;היום?</h1>
+    <div class="cover-sub">ענו לסקר שעולה על המסך.</div>
+  </section>
+
+  <!-- 6 — POLL QUESTION 2 -->
+  <section class="slide dark poll-slide" data-clock="21:07–21:09" data-poll-key="משלם">
+    <span class="slide-index">07 / 38</span>
+    <span class="eyebrow">שאלה לקהל</span>
+    <h1>מי מכם <span class="accent" style="font-weight:100;">משלם</span><br>על כלי&nbsp;<span class="ia-fx">AI</span>?</h1>
+    <div class="cover-sub">ענו לסקר שעולה על המסך.</div>
+  </section>
+
+  <!-- 7 — POLL QUESTION 3 -->
+  <section class="slide dark poll-slide" data-clock="21:09–21:11" data-poll-key="למה אתם משתמשים">
+    <span class="slide-index">08 / 38</span>
+    <span class="eyebrow">שאלה לקהל</span>
+    <h1>למה אתם <span class="accent" style="font-weight:100;">משתמשים</span><br>בכלי&nbsp;<span class="ia-fx">AI</span>?</h1>
+    <div class="cover-sub">ענו לסקר שעולה על המסך.</div>
+  </section>
+
+  <!-- 8 — AI / LLM -->
+  <section class="slide" data-clock="21:11–21:13">
+    <span class="slide-index">09 / 38</span>
+    <span class="eyebrow">מה זה AI</span>
+    <h2>מודל שפה — לא קסם, חיזוי מתקדם</h2>
+    <div class="content grid grid-2">
+      <div class="card" style="align-items:center;text-align:center;justify-content:center;gap:16px;padding:40px 26px;">
+        <div style="display:flex;gap:18px;font-size:42px;"><span>🧠</span><span>⚡</span><span>🤖</span></div>
+        <div style="font-family:var(--font);font-weight:900;font-size:clamp(68px,9.5vw,126px);line-height:0.9;background:linear-gradient(120deg,#ffffff 0%,var(--lavender) 55%,var(--gold) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;" dir="ltr">LLM</div>
+        <div style="font-size:clamp(19px,2.1vw,28px);font-weight:500;color:var(--lavender);">מודל שפה גדול</div>
+      </div>
+      <div class="card" style="border-color:var(--gold);align-items:center;text-align:center;justify-content:center;gap:20px;padding:40px 26px;">
+        <div style="display:flex;gap:18px;font-size:42px;"><span>🎯</span><span>🎛️</span></div>
+        <div style="font-family:var(--font);font-weight:900;font-size:clamp(44px,5.8vw,72px);line-height:1;color:#fff;">פרומט</div>
+        <div style="font-family:var(--font);font-weight:900;font-size:clamp(44px,5.8vw,72px);line-height:1;background:linear-gradient(90deg,var(--gold),#ffd98a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">קונטקסט</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9 — AI FOR FUN VS WORK -->
+  <section class="slide" data-clock="21:13–21:15">
+    <span class="slide-index">10 / 38</span>
+    <span class="eyebrow">AI לשיחה מול AI לעבודה</span>
+    <h2>"תכתוב לי מכתב לתורם" מול "תבנה לי מערכת שמנהלת את התרומות"</h2>
+    <div class="content" style="display:flex;align-items:center;gap:10px;">
+      <div class="card" style="flex:1;">
+        <div class="logo-row">
+          <span class="logo-chip"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M22.28 9.82a5.98 5.98 0 0 0-.52-4.91 6.05 6.05 0 0 0-6.51-2.9A6.07 6.07 0 0 0 4.98 4.18a5.99 5.99 0 0 0-4 2.9 6.05 6.05 0 0 0 .74 7.1 5.98 5.98 0 0 0 .51 4.91 6.05 6.05 0 0 0 6.52 2.9A5.99 5.99 0 0 0 13.26 22a6.06 6.06 0 0 0 5.77-4.21 5.99 5.99 0 0 0 4-2.9 6.06 6.06 0 0 0-.75-7.07Zm-9.02 12.6a4.48 4.48 0 0 1-2.88-1.04l.14-.08 4.78-2.76a.79.79 0 0 0 .39-.68v-6.74l2.02 1.17a.07.07 0 0 1 .04.05v5.58a4.5 4.5 0 0 1-4.5 4.5ZM3.6 18.3a4.47 4.47 0 0 1-.54-3.01l.14.08 4.78 2.76a.77.77 0 0 0 .78 0l5.84-3.37v2.33a.08.08 0 0 1-.03.06L9.74 19.9a4.5 4.5 0 0 1-6.14-1.64ZM2.34 7.9a4.48 4.48 0 0 1 2.34-1.97V11.6a.77.77 0 0 0 .39.68l5.81 3.35-2.02 1.17a.08.08 0 0 1-.07 0l-4.83-2.79A4.5 4.5 0 0 1 2.34 7.9Zm16.6 3.86-5.84-3.4L15.12 7.2a.08.08 0 0 1 .07 0l4.83 2.78a4.5 4.5 0 0 1-.68 8.12v-5.68a.79.79 0 0 0-.4-.67Zm2.01-3.03-.14-.09-4.77-2.78a.78.78 0 0 0-.79 0L9.42 9.24V6.9a.07.07 0 0 1 .03-.06l4.83-2.79a4.5 4.5 0 0 1 6.68 4.66ZM8.32 12.86 6.3 11.7a.08.08 0 0 1-.04-.06V6.07a4.5 4.5 0 0 1 7.38-3.45l-.14.08L8.72 5.46a.79.79 0 0 0-.39.68l-.01 6.72Zm1.1-2.37L12 8.99l2.6 1.5v3l-2.6 1.5-2.6-1.5v-3Z"/></svg>ChatGPT</span>
+          <span class="logo-chip"><svg viewBox="0 0 24 24" fill="#D97757"><path d="M12 1.6c.35 2.4 1 4.3 1.94 5.66.94-1.35 1.59-3.26 1.94-5.66-.35 2.4-.3 4.42.1 6.04 1.4-.85 2.85-2.24 4.32-4.14-1.2 2.1-1.9 3.98-2.06 5.62 1.62-.4 3.64-.45 6.04-.1-2.4.35-4.31 1-5.66 1.94 1.35.94 3.26 1.59 5.66 1.94-2.4-.35-4.42-.3-6.04.1.16 1.64.86 3.52 2.06 5.62-1.47-1.9-2.92-3.29-4.32-4.14-.4 1.62-.45 3.64-.1 6.04-.35-2.4-1-4.31-1.94-5.66-.94 1.35-1.59 3.26-1.94 5.66.35-2.4.3-4.42-.1-6.04-1.4.85-2.85 2.24-4.32 4.14 1.2-2.1 1.9-3.98 2.06-5.62-1.62.4-3.64.45-6.04.1 2.4-.35 4.31-1 5.66-1.94-1.35-.94-3.26-1.59-5.66-1.94 2.4.35 4.42.3 6.04-.1-.16-1.64-.86-3.52-2.06-5.62 1.47 1.9 2.92 3.29 4.32 4.14.4-1.62.45-3.64.1-6.04Z"/></svg>Claude</span>
+          <span class="logo-chip"><svg viewBox="0 0 24 24"><defs><linearGradient id="gemHe" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#4285F4"/><stop offset="1" stop-color="#9B72CB"/></linearGradient></defs><path fill="url(#gemHe)" d="M12 2c0 5-3 8-8 10 5 2 8 5 8 10 0-5 3-8 8-10-5-2-8-5-8-10Z"/></svg>Gemini</span>
+        </div>
+        <h3>AI לשיחה</h3>
+        <ul class="blist"><li>אתה כותב ל-ChatGPT, Claude או Gemini</li><li>"תנסח לי מכתב", "תכתוב דבר תורה", "תעשה לי תמונה"</li><li>שיחה — לא פעולה</li><li>נגמר ברגע שסגרת את החלון</li></ul>
+      </div>
+      <div class="vs-badge"><span>VS</span></div>
+      <div class="card" style="flex:1;border-color:var(--gold);">
+        <div class="logo-row">
+          <span class="logo-chip" style="border-color:rgba(224,183,104,0.5);"><svg viewBox="0 0 24 24" fill="none" stroke="#e0b768" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4" width="19" height="16" rx="2.5"/><path d="m6 9 3 3-3 3M12.5 15h5"/></svg>Claude Code</span>
+        </div>
+        <h3>AI לעבודה</h3>
+        <ul class="blist"><li>פועל במקומך בתוך המחשב שלך</li><li>נכנס לקבצים ולנתונים ועושה שינויים בפועל</li><li>בונה, מתקן, מריץ — גם כשאתה ישן</li><li>ההבדל בין לשוחח עם AI לבין להעסיק אותו</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 — FREE VS PRO -->
+  <section class="slide" data-clock="21:15–21:17">
+    <span class="slide-index">11 / 38</span>
+    <span class="eyebrow">חינם מול Pro</span>
+    <h2>למה עוברים לגרסה בתשלום כבר מהיום הראשון</h2>
+    <div class="content" style="display:flex;align-items:center;gap:10px;">
+      <div class="card" style="flex:1;">
+        <div class="logo-row">
+          <span class="logo-chip"><svg viewBox="0 0 24 24" fill="none" stroke="#c3b0e0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg><span dir="rtl">גרסה חינמית</span></span>
+        </div>
+        <h3>חינם</h3>
+        <ul class="blist"><li>מוגבל בהודעות ובמהירות</li><li>בלי הכלים המתקדמים — Claude Code לא נפתח בכלל</li><li>אם זה חינם — המוצר זה אתה</li><li>המידע והשיחות שלך משמשים לאימון המערכת</li></ul>
+      </div>
+      <div class="vs-badge"><span>VS</span></div>
+      <div class="card" style="flex:1;border-color:var(--gold);">
+        <div class="logo-row">
+          <span class="logo-chip" style="border-color:rgba(224,183,104,0.5);"><svg viewBox="0 0 24 24" fill="none" stroke="#e0b768" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8Z"/></svg><span dir="rtl">Pro (בתשלום)</span></span>
+        </div>
+        <h3>Pro</h3>
+        <ul class="blist"><li>אתה לקוח — לא המוצר</li><li>פותח את הכל, כולל Claude Code</li><li>התשובות חדות וטובות משמעותית</li><li>גישה מלאה מהיום הראשון</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 — WHY CRITICAL -->
+  <section class="slide dark" data-clock="21:17–21:19">
+    <span class="slide-index">12 / 38</span>
+    <span class="eyebrow">למה זה קריטי דווקא לך</span>
+    <h2>אתה לבד — הכלי הזה הוא הצוות שלך</h2>
+    <div class="content" style="display:flex;gap:44px;flex-wrap:wrap;align-items:stretch;">
+      <img src="one-man-team-he.png" alt="אתה לבד — ה-AI הוא הצוות שלך" style="width:360px;max-width:42vw;align-self:stretch;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.14);object-fit:cover;flex-shrink:0;">
+      <div class="card" style="flex:1;min-width:300px;justify-content:center;">
+        <ul class="blist" style="gap:16px;">
+          <li>אין צוות ואין תקציב למתכנת</li>
+          <li>כל פרויקט טכני — חודשים של המתנה או אלפי דולרים</li>
+          <li>Claude Code = הידיים הנוספות שלך</li>
+          <li>בונה מה שעד היום היית חייב לשכור בשבילו מישהו</li>
+          <li>הקהילה או המוסד גדלים — בלי להגדיל את הצוות</li>
+          <li>ה-AI לא מחליף את הניסיון שלך — <strong>הוא מכפיל אותו</strong></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 — WHAT IS SOFTWARE (QUESTION) -->
+  <section class="slide" data-clock="21:19–21:20">
+    <span class="slide-index">13 / 38</span>
+    <span class="eyebrow">שאלה לקהל</span>
+    <h1>מה זה&nbsp;<span class="ia-fx">תוכנה</span>?</h1>
+    <div class="cover-sub">מי מכם יודע?</div>
+  </section>
+
+  <!-- 13 — FRONTEND / UI EXAMPLES -->
+  <section class="slide dark" data-clock="21:23–21:25">
+    <span class="slide-index">14 / 38</span>
+    <span class="eyebrow">ממשק משתמש</span>
+    <h2>מה שאתה רואה כשאתה נכנס לתוכנה — זה רק הממשק</h2>
+    <div class="lede content">המסך, הכפתורים, הצבעים — זה ה-Frontend. מה שהדפדפן מציג לך. לא התוכנה עצמה, רק החזית שלה.</div>
+    <div class="content grid grid-3" style="margin-top:6px;">
+      <div class="card" style="padding:0;overflow:hidden;"><div style="display:flex;gap:6px;padding:10px 14px;background:rgba(0,0,0,0.25);"><span style="width:10px;height:10px;border-radius:50%;background:#ef4444;"></span><span style="width:10px;height:10px;border-radius:50%;background:#e0b768;"></span><span style="width:10px;height:10px;border-radius:50%;background:#22c55e;"></span></div><div style="padding:26px 20px;text-align:center;"><svg viewBox="0 0 52 40" style="width:56px;height:auto;"><path fill="#4285F4" d="M3.5 40h9V18L0 8v28.5A3.5 3.5 0 0 0 3.5 40Z"/><path fill="#34A853" d="M39.5 40h9a3.5 3.5 0 0 0 3.5-3.5V8L39.5 18Z"/><path fill="#FBBC04" d="M39.5 3.5V18L52 8V5.25c0-3.65-4.2-5.65-7.1-3.45Z"/><path fill="#EA4335" d="M12.5 18V3.5L26 13.6 39.5 3.5V18L26 28Z"/><path fill="#C5221F" d="M0 5.25V8l12.5 10V3.5L7.1 1.8C4.2-.4 0 1.6 0 5.25Z"/></svg><h3 style="margin-top:8px;">Gmail</h3></div></div><div class="card" style="padding:0;overflow:hidden;"><div style="display:flex;gap:6px;padding:10px 14px;background:rgba(0,0,0,0.25);"><span style="width:10px;height:10px;border-radius:50%;background:#ef4444;"></span><span style="width:10px;height:10px;border-radius:50%;background:#e0b768;"></span><span style="width:10px;height:10px;border-radius:50%;background:#22c55e;"></span></div><div style="padding:26px 20px;text-align:center;"><svg viewBox="0 0 32 32" style="width:52px;height:52px;"><path fill="#25D366" d="M16 3C8.82 3 3 8.82 3 16c0 2.3.62 4.46 1.7 6.32L3 29l6.86-1.66A12.9 12.9 0 0 0 16 29c7.18 0 13-5.82 13-13S23.18 3 16 3Z"/><path fill="#fff" d="M22.9 19.4c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.65.08-.3-.15-1.26-.47-2.4-1.48-.9-.8-1.5-1.78-1.67-2.08-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.38-.02-.53-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.53.07-.8.38-.28.3-1.05 1.02-1.05 2.5s1.07 2.9 1.22 3.1c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.77-.73 2.02-1.43.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35Z"/></svg><h3 style="margin-top:8px;">WhatsApp</h3></div></div><div class="card" style="padding:0;overflow:hidden;"><div style="display:flex;gap:6px;padding:10px 14px;background:rgba(0,0,0,0.25);"><span style="width:10px;height:10px;border-radius:50%;background:#ef4444;"></span><span style="width:10px;height:10px;border-radius:50%;background:#e0b768;"></span><span style="width:10px;height:10px;border-radius:50%;background:#22c55e;"></span></div><div style="padding:26px 20px;text-align:center;"><svg viewBox="0 0 48 48" style="width:48px;height:48px;"><path fill="#0F9D58" d="M29 2H10a2 2 0 0 0-2 2v40a2 2 0 0 0 2 2h28a2 2 0 0 0 2-2V13L29 2Z"/><path fill="#087443" d="M29 2v9a2 2 0 0 0 2 2h9L29 2Z"/><path fill="#fff" d="M31 23H17a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V24a1 1 0 0 0-1-1Zm-8 13h-5v-3h5v3Zm0-5h-5v-3h5v3Zm0-5h-5v-2h5v2Zm7 10h-5v-3h5v3Zm0-5h-5v-3h5v3Zm0-5h-5v-2h5v2Z"/></svg><h3 style="margin-top:8px;">Google Sheets</h3></div></div>
+    </div>
+    <div class="foot-note content">כל אחד מהמסכים האלה — זה ה-front. מה שרואים בדפדפן.</div>
+  </section>
+
+  <!-- 14 — WHAT IS CODE (BEHIND THE SCENES) -->
+  <section class="slide" data-clock="21:25–21:27">
+    <span class="slide-index">15 / 38</span>
+    <span class="eyebrow">מאחורי הקלעים</span>
+    <h2>מאחורי כל ממשק — יש קוד</h2>
+    <div class="lede content">קוד הוא בעצם סדרה של פקודות ותנאים. הממשק שאתה רואה קורא את השורות האלה, ומתרגם אותן בזמן אמת למה שקורה על המסך. תוכנה בנויה מכמה קבצים — וכל סוג קובץ אחראי על פקודה אחרת.</div>
+    <div class="content grid grid-2" style="margin-top:6px;align-items:stretch;">
+      <div class="prompt" style="max-height:520px;overflow:hidden;">
+        <span class="prompt-label">כך נראה קוד</span>
+        <pre dir="ltr" style="direction:ltr;text-align:left;">if (user.clicksButton("שלח")) {
+  sendEmail(to, subject, body);
+  showMessage("נשלח בהצלחה");
+}
+
+function loadContacts() {
+  const list = database.getAll("contacts");
+  return list.filter(c => c.active);
+}
+
+if (contact.birthday === today) {
+  sendWhatsApp(contact.phone, "מזל טוב!");
+}
+
+for (const task of dailyTasks) {
+  if (!task.done) reminder.schedule(task);
+}
+
+class Community {
+  constructor(name) {
+    this.name = name;
+    this.members = [];
+  }
+}</pre>
+      </div>
+      <div class="grid" style="grid-template-columns:1fr;gap:14px;">
+        <div class="card"><span class="tag">📄 index.html</span><h3>המבנה</h3><p>מה קיים בעמוד — כותרות, כפתורים, תיבות טקסט.</p></div>
+        <div class="card"><span class="tag">🎨 style.css</span><h3>העיצוב</h3><p>צבעים, גדלים, מרווחים — איך זה נראה.</p></div>
+        <div class="card"><span class="tag">⚙️ app.js</span><h3>ההיגיון</h3><p>מה קורה כשלוחצים, מה מחשבים, איך מגיבים.</p></div>
+        <div class="card" style="border-color:var(--gold);"><span class="tag">🔒 .env</span><h3>הסודות</h3><p>טוקנים וסיסמאות — לא נראים, לא מועלים לאף מקום ציבורי.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 — THE OLD WAY (BEFORE AI) -->
+  <section class="slide dark" data-clock="21:27–21:29">
+    <span class="slide-index">16 / 38</span>
+    <span class="eyebrow">ככה זה היה פעם</span>
+    <h2>מתכנת אחד, מול עשרות שפות כתיבה</h2>
+    <div class="lede content">כדי לבנות תוכנה קטנה אחת, היה צריך לדעת לכתוב בכמה שפות שונות בו-זמנית — כל פסיק במקום הלא נכון שובר הכל.</div>
+    <div class="content" style="margin-top:6px;">
+      <img src="old-way-chaos.png" alt="מתכנת מוקף במסכים ושפות תכנות" style="width:100%;max-width:1000px;border-radius:var(--radius);border:1px solid rgba(255,255,255,0.14);display:block;">
+    </div>
+  </section>
+
+  <!-- 16 — WHAT'S THERE TODAY (QUESTION) -->
+  <section class="slide" data-clock="21:29–21:30">
+    <span class="slide-index">17 / 38</span>
+    <span class="eyebrow">שאלה לקהל</span>
+    <h1>ומה יש <span class="accent" style="font-weight:100;">היום?</span></h1>
+  </section>
+
+  <!-- 17 — CLAUDE CODE -->
+  <section class="slide dark" data-clock="21:30–21:32">
+    <span class="slide-index">18 / 38</span>
+    <span class="eyebrow">הפתרון של היום</span>
+    <div style="display:flex;align-items:center;gap:28px;">
+      <div class="cc-logo" style="width:120px;height:120px;border-radius:28px;background:#1a1130;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:22px;"><svg viewBox="0 0 24 24" width="74" height="74" fill="#D97757" xmlns="http://www.w3.org/2000/svg"><path d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/></svg></div>
+      <h1 class="cc-title" style="margin:0;font-size:clamp(56px,9vw,120px);" dir="ltr">Claude Code</h1>
+    </div>
+    <div class="content checklist" style="margin-top:10px;">
+      <div class="check-item hl-item"><span class="check-mark">1</span> כותב את הקוד בעצמו — לא עוזר למתכנת, אלא מחליף אותו.</div>
+      <div class="check-item"><span class="check-mark">2</span> לא רק כותב — גם מריץ, בודק את עצמו, ומוצא שגיאות.</div>
+      <div class="check-item"><span class="check-mark">3</span> מתקן את מה שהוא מצא, וממשיך שוב עד שזה עובד בפועל.</div>
+    </div>
+  </section>
+
+  <!-- 18 — EXISTING AI TOOLS -->
+  <section class="slide" data-clock="21:32–21:33">
+    <span class="slide-index">19 / 38</span>
+    <span class="eyebrow">כלי ה-AI הקיימים</span>
+    <h2>מיליוני כלים — נתמקד באחד</h2>
+    <div class="content" style="display:flex;align-items:center;justify-content:center;gap:36px;margin-top:20px;flex-wrap:wrap;">
+      <div class="card" style="text-align:center;flex:0 0 auto;width:220px;">
+        <div style="width:96px;height:96px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto;padding:20px;"><svg viewBox='0 0 320 320' width="56" height="56" xmlns='http://www.w3.org/2000/svg'><path d='m297.06 130.97c7.26-21.79 4.76-45.66-6.85-65.48-17.46-30.4-52.56-46.04-86.84-38.68-15.25-17.18-37.16-26.95-60.13-26.81-35.04-.08-66.13 22.48-76.91 55.82-22.51 4.61-41.94 18.7-53.31 38.67-17.59 30.32-13.58 68.54 9.92 94.54-7.26 21.79-4.76 45.66 6.85 65.48 17.46 30.4 52.56 46.04 86.84 38.68 15.24 17.18 37.16 26.95 60.13 26.8 35.06.09 66.16-22.49 76.94-55.86 22.51-4.61 41.94-18.7 53.31-38.67 17.57-30.32 13.55-68.51-9.94-94.51zm-120.28 168.11c-14.03.02-27.62-4.89-38.39-13.88.49-.26 1.34-.73 1.89-1.07l63.72-36.8c3.26-1.85 5.26-5.32 5.24-9.07v-89.83l26.93 15.55c.29.14.48.42.52.74v74.39c-.04 33.08-26.83 59.9-59.91 59.97zm-128.84-55.03c-7.03-12.14-9.56-26.37-7.15-40.18.47.28 1.3.79 1.89 1.13l63.72 36.8c3.23 1.89 7.23 1.89 10.47 0l77.79-44.92v31.1c.02.32-.13.63-.38.83l-64.41 37.19c-28.69 16.52-65.33 6.7-81.92-21.95zm-16.77-139.09c7-12.16 18.05-21.46 31.21-26.29 0 .55-.03 1.52-.03 2.2v73.61c-.02 3.74 1.98 7.21 5.23 9.06l77.79 44.91-26.93 15.55c-.27.18-.61.21-.91.08l-64.42-37.22c-28.63-16.58-38.45-53.21-21.95-81.89zm221.26 51.49-77.79-44.92 26.93-15.54c.27-.18.61-.21.91-.08l64.42 37.19c28.68 16.57 38.51 53.26 21.94 81.94-7.01 12.14-18.05 21.44-31.2 26.28v-75.81c.03-3.74-1.96-7.2-5.2-9.06zm26.8-40.34c-.47-.29-1.3-.79-1.89-1.13l-63.72-36.8c-3.23-1.89-7.23-1.89-10.47 0l-77.79 44.92v-31.1c-.02-.32.13-.63.38-.83l64.41-37.16c28.69-16.55 65.37-6.7 81.91 22 6.99 12.12 9.52 26.31 7.15 40.1zm-168.51 55.43-26.94-15.55c-.29-.14-.48-.42-.52-.74v-74.39c.02-33.12 26.89-59.96 60.01-59.94 14.01 0 27.57 4.92 38.34 13.88-.49.26-1.33.73-1.89 1.07l-63.72 36.8c-3.26 1.85-5.26 5.31-5.24 9.06l-.04 89.79zm14.63-31.54 34.65-20.01 34.65 20v40.01l-34.65 20-34.65-20z'/></svg></div>
+        <h3 style="margin-top:14px;">ChatGPT</h3>
+      </div>
+      <div class="card" style="text-align:center;flex:0 0 auto;width:260px;border-color:var(--gold);transform:scale(1.06);">
+        <div class="cc-logo" style="width:140px;height:140px;border-radius:50%;background:#1a1130;display:flex;align-items:center;justify-content:center;margin:0 auto;padding:28px;"><svg viewBox="0 0 24 24" width="88" height="88" fill="#D97757" xmlns="http://www.w3.org/2000/svg"><path d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/></svg></div>
+        <h3 class="cc-title" style="margin-top:16px;font-size:30px;">Claude</h3>
+      </div>
+      <div class="card" style="text-align:center;flex:0 0 auto;width:220px;">
+        <div style="width:96px;height:96px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;margin:0 auto;padding:20px;"><svg viewBox="0 0 24 24" width="56" height="56" fill="#8E75B2" xmlns="http://www.w3.org/2000/svg"><path d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg></div>
+        <h3 style="margin-top:14px;">Gemini</h3>
+      </div>
+    </div>
+    <div class="foot-note content" style="margin-top:18px;text-align:center;">לכולם יש גם מסלול כתיבת קוד. הערב נתמקד ב-Claude Code — הכי נוח והכי פונקציונלי — אבל כל אחד מוזמן להשתמש במה שהוא בוחר.</div>
+  </section>
+
+  <!-- 19 — MODELS WITHIN A TOOL -->
+  <section class="slide dark" data-clock="21:33–21:34">
+    <span class="slide-index">20 / 38</span>
+    <span class="eyebrow">מודלים בתוך כלי</span>
+    <h2>אותו כלי, מודלים שונים</h2>
+    <div class="content" style="display:flex;align-items:stretch;justify-content:center;gap:32px;margin-top:22px;flex-wrap:wrap;">
+      <div class="card" style="text-align:center;flex:0 0 auto;width:240px;justify-content:flex-start;"><div style="width:72px;height:72px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto;padding:15px;"><svg viewBox='0 0 320 320' width="42" height="42" xmlns='http://www.w3.org/2000/svg'><path d='m297.06 130.97c7.26-21.79 4.76-45.66-6.85-65.48-17.46-30.4-52.56-46.04-86.84-38.68-15.25-17.18-37.16-26.95-60.13-26.81-35.04-.08-66.13 22.48-76.91 55.82-22.51 4.61-41.94 18.7-53.31 38.67-17.59 30.32-13.58 68.54 9.92 94.54-7.26 21.79-4.76 45.66 6.85 65.48 17.46 30.4 52.56 46.04 86.84 38.68 15.24 17.18 37.16 26.95 60.13 26.8 35.06.09 66.16-22.49 76.94-55.86 22.51-4.61 41.94-18.7 53.31-38.67 17.57-30.32 13.55-68.51-9.94-94.51zm-120.28 168.11c-14.03.02-27.62-4.89-38.39-13.88.49-.26 1.34-.73 1.89-1.07l63.72-36.8c3.26-1.85 5.26-5.32 5.24-9.07v-89.83l26.93 15.55c.29.14.48.42.52.74v74.39c-.04 33.08-26.83 59.9-59.91 59.97zm-128.84-55.03c-7.03-12.14-9.56-26.37-7.15-40.18.47.28 1.3.79 1.89 1.13l63.72 36.8c3.23 1.89 7.23 1.89 10.47 0l77.79-44.92v31.1c.02.32-.13.63-.38.83l-64.41 37.19c-28.69 16.52-65.33 6.7-81.92-21.95zm-16.77-139.09c7-12.16 18.05-21.46 31.21-26.29 0 .55-.03 1.52-.03 2.2v73.61c-.02 3.74 1.98 7.21 5.23 9.06l77.79 44.91-26.93 15.55c-.27.18-.61.21-.91.08l-64.42-37.22c-28.63-16.58-38.45-53.21-21.95-81.89zm221.26 51.49-77.79-44.92 26.93-15.54c.27-.18.61-.21.91-.08l64.42 37.19c28.68 16.57 38.51 53.26 21.94 81.94-7.01 12.14-18.05 21.44-31.2 26.28v-75.81c.03-3.74-1.96-7.2-5.2-9.06zm26.8-40.34c-.47-.29-1.3-.79-1.89-1.13l-63.72-36.8c-3.23-1.89-7.23-1.89-10.47 0l-77.79 44.92v-31.1c-.02-.32.13-.63.38-.83l64.41-37.16c28.69-16.55 65.37-6.7 81.91 22 6.99 12.12 9.52 26.31 7.15 40.1zm-168.51 55.43-26.94-15.55c-.29-.14-.48-.42-.52-.74v-74.39c.02-33.12 26.89-59.96 60.01-59.94 14.01 0 27.57 4.92 38.34 13.88-.49.26-1.33.73-1.89 1.07l-63.72 36.8c-3.26 1.85-5.26 5.31-5.24 9.06l-.04 89.79zm14.63-31.54 34.65-20.01 34.65 20v40.01l-34.65 20-34.65-20z'/></svg></div><h3 style="margin-top:14px;">ChatGPT</h3><div style="display:flex;flex-direction:column;gap:7px;align-items:center;margin-top:18px;"><div style="height:13px;width:40%;background:#4d4d4d;border-radius:6px;"></div><div style="height:13px;width:70%;background:#8a8a8a;border-radius:6px;"></div><div style="height:13px;width:100%;background:#ffffff;border-radius:6px;"></div></div><p style="font-size:13px;color:var(--paper-dim);margin-top:10px;">מהיר ← מאוזן ← חזק</p></div>
+      <div class="card" style="text-align:center;flex:0 0 auto;width:288px;justify-content:flex-start;border-color:var(--gold);transform:scale(1.06);"><div class="cc-logo" style="width:112px;height:112px;border-radius:50%;background:#1a1130;display:flex;align-items:center;justify-content:center;margin:0 auto;padding:22px;"><svg viewBox="0 0 24 24" width="68" height="68" fill="#D97757" xmlns="http://www.w3.org/2000/svg"><path d="m4.7144 15.9555 4.7174-2.6471.079-.2307-.079-.1275h-.2307l-.7893-.0486-2.6956-.0729-2.3375-.0971-2.2646-.1214-.5707-.1215-.5343-.7042.0546-.3522.4797-.3218.686.0608 1.5179.1032 2.2767.1578 1.6514.0972 2.4468.255h.3886l.0546-.1579-.1336-.0971-.1032-.0972L6.973 9.8356l-2.55-1.6879-1.3356-.9714-.7225-.4918-.3643-.4614-.1578-1.0078.6557-.7225.8803.0607.2246.0607.8925.686 1.9064 1.4754 2.4893 1.8336.3643.3035.1457-.1032.0182-.0728-.164-.2733-1.3539-2.4467-1.445-2.4893-.6435-1.032-.17-.6194c-.0607-.255-.1032-.4674-.1032-.7285L6.287.1335 6.6997 0l.9957.1336.419.3642.6192 1.4147 1.0018 2.2282 1.5543 3.0296.4553.8985.2429.8318.091.255h.1579v-.1457l.1275-1.706.2368-2.0947.2307-2.6957.0789-.7589.3764-.9107.7468-.4918.5828.2793.4797.686-.0668.4433-.2853 1.8517-.5586 2.9021-.3643 1.9429h.2125l.2429-.2429.9835-1.3053 1.6514-2.0643.7286-.8196.85-.9046.5464-.4311h1.0321l.759 1.1293-.34 1.1657-1.0625 1.3478-.8804 1.1414-1.2628 1.7-.7893 1.36.0729.1093.1882-.0183 2.8535-.607 1.5421-.2794 1.8396-.3157.8318.3886.091.3946-.3278.8075-1.967.4857-2.3072.4614-3.4364.8136-.0425.0304.0486.0607 1.5482.1457.6618.0364h1.621l3.0175.2247.7892.522.4736.6376-.079.4857-1.2142.6193-1.6393-.3886-3.825-.9107-1.3113-.3279h-.1822v.1093l1.0929 1.0686 2.0035 1.8092 2.5075 2.3314.1275.5768-.3218.4554-.34-.0486-2.2039-1.6575-.85-.7468-1.9246-1.621h-.1275v.17l.4432.6496 2.3436 3.5214.1214 1.0807-.17.3521-.6071.2125-.6679-.1214-1.3721-1.9246L14.38 17.959l-1.1414-1.9428-.1397.079-.674 7.2552-.3156.3703-.7286.2793-.6071-.4614-.3218-.7468.3218-1.4753.3886-1.9246.3157-1.53.2853-1.9004.17-.6314-.0121-.0425-.1397.0182-1.4328 1.9672-2.1796 2.9446-1.7243 1.8456-.4128.164-.7164-.3704.0667-.6618.4008-.5889 2.386-3.0357 1.4389-1.882.929-1.0868-.0062-.1579h-.0546l-6.3385 4.1164-1.1293.1457-.4857-.4554.0608-.7467.2307-.2429 1.9064-1.3114Z"/></svg></div><h3 class="cc-title" style="margin-top:16px;font-size:30px;">Claude</h3><div style="display:flex;flex-direction:column;gap:7px;align-items:center;margin-top:18px;"><div style="height:13px;width:34%;background:#f5d3b3;border-radius:6px;"></div><div style="height:13px;width:56%;background:#eab488;border-radius:6px;"></div><div style="height:13px;width:78%;background:#e0965f;border-radius:6px;"></div><div style="height:13px;width:100%;background:#D97757;border-radius:6px;"></div></div><p style="font-size:13px;color:var(--paper-dim);margin-top:10px;">Haiku ← Sonnet ← Opus ← Fable</p></div>
+      <div class="card" style="text-align:center;flex:0 0 auto;width:240px;justify-content:flex-start;"><div style="width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;margin:0 auto;padding:15px;"><svg viewBox="0 0 24 24" width="42" height="42" fill="#8E75B2" xmlns="http://www.w3.org/2000/svg"><path d="M11.04 19.32Q12 21.51 12 24q0-2.49.93-4.68.96-2.19 2.58-3.81t3.81-2.55Q21.51 12 24 12q-2.49 0-4.68-.93a12.3 12.3 0 0 1-3.81-2.58 12.3 12.3 0 0 1-2.58-3.81Q12 2.49 12 0q0 2.49-.96 4.68-.93 2.19-2.55 3.81a12.3 12.3 0 0 1-3.81 2.58Q2.49 12 0 12q2.49 0 4.68.96 2.19.93 3.81 2.55t2.55 3.81"/></svg></div><h3 style="margin-top:14px;">Gemini</h3><div style="display:flex;flex-direction:column;gap:7px;align-items:center;margin-top:18px;"><div style="height:13px;width:40%;background:#c9bcdd;border-radius:6px;"></div><div style="height:13px;width:70%;background:#a68fc4;border-radius:6px;"></div><div style="height:13px;width:100%;background:#8E75B2;border-radius:6px;"></div></div><p style="font-size:13px;color:var(--paper-dim);margin-top:10px;">Flash ← Pro ← Ultra</p></div>
+    </div>
+    <div class="foot-note content" style="margin-top:16px;text-align:center;">בכל כלי יש כמה מודלים — כל אחד מתמחה במשהו אחר. לא חייבים לזכור הכל — אפשר תמיד לשאול את ה-AI עצמו באיזה מודל להשתמש.</div>
+  </section>
+
+  <!-- 20 — BIG QUESTION: WHAT CAN BE DONE -->
+  <section class="slide dark" data-clock="21:34–21:35">
+    <span class="slide-index">21 / 38</span>
+    <h1>מה ניתן <span class="accent" style="font-weight:100;">לעשות</span><br>עם Claude Code?</h1>
+  </section>
+
+  <!-- 21 — EXAMPLE 1: PRESENTATIONS (META, THIS DECK) -->
+  <section class="slide" data-clock="21:35–21:37">
+    <span class="slide-index">22 / 38</span>
+    <span class="eyebrow">דוגמה 1</span>
+    <h2><span class="ia-fx">מצגות</span>&nbsp;ותוכן ויזואלי</h2>
+    <div class="lede content">המצגת הזו עצמה — שאתם רואים ממש עכשיו — נבנתה מאפס עם Claude Code. בלי PowerPoint, בלי מעצב. רק שיחה.</div>
+    <div class="content" style="max-width:820px;margin-top:6px;">
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="display:flex;gap:6px;padding:10px 14px;background:rgba(0,0,0,0.25);">
+          <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;"></span>
+          <span style="width:10px;height:10px;border-radius:50%;background:#e0b768;"></span>
+          <span style="width:10px;height:10px;border-radius:50%;background:#22c55e;"></span>
+        </div>
+        <div style="padding:22px;display:flex;gap:14px;flex-wrap:wrap;justify-content:center;">
+          <div style="width:110px;height:70px;border-radius:8px;background:linear-gradient(180deg,var(--purple-2),var(--purple-3));border:1px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--paper-dim);">שקף 1</div>
+          <div style="width:110px;height:70px;border-radius:8px;background:linear-gradient(180deg,var(--purple-2),var(--purple-3));border:1px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--paper-dim);">שקף 2</div>
+          <div style="width:110px;height:70px;border-radius:8px;background:linear-gradient(180deg,var(--purple-2),var(--purple-3));border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--gold);font-weight:700;">השקף הזה!</div>
+          <div style="width:110px;height:70px;border-radius:8px;background:linear-gradient(180deg,var(--purple-2),var(--purple-3));border:1px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--paper-dim);">שקף 4</div>
+          <div style="width:110px;height:70px;border-radius:8px;background:linear-gradient(180deg,var(--purple-2),var(--purple-3));border:1px solid rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--paper-dim);">שקף 5</div>
+        </div>
+      </div>
+    </div>
+    <div class="foot-note content">כן — הוא בנה גם את השקף שאתם מסתכלים עליו עכשיו.</div>
+  </section>
+
+  <!-- 22 — EXAMPLE 2: WEBSITES (AL AUTOMAT) -->
+  <section class="slide dark" data-clock="21:37–21:39">
+    <span class="slide-index">23 / 38</span>
+    <span class="eyebrow">דוגמה 2</span>
+    <h2><span class="ia-fx">אתרים</span></h2>
+    <div class="lede content">גם אתרי אינטרנט שלמים — דפי נחיתה, אתרי מכירה עם סליקה, ודפים לאיסוף פרטים ותרומות.</div>
+    <div class="content" style="max-width:820px;margin-top:6px;">
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(0,0,0,0.25);">
+          <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;"></span>
+          <span style="width:10px;height:10px;border-radius:50%;background:#e0b768;"></span>
+          <span style="width:10px;height:10px;border-radius:50%;background:#22c55e;"></span>
+          <span style="margin-inline-start:10px;font-size:12px;color:var(--paper-dim);">al-automat.co.il</span>
+        </div>
+        <img src="al-automat-home.png" alt="אתר על אוטומט" style="width:100%;display:block;">
+      </div>
+      <div class="foot-note" style="margin-top:8px;">al-automat.co.il — נבנה עם Claude Code</div>
+    </div>
+  </section>
+
+  <!-- 23 — EXAMPLE 3: CRM / COMMUNITY MANAGEMENT -->
+  <section class="slide" data-clock="21:39–21:41">
+    <span class="slide-index">24 / 38</span>
+    <span class="eyebrow">דוגמה 3</span>
+    <h2>מערכות&nbsp;<span class="ia-fx">CRM</span></h2>
+    <div class="lede content">לדוגמה — מערכת לניהול קהילה: אנשי קשר, שיעורים, ומעקב נוכחות. מחוברת ישירות לכלים שכבר יש לך.</div>
+    <div class="content" style="margin-top:6px;">
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="display:flex;gap:6px;padding:10px 14px;background:rgba(0,0,0,0.25);">
+          <span style="width:10px;height:10px;border-radius:50%;background:#ef4444;"></span>
+          <span style="width:10px;height:10px;border-radius:50%;background:#e0b768;"></span>
+          <span style="width:10px;height:10px;border-radius:50%;background:#22c55e;"></span>
+          <span style="margin-inline-start:10px;font-size:12px;color:var(--paper-dim);">ניהול קהילה</span>
+        </div>
+        <div class="table-wrap" style="border:none;border-radius:0;">
+          <table>
+            <tr><th>שם</th><th>תפקיד</th><th>טלפון</th><th>שיעור אחרון</th><th>נוכחות</th><th>יום הולדת עברי</th><th>תרומה אחרונה</th></tr>
+            <tr><td class="hl">יוסי כהן</td><td>חבר קהילה</td><td>050-1234567</td><td>הלכות שבת</td><td>✅</td><td>י״ב אדר</td><td>₪180</td></tr>
+            <tr><td class="hl">משה לוי</td><td>גבאי</td><td>052-2345678</td><td>פרשת השבוע</td><td>✅</td><td>ג׳ תשרי</td><td>₪500</td></tr>
+            <tr><td class="hl">דוד ישראלי</td><td>חבר קהילה</td><td>054-3456789</td><td>הלכות שבת</td><td>⚠️ נעדר</td><td>כ״א ניסן</td><td>—</td></tr>
+            <tr><td class="hl">אברהם שמש</td><td>תורם</td><td>053-4567890</td><td>שיעור גמרא</td><td>✅</td><td>ח׳ אב</td><td>₪1,200</td></tr>
+            <tr><td class="hl">רפאל מזרחי</td><td>מתנדב</td><td>058-5678901</td><td>פרשת השבוע</td><td>✅</td><td>ט״ו שבט</td><td>₪90</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="content" style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-top:14px;">
+      <span class="tag">מערכות מחוברות</span>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;padding:7px;">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="#25D366" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+        </div>
+        <span>WhatsApp</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;padding:7px;">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="#EA4335" xmlns="http://www.w3.org/2000/svg"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg>
+        </div>
+        <span>Gmail</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;padding:7px;">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="#4285F4" xmlns="http://www.w3.org/2000/svg"><path d="M18.316 5.684H24v12.632h-5.684V5.684zM5.684 24h12.632v-5.684H5.684V24zM18.316 5.684V0H1.895A1.894 1.894 0 0 0 0 1.895v16.421h5.684V5.684h12.632zm-7.207 6.25v-.065c.272-.144.5-.349.687-.617s.279-.595.279-.982c0-.379-.099-.72-.3-1.025a2.05 2.05 0 0 0-.832-.714 2.703 2.703 0 0 0-1.197-.257c-.6 0-1.094.156-1.481.467-.386.311-.65.671-.793 1.078l1.085.452c.086-.249.224-.461.413-.633.189-.172.445-.257.767-.257.33 0 .602.088.816.264a.86.86 0 0 1 .322.703c0 .33-.12.589-.36.778-.24.19-.535.284-.886.284h-.567v1.085h.633c.407 0 .748.109 1.02.327.272.218.407.499.407.843 0 .336-.129.614-.387.832s-.565.327-.924.327c-.351 0-.651-.103-.897-.311-.248-.208-.422-.502-.521-.881l-1.096.452c.178.616.505 1.082.977 1.401.472.319.984.478 1.538.477a2.84 2.84 0 0 0 1.293-.291c.382-.193.684-.458.902-.794.218-.336.327-.72.327-1.149 0-.429-.115-.797-.344-1.105a2.067 2.067 0 0 0-.881-.689zm2.093-1.931l.602.913L15 10.045v5.744h1.187V8.446h-.827l-2.158 1.557zM22.105 0h-3.289v5.184H24V1.895A1.894 1.894 0 0 0 22.105 0zm-3.289 23.5l4.684-4.684h-4.684V23.5zM0 22.105C0 23.152.848 24 1.895 24h3.289v-5.184H0v3.289z"/></svg>
+        </div>
+        <span>Google Calendar</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 24 — EXAMPLE 4: ARMY OF AI AGENTS -->
+  <section class="slide dark" data-clock="21:41–21:43">
+    <span class="slide-index">25 / 38</span>
+    <span class="eyebrow">דוגמה 4</span>
+    <h2>צבא של&nbsp;<span class="ia-fx">סוכני AI</span></h2>
+    <div class="lede content">לא כלי אחד — צבא שלם של סוכנים קטנים, שעובדים מאחורי הקלעים ומייעלים את היום-יום של הקהילה או המוסד, בלי שתצטרך לגעת בהם בעצמך.</div>
+    <div class="content grid grid-3" style="margin-top:10px;max-width:960px;">
+      <div class="card" style="position:relative;">
+        <span style="position:absolute;top:14px;left:16px;width:9px;height:9px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;"></span>
+        <div class="agent-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#e0b768" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <h3 style="margin-top:10px;">תזכורות</h3>
+        <p>שולח תזכורת אוטומטית לפני כל אירוע ביומן.</p>
+      </div>
+      <div class="card" style="position:relative;">
+        <span style="position:absolute;top:14px;left:16px;width:9px;height:9px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;"></span>
+        <div class="agent-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#e0b768" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>
+        <h3 style="margin-top:10px;">מיילים</h3>
+        <p>קורא, ממיין ועונה על מיילים שחוזרים על עצמם.</p>
+      </div>
+      <div class="card" style="position:relative;">
+        <span style="position:absolute;top:14px;left:16px;width:9px;height:9px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;"></span>
+        <div class="agent-ic" style="background:rgba(37,211,102,0.14);border-color:rgba(37,211,102,0.4);"><svg viewBox="0 0 32 32" width="27" height="27"><path fill="#25D366" d="M16 3C8.82 3 3 8.82 3 16c0 2.3.62 4.46 1.7 6.32L3 29l6.86-1.66A12.9 12.9 0 0 0 16 29c7.18 0 13-5.82 13-13S23.18 3 16 3Z"/><path fill="#fff" d="M22.9 19.4c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.65.08-.3-.15-1.26-.47-2.4-1.48-.9-.8-1.5-1.78-1.67-2.08-.17-.3-.02-.46.13-.61.14-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.38-.02-.53-.08-.15-.67-1.62-.92-2.22-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.53.07-.8.38-.28.3-1.05 1.02-1.05 2.5s1.07 2.9 1.22 3.1c.15.2 2.1 3.2 5.08 4.49.71.3 1.26.49 1.7.63.71.22 1.36.19 1.87.12.57-.09 1.77-.73 2.02-1.43.25-.7.25-1.29.17-1.42-.07-.13-.27-.2-.57-.35Z"/></svg></div>
+        <h3 style="margin-top:10px;">וואטסאפ</h3>
+        <p>עונה על שאלות נפוצות בקבוצת הקהילה, אוטומטית.</p>
+      </div>
+      <div class="card" style="position:relative;">
+        <span style="position:absolute;top:14px;left:16px;width:9px;height:9px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;"></span>
+        <div class="agent-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#e0b768" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/></svg></div>
+        <h3 style="margin-top:10px;">תיאום פגישות</h3>
+        <p>מתאם זמנים מול היומן, בלי הלוך ושוב בהודעות.</p>
+      </div>
+      <div class="card" style="position:relative;">
+        <span style="position:absolute;top:14px;left:16px;width:9px;height:9px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;"></span>
+        <div class="agent-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#e0b768" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><rect x="5" y="11" width="3.5" height="8" rx="1"/><rect x="10.25" y="6" width="3.5" height="13" rx="1"/><rect x="15.5" y="14" width="3.5" height="5" rx="1"/></svg></div>
+        <h3 style="margin-top:10px;">דוחות</h3>
+        <p>מעדכן דוחות ומעקב נוכחות, בלי הזנה ידנית.</p>
+      </div>
+      <div class="card" style="position:relative;">
+        <span style="position:absolute;top:14px;left:16px;width:9px;height:9px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px #22c55e;"></span>
+        <div class="agent-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#e0b768" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></svg></div>
+        <h3 style="margin-top:10px;">התראות</h3>
+        <p>מתריע על אירוע חשוב — יארצייט, יום הולדת, נעדר.</p>
+      </div>
+    </div>
+    <div class="foot-note content" style="margin-top:8px;">כל נקודה ירוקה — סוכן שרץ ברקע, כרגע.</div>
+  </section>
+
+  <!-- 25 — EXAMPLE 5: AUTOMATIONS -->
+  <section class="slide" data-clock="21:43–21:45">
+    <span class="slide-index">26 / 38</span>
+    <span class="eyebrow">דוגמה 5</span>
+    <h2><span class="ia-fx">אוטומציות</span></h2>
+    <div class="lede content">תהליכים שעד היום עשית ביד — עכשיו רצים לבד, מאחורי הקלעים, ומחברים בין הכלים שכבר יש לך מקצה לקצה.</div>
+    <div class="content" style="max-width:900px;margin-top:6px;">
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(0,0,0,0.25);"><span style="width:10px;height:10px;border-radius:50%;background:#ef4444;"></span><span style="width:10px;height:10px;border-radius:50%;background:#e0b768;"></span><span style="width:10px;height:10px;border-radius:50%;background:#22c55e;"></span><span style="margin-inline-start:10px;font-size:12px;color:var(--paper-dim);">אוטומציה — תהליך מחובר</span></div>
+        <img src="automations.png" alt="אוטומציות שנבנו עם Claude Code" style="width:100%;display:block;">
+      </div>
+    </div>
+  </section>
+
+  <!-- 26 — EXAMPLE 6: DONATIONS DASHBOARD -->
+  <section class="slide dark" data-clock="21:45–21:47">
+    <span class="slide-index">27 / 38</span>
+    <span class="eyebrow">דוגמה 6</span>
+    <h2><span class="ia-fx">דשבורד</span>&nbsp;תרומות ותורמים</h2>
+    <div class="lede content">כל המספרים של הקהילה או המוסד במסך אחד — כמה נכנס, מי תרם, מי התחייב ועדיין לא שילם — מתעדכן לבד, בלי לפתוח אקסל.</div>
+    <div class="content" style="max-width:1000px;margin-top:6px;">
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(0,0,0,0.25);"><span style="width:10px;height:10px;border-radius:50%;background:#ef4444;"></span><span style="width:10px;height:10px;border-radius:50%;background:#e0b768;"></span><span style="width:10px;height:10px;border-radius:50%;background:#22c55e;"></span><span style="margin-inline-start:10px;font-size:12px;color:var(--paper-dim);">לוח תרומות — זמן אמת (הדגמה)</span></div>
+        <div style="padding:22px;display:flex;flex-direction:column;gap:18px;">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+            <div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:16px;"><div style="font-size:13px;color:var(--paper-dim);">תרומות החודש</div><div style="font-family:var(--font);font-weight:900;font-size:32px;color:#fff;margin-top:4px;" dir="ltr">₪48,200</div><div style="font-size:13px;color:#22c55e;font-weight:700;margin-top:2px;">▲ 18%</div></div><div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:16px;"><div style="font-size:13px;color:var(--paper-dim);">תורמים חדשים</div><div style="font-family:var(--font);font-weight:900;font-size:32px;color:#fff;margin-top:4px;" dir="ltr">37</div><div style="font-size:13px;color:#22c55e;font-weight:700;margin-top:2px;">▲ 9%</div></div><div style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:16px;"><div style="font-size:13px;color:var(--paper-dim);">אחוז מהיעד השנתי</div><div style="font-family:var(--font);font-weight:900;font-size:32px;color:#fff;margin-top:4px;" dir="ltr">72%</div><div style="font-size:13px;color:#22c55e;font-weight:700;margin-top:2px;">▲ 5 נק׳</div></div><div style="background:rgba(224,183,104,0.1);border:1px solid rgba(224,183,104,0.35);border-radius:12px;padding:16px;"><div style="font-size:13px;color:var(--paper-dim);">התחייבויות פתוחות</div><div style="font-family:var(--font);font-weight:900;font-size:32px;color:var(--gold);margin-top:4px;" dir="ltr">₪12,400</div><div style="font-size:13px;color:var(--paper-dim);font-weight:700;margin-top:2px;">ממתין לגבייה</div></div>
+          </div>
+          <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:18px 20px;">
+            <div style="font-size:13px;color:var(--paper-dim);margin-bottom:14px;">תרומות · 6 חודשים אחרונים</div>
+            <div style="display:flex;align-items:flex-end;gap:16px;height:120px;">
+              <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%;"><div style="width:100%;height:44%;background:linear-gradient(180deg,#8a68b8,#5f3698);border-radius:6px 6px 0 0;"></div><span style="font-size:12px;color:var(--paper-dim);">ניסן</span></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%;"><div style="width:100%;height:52%;background:linear-gradient(180deg,#8a68b8,#5f3698);border-radius:6px 6px 0 0;"></div><span style="font-size:12px;color:var(--paper-dim);">אייר</span></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%;"><div style="width:100%;height:48%;background:linear-gradient(180deg,#8a68b8,#5f3698);border-radius:6px 6px 0 0;"></div><span style="font-size:12px;color:var(--paper-dim);">סיון</span></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%;"><div style="width:100%;height:66%;background:linear-gradient(180deg,#8a68b8,#5f3698);border-radius:6px 6px 0 0;"></div><span style="font-size:12px;color:var(--paper-dim);">תמוז</span></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%;"><div style="width:100%;height:82%;background:linear-gradient(180deg,#8a68b8,#5f3698);border-radius:6px 6px 0 0;"></div><span style="font-size:12px;color:var(--paper-dim);">אב</span></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:6px;height:100%;"><div style="width:100%;height:100%;background:linear-gradient(180deg,var(--gold),#b9853c);border-radius:6px 6px 0 0;"></div><span style="font-size:12px;color:var(--gold);font-weight:700;">אלול</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 26b — EXAMPLE 7: STAM INSTITUTE + SEATING -->
+  <section class="slide" data-clock="21:47–21:49">
+    <span class="slide-index">28 / 38</span>
+    <span class="eyebrow">דוגמה 7</span>
+    <h2>מערכת לניהול <span class="ia-fx">מכון סת״ם</span></h2>
+    <div class="lede content">כל פריט שיצא מהמכון — מזוזות, תפילין, ספרי תורה — עם מי הוא, מתי נבדק, ומתי הבדיקה הבאה. והמערכת מזכירה לבד.</div>
+    <div class="content" style="margin-top:6px;">
+      <div class="card" style="padding:0;overflow:hidden;">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(0,0,0,0.25);"><span style="width:10px;height:10px;border-radius:50%;background:#ef4444;"></span><span style="width:10px;height:10px;border-radius:50%;background:#e0b768;"></span><span style="width:10px;height:10px;border-radius:50%;background:#22c55e;"></span><span style="margin-inline-start:10px;font-size:12px;color:var(--paper-dim);">מכון סת״ם — מעקב פריטים ובדיקות (הדגמה)</span></div>
+        <div class="table-wrap" style="border:none;border-radius:0;">
+          <table>
+            <tr><th>לקוח</th><th>פריט</th><th>בדיקה אחרונה</th><th>בדיקה הבאה</th><th>סטטוס</th></tr>
+            <tr><td class="hl">שמעון אזולאי</td><td>מזוזות (7)</td><td>י״ד אייר תשפ״ה</td><td>אייר תשפ״ז</td><td>⚠️ בדיקה בקרוב</td></tr><tr><td class="hl">נדב פרץ</td><td>תפילין רש״י</td><td>כ״ב טבת תשפ״ו</td><td>טבת תשפ״ח</td><td>✅ תקין</td></tr><tr><td class="hl">משפחת דיין</td><td>תפילין לבר מצווה</td><td>—</td><td>—</td><td>🎉 בר מצווה — ט״ז כסלו</td></tr><tr><td class="hl">בית כנסת אוהל יעקב</td><td>ספר תורה — הגהה</td><td>ח׳ אלול תשפ״ה</td><td>אלול תשפ״ו</td><td>⚠️ בדיקה בקרוב</td></tr><tr><td class="hl">יוסף בן חיים</td><td>מזוזות (4)</td><td>ג׳ ניסן תשפ״ו</td><td>ניסן תשפ״ח</td><td>✅ תקין</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="content grid grid-2" style="margin-top:14px;gap:14px;">
+      <div class="card"><span class="tag">מעקב אוטומטי</span><h3>תאריכי בר מצווה</h3><p>המערכת יודעת מי מגיע לגיל מצוות בעוד שנה — ומזכירה להזמין תפילין בזמן, בלי שאף אחד יצטרך לזכור.</p></div>
+      <div class="card" style="border-color:var(--gold);"><span class="tag">אותה מערכת</span><h3>סידור מקומות ישיבה בימים הנוראים</h3><p>מי יושב איפה, מי תרם על מקום, מי צריך מקום נוסף לאורח — הכל במסך אחד, ומודפס לרשימה מסודרת לפני ראש השנה.</p></div>
+    </div>
+  </section>
+
+  <!-- 26 — CHECKLIST: WHAT WE TEACH -->
+  <section class="slide dark" data-clock="21:44–21:46">
+    <span class="slide-index">29 / 38</span>
+    <span class="eyebrow">תוכן הסדנה</span>
+    <h2><span class="ia-fx">מה תדעו לעשות בסוף?</span></h2>
+    <div class="content checklist" style="max-width:820px;margin-top:6px;column-count:2;column-gap:40px;">
+      <div class="check-item"><span class="check-mark">1</span> התקנת Claude Code והתשתית</div>
+      <div class="check-item"><span class="check-mark">2</span> ניהול טוקנים וחיסכון בעלויות</div>
+      <div class="check-item"><span class="check-mark">3</span> מילון מושגים — API, MCP, CLI</div>
+      <div class="check-item"><span class="check-mark">4</span> אבטחת מידע וטוקנים</div>
+      <div class="check-item"><span class="check-mark">5</span> חיבור מייל ויומן</div>
+      <div class="check-item hl-item"><span class="check-mark">6</span> חיבור וואטסאפ</div>
+      <div class="check-item"><span class="check-mark">7</span> בניית מערכת לניהול קהילה</div>
+      <div class="check-item"><span class="check-mark">8</span> אוטומציות ותזכורות</div>
+      <div class="check-item"><span class="check-mark">9</span> העלאה לענן — GitHub, Vercel, Supabase</div>
+      <div class="check-item hl-item"><span class="check-mark">10</span> תרגול חי — בונים ביחד</div>
+      <div class="check-item"><span class="check-mark">11</span> תמיכה גם אחרי הסדנה</div>
+    </div>
+  </section>
+
+  <!-- 27 — WHEN (DATES) -->
+  <section class="slide" data-clock="21:46–21:47">
+    <span class="slide-index">30 / 38</span>
+    <span class="eyebrow">מתי</span>
+    <h1>יום שישי 9.10 <span class="accent" style="font-weight:100;">+</span> יום שישי 16.10</h1>
+    <div class="cover-sub">שני מפגשים חיים של 3 שעות, בזום. 9:30–12:30 בבוקר.</div>
+    <div class="content grid grid-2" style="margin-top:22px;max-width:820px;gap:13px;">
+      <div class="hora-card main"><span class="flags">📅</span><span class="pais">מפגש א׳ · שישי 9.10</span><span class="hora">9:30–12:30</span></div>
+      <div class="hora-card main"><span class="flags">📅</span><span class="pais">מפגש ב׳ · שישי 16.10</span><span class="hora">9:30–12:30</span></div>
+    </div>
+    <div class="foot-note content" style="margin-top:14px;">בבוקר — לפני שהיום מתחיל. כל מפגש מוקלט, וההקלטה נשארת פתוחה לצפייה.</div>
+  </section>
+
+  <!-- 28 — VISUAL: EVERYONE AT HOME ON ZOOM -->
+  <section class="slide dark" data-clock="21:47–21:48">
+    <span class="slide-index">31 / 38</span>
+    <span class="eyebrow">איך זה נראה בפועל</span>
+    <h2>כל אחד מהבית שלו</h2>
+    <div class="content grid grid-3" style="margin-top:16px;max-width:960px;">
+      <div class="card" style="text-align:center;align-items:center;gap:14px;padding:32px 24px;">
+        <div class="agent-ic" style="width:66px;height:66px;border-radius:16px;"><svg viewBox="0 0 24 24" fill="none" stroke="#e0b768" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:36px;height:36px;"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></div>
+        <p style="font-size:18px;">מהסלון, מהמשרד — מכל מקום</p>
+      </div>
+      <div class="card" style="text-align:center;align-items:center;gap:14px;padding:32px 24px;border-color:var(--gold);transform:scale(1.05);">
+        <div class="agent-ic" style="width:66px;height:66px;border-radius:16px;"><svg viewBox="0 0 24 24" fill="none" stroke="#e0b768" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:36px;height:36px;"><rect x="2" y="6" width="13" height="12" rx="2"/><path d="m22 8-5 4 5 4V8Z"/></svg></div>
+        <p style="font-size:18px;">כוס קפה, מסך זום פתוח</p>
+      </div>
+      <div class="card" style="text-align:center;align-items:center;gap:14px;padding:32px 24px;">
+        <div class="agent-ic" style="width:66px;height:66px;border-radius:16px;"><svg viewBox="0 0 24 24" fill="none" stroke="#e0b768" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:36px;height:36px;"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg></div>
+        <p style="font-size:18px;">שכירים, עצמאים ומנהלים — ביחד</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 29 — BIG QUESTION: WHAT DO YOU GET -->
+  <section class="slide" data-clock="21:48–21:49">
+    <span class="slide-index">32 / 38</span>
+    <h1 style="font-size:clamp(56px,9vw,120px);">מה&nbsp;<span class="ia-fx">מקבלים</span><br>בסדנה?</h1>
+  </section>
+
+  <!-- 30 — TODAY'S OFFER -->
+  <section class="slide dark" data-clock="21:49–21:51">
+    <span class="slide-index">33 / 38</span>
+    <span class="eyebrow">מי שסוגר היום · עד 23:32 שעון ישראל</span>
+    <h2 style="font-size:clamp(36px,4.8vw,64px);"><span class="ia-fx">כל</span> זה כלול</h2>
+    <div id="pb-incl" class="content grid grid-2" style="max-width:1000px;margin-top:14px;gap:12px 30px;">
+      <div class="check-item" style="font-size:18px;"><span class="check-mark">1</span> שני מפגשים חיים של 3 שעות + גישה מלאה לסדנה</div>
+      <div class="check-item" style="font-size:18px;"><span class="check-mark">2</span> קבוצת תמיכה בוואטסאפ — כולל בוט AI לתשובות מיידיות</div>
+      <div class="check-item" style="font-size:18px;"><span class="check-mark">3</span> אתר הסדנה: הקלטות + תמלול מלא + פרומפטים מוכנים</div>
+      <div class="check-item" style="font-size:18px;"><span class="check-mark">4</span> חצי שנה חינם בקבוצת ה-AI הסגורה</div>
+      <div class="check-item" style="font-size:18px;"><span class="check-mark">5</span> ההקלטות פתוחות לצפייה לכל החיים</div>
+    </div>
+    <div class="content" style="margin-top:22px;">
+      <button class="pb-reveal-btn" onclick="document.getElementById('pb-reveal').classList.add('show');document.getElementById('pb-incl').style.display='none';this.style.display='none';">💥 גלה את המחיר של היום</button>
+      <div id="pb-reveal" class="pb-reveal">
+        <div class="lead">לבנות את 6 המערכות האלה לבד היה עולה:</div>
+        <div class="pb-costs"><div class="row" style="animation-delay:0.10s;"><span>מצגות מקצועיות</span><span dir="ltr">₪1,200</span></div><div class="row" style="animation-delay:0.25s;"><span>אתר אינטרנט עם סליקה</span><span dir="ltr">₪6,000</span></div><div class="row" style="animation-delay:0.40s;"><span>מערכת CRM לניהול לקוחות</span><span dir="ltr">₪9,000</span></div><div class="row" style="animation-delay:0.55s;"><span>צבא של סוכני AI</span><span dir="ltr">₪11,000</span></div><div class="row" style="animation-delay:0.70s;"><span>אוטומציות</span><span dir="ltr">₪7,500</span></div><div class="row" style="animation-delay:0.85s;"><span>דשבורד תרומות ותורמים</span><span dir="ltr">₪4,500</span></div></div>
+        <div class="pb-total"><span>סה״כ</span><span class="pb-strike" dir="ltr">₪39,200</span></div>
+        <div class="pb-final"><span class="lab">היום, כל זה ב־</span><span class="pb-price" dir="ltr">₪800</span></div>
+        <div class="pb-deadline">⏳ רק עד 23:32 הלילה, שעון ישראל</div>
+      </div>
+      <div class="foot-note" style="margin-top:16px;">דוגמה לאתר שכבר בנינו לסדנה הקודמת: <a href="https://al-automat.co.il/course" style="color:var(--lavender);text-decoration:underline;" dir="ltr">al-automat.co.il/course</a></div>
+    </div>
+  </section>
+
+  <!-- 31 — LATER OFFER -->
+  <section class="slide" data-clock="21:51–21:52">
+    <span class="slide-index">34 / 38</span>
+    <span class="eyebrow">מי שלא סוגר היום · הגרסה המצומצמת</span>
+    <h2>אותו מחיר — <span style="color:var(--gold);font-weight:900;" dir="ltr">₪800</span> — אבל מקבלים פחות</h2>
+    <div class="content grid grid-2" style="max-width:960px;margin-top:18px;gap:20px 40px;">
+      <div>
+        <div class="si-label">✓ כן מקבלים</div>
+        <div class="checklist">
+          <div class="check-item" style="font-size:18px;"><span class="check-mark">✓</span> שני המפגשים החיים של 3 שעות + הסדנה המלאה</div>
+          <div class="check-item" style="font-size:18px;"><span class="check-mark">✓</span> ההקלטות של הסדנה (שנה אחת)</div>
+        </div>
+      </div>
+      <div>
+        <div class="no-label">✕ לא מקבלים</div>
+        <div class="no-item"><span class="x">✕</span><span class="txt">תמלול מלא + פרומפטים מוכנים לשימוש</span></div>
+        <div class="no-item"><span class="x">✕</span><span class="txt">גישה לקבוצת ה-AI הסגורה</span></div>
+        <div class="no-item"><span class="x">✕</span><span class="txt">הקלטות פתוחות לכל החיים</span></div>
+      </div>
+    </div>
+    <div class="foot-note content" style="margin-top:18px;">היום אתה לוקח את החבילה המלאה; מחר — הגרסה המצומצמת, באותו מחיר בדיוק.</div>
+  </section>
+
+  <!-- 32 — RECAP OF TODAY'S DEAL -->
+  <section class="slide dark" data-clock="21:52–21:54">
+    <span class="slide-index">35 / 38</span>
+    <span class="eyebrow">רק במחיר הזה, רק היום · עד 23:32 שעון ישראל</span>
+    <h2 style="font-size:clamp(34px,4.6vw,60px);">כל מה שאתה מקבל ב־<span style="color:var(--gold);font-weight:900;" dir="ltr">₪800</span></h2>
+    <div class="content" style="margin-top:16px;">
+      <button class="pb-reveal-btn" onclick="var c=document.getElementById('rs');var l=c.querySelector('.rs-line:not(.on)');if(l)l.classList.add('on');if(!c.querySelector('.rs-line:not(.on)')){this.textContent='🔥 כל זה — ב־800₪ בלבד';}">➕ גלה מה מקבלים</button>
+      <div id="rs" style="margin-top:22px;max-width:960px;"><div class="rs-line"><span class="rs-num">1</span> שני מפגשים חיים של 3 שעות + הסדנה המלאה</div><div class="rs-line"><span class="rs-num">2</span> קבוצת תמיכה בוואטסאפ עם בוט AI</div><div class="rs-line"><span class="rs-num">3</span> אתר הסדנה: הקלטות + תמלול מלא + פרומפטים מוכנים</div><div class="rs-line"><span class="rs-num">4</span> חצי שנה חינם בקבוצת ה-AI הסגורה</div><div class="rs-line"><span class="rs-num">5</span> ההקלטות פתוחות לצפייה לכל החיים</div></div>
+    </div>
+  </section>
+
+  <!-- 33 — CALL TO ACTION -->
+  <section class="slide" data-clock="21:54–21:56">
+    <span class="slide-index">36 / 38</span>
+    <h2 style="font-size:clamp(42px,5.6vw,84px);">מה עושים <span class="ia-fx">עכשיו</span>?</h2>
+    <div class="content" style="margin-top:26px;display:flex;flex-direction:column;gap:20px;align-items:flex-start;">
+      <a class="pay-btn" href="https://al-automat.co.il/sadna/form" target="_blank" rel="noopener">💳 להרשמה ותשלום · 800₪</a>
+      <div style="display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.16);border-radius:12px;padding:11px 16px;">
+        <span dir="ltr" style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:17px;color:#fff;">al-automat.co.il/sadna/form</span>
+        <button onclick="navigator.clipboard.writeText('https://al-automat.co.il/sadna/form');var t=this.querySelector('span');t.textContent='✔ הועתק';setTimeout(function(){t.textContent='העתק';},1600);" style="display:inline-flex;align-items:center;gap:7px;background:rgba(224,183,104,0.16);border:1px solid rgba(224,183,104,0.45);color:var(--gold);border-radius:9px;padding:8px 14px;font-size:15px;font-weight:700;cursor:pointer;" title="להעתקה לצ׳אט של הזום">📋 <span>העתק</span></button>
+      </div>
+      <div style="font-size:20px;color:var(--paper);max-width:680px;">נרשמים ומשלמים — והגישה ומייל האישור מגיעים מיד, <strong style="color:#fff;">בלי שום שלב באמצע</strong>.</div>
+      <div style="font-size:16px;color:var(--gold);font-weight:700;">⏳ רק עד 23:32 הלילה, שעון ישראל</div>
+    </div>
+  </section>
+
+  <!-- 34 — RECAP + CTA AGAIN -->
+  <section class="slide dark" data-clock="21:56–21:58">
+    <span class="slide-index">37 / 38</span>
+    <span class="eyebrow">לפני שממשיכים</span>
+    <h2>וכל זה אתה מקבל</h2>
+    <div class="content checklist" style="max-width:860px;margin-top:6px;">
+      <div class="check-item"><span class="check-mark">📅</span> יום שישי 9.10 + יום שישי 16.10, שני מפגשים חיים של 3 שעות, 9:30–12:30 בבוקר</div>
+      <div class="check-item"><span class="check-mark">🎁</span> אתר הסדנה עם הקלטות + תמלול מלא + פרומפטים מוכנים · חצי שנה חינם בקבוצת ה-AI · הקלטות פתוחות לכל החיים</div>
+      <div class="check-item"><span class="check-mark">💬</span> קבוצת תמיכה בוואטסאפ עם בוט AI, גם אחרי הסדנה</div>
+    </div>
+    <div class="content" style="margin-top:6px;">
+      <span class="quote">זה הזמן לסגור — <a href="https://al-automat.co.il/sadna/form" style="color:var(--lavender);text-decoration:underline;" dir="ltr">al-automat.co.il/sadna/form</a></span>
+    </div>
+    <div class="content" style="margin-top:14px;display:flex;align-items:center;gap:22px;flex-wrap:wrap;">
+      <div style="background:linear-gradient(135deg,var(--gold),#b9853c);border-radius:20px;padding:18px 32px;text-align:center;box-shadow:0 10px 30px rgba(224,183,104,0.35);">
+        <div style="font-size:12px;font-weight:700;letter-spacing:0.1em;color:#3a2a10;">רק היום</div>
+        <div style="font-size:44px;font-weight:900;color:#1a1130;line-height:1;">800₪</div>
+      </div>
+      <div style="font-size:14px;color:var(--paper-dim);max-width:300px;">עד <strong style="color:var(--white);">23:32 הלילה</strong> — אחר כך, הגרסה המצומצמת באותו מחיר.</div>
+      <div style="background:#fff;border-radius:14px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <img src="payment-qr-sadna.png" alt="QR להרשמה" style="width:110px;height:110px;border-radius:8px;display:block;">
+        <span style="font-size:11px;color:#1a1130;font-weight:700;">סרוק להרשמה</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 35 — QUESTIONS -->
+  <section class="slide dark" data-clock="21:57–22:00">
+    <span class="slide-index">38 / 38</span>
+    <h1>יש <span class="accent" style="font-weight:100;">שאלות?</span></h1>
+  </section>
+
+</div>
+
+<div id="poll-live-config" style="display:none;" data-endpoint="https://al-automat.co.il/api/zoom/poll-results" data-meeting-id="86183821803"></div>
+
+<div class="navbar">
+  <button id="prevBtn" aria-label="הקודם">‹</button>
+  <span class="counter" id="counter">1 / 38</span>
+  <button id="nextBtn" aria-label="הבא">›</button>
+</div>
+
+<div class="clockstrip" id="clockstrip">21:00</div>
+
+<script>
+  (function(){
+    var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+    var counter = document.getElementById('counter');
+    var clockstrip = document.getElementById('clockstrip');
+    function currentIndex(){
+      var mid = window.scrollY + window.innerHeight/2;
+      var idx = 0;
+      slides.forEach(function(s,i){ if (s.offsetTop <= mid) idx = i; });
+      return idx;
+    }
+    function update(){
+      var i = currentIndex();
+      counter.textContent = (i+1) + ' / ' + slides.length;
+      clockstrip.textContent = slides[i].getAttribute('data-clock') || '';
+    }
+    function goTo(i){ i = Math.max(0, Math.min(slides.length-1, i)); slides[i].scrollIntoView({behavior:'smooth'}); }
+    document.getElementById('nextBtn').addEventListener('click', function(){ goTo(currentIndex()+1); });
+    document.getElementById('prevBtn').addEventListener('click', function(){ goTo(currentIndex()-1); });
+    window.addEventListener('scroll', update, {passive:true});
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'ArrowDown' || e.key === 'PageDown'){ goTo(currentIndex()+1); e.preventDefault(); }
+      if (e.key === 'ArrowUp' || e.key === 'PageUp'){ goTo(currentIndex()-1); e.preventDefault(); }
+    });
+    update();
+  })();
+</script>
+<style>
+  .poll-live-btn{ position:absolute; bottom:30px; left:8vw; z-index:20; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.3); color:var(--paper); font-family:var(--font); font-size:13px; font-weight:500; padding:8px 16px; border-radius:999px; cursor:pointer; }
+  .poll-live-btn:hover{ background:rgba(255,255,255,0.18); }
+  .poll-live-box{ display:flex; flex-direction:column; gap:8px; max-width:560px; margin-top:6px; }
+  .poll-live-row{ display:flex; align-items:center; gap:10px; font-size:14px; }
+  .poll-live-label{ width:180px; flex-shrink:0; color:var(--paper); }
+  .poll-live-track{ flex:1; background:rgba(255,255,255,0.08); border-radius:8px; height:26px; overflow:hidden; }
+  .poll-live-fill{ height:100%; background:var(--gold); border-radius:8px; display:flex; align-items:center; padding:0 10px; font-weight:700; font-size:12px; color:#1a1130; white-space:nowrap; transition:width .4s; }
+  .poll-live-note{ font-size:12px; color:var(--paper-dim); }
+</style>
+<script>
+/* Live Zoom poll results — reads from our own /api/zoom/poll-results endpoint,
+   which in turn calls Zoom's "meeting poll report" REST API. Requires the
+   Zoom Server-to-Server app to have the report:read poll scope enabled. */
+(function(){
+  var cfg = document.getElementById('poll-live-config');
+  if(!cfg) return;
+  var endpoint = cfg.getAttribute('data-endpoint');
+  var meetingId = cfg.getAttribute('data-meeting-id');
+  var timers = {};
+
+  function findMatch(results, key){
+    return results.find(function(r){ return r.question && r.question.indexOf(key) > -1; });
+  }
+
+  function render(slide, box, match){
+    box.innerHTML = '';
+    if(!match || !match.answers.length){
+      box.innerHTML = '<div class="poll-live-note">ממתין לתשובות...</div>';
+      return;
+    }
+    var total = match.answers.reduce(function(s,a){ return s+a.count; }, 0) || 1;
+    match.answers
+      .slice()
+      .sort(function(a,b){ return b.count - a.count; })
+      .forEach(function(a){
+        var pct = Math.round((a.count/total)*100);
+        var row = document.createElement('div'); row.className = 'poll-live-row';
+        row.innerHTML =
+          '<span class="poll-live-label">'+a.text+'</span>'+
+          '<div class="poll-live-track"><div class="poll-live-fill" style="width:'+pct+'%">'+pct+'% ('+a.count+')</div></div>';
+        box.appendChild(row);
+      });
+  }
+
+  document.querySelectorAll('.poll-slide').forEach(function(slide){
+    var key = slide.getAttribute('data-poll-key');
+    var btn = document.createElement('button');
+    btn.className = 'poll-live-btn'; btn.type = 'button'; btn.textContent = '▶ תוצאות חי';
+    var box = document.createElement('div'); box.className = 'poll-live-box content';
+    slide.appendChild(box); slide.appendChild(btn);
+
+    btn.addEventListener('click', function(){
+      if(timers[key]){ clearInterval(timers[key]); timers[key]=null; btn.textContent='▶ תוצאות חי'; return; }
+      btn.textContent = '⏸ עוצר תוצאות';
+      function tick(){
+        fetch(endpoint + '?meetingId=' + encodeURIComponent(meetingId))
+          .then(function(r){ return r.json(); })
+          .then(function(data){
+            if(!data.ok){ box.innerHTML = '<div class="poll-live-note">שגיאה: '+(data.error||'לא ידוע')+'</div>'; return; }
+            render(slide, box, findMatch(data.results, key));
+          })
+          .catch(function(){ box.innerHTML = '<div class="poll-live-note">אין חיבור לשרת</div>'; });
+      }
+      tick();
+      timers[key] = setInterval(tick, 4000);
+    });
+  });
+})();
+</script>
+<script>
+/* ===== BRAIN DECK · EDIT MODE v2 (additive, self-contained) =====
+   v2 adds: clipboard image paste (Cmd+V) + file drag-drop, internal element
+   copy/paste (Cmd+C/Cmd+V), brand color swatches (whole element OR selected
+   word while editing), center snap-guides while dragging, arrow-key nudge,
+   z-order, center buttons, redo, autosave to localStorage with restore bar,
+   blur intensity/opaque controls, proportional image resize, Cmd+S save. */
+(function(){
+  if(window.__brainEdInit) return; window.__brainEdInit=true;
+  var deck=document.getElementById('deck');
+  if(!deck) return;
+  var edOn=false, selected=null, undoStack=[], redoStack=[], editState=null;
+  var clipInternal=null, pasteCount=0, zTop=60, lastNudge={el:null,t:0};
+  var touched={}, persistTimer=null, persistWarned=false;
+  var LS_KEY='brainEd:'+(location.pathname.split('/').pop()||'deck');
+  var MARKER='__brain-ed-copy__';
+
+  var ADDED='.ed-img,.ed-blur,.ed-shape,.ed-textbox,.ed-clone';
+  /* DENY = full-bleed backgrounds, slide-filling wrappers, deck chrome, editor UI */
+  var DENY='#deck,.slide,.bg-img,.foot,.pg,#nav,.nav-btn,#slide-counter,#btn-fs,#progress-bar,#ed-toolbar,#ed-fab,#ed-hint,#ed-toast,#ed-ctx,#ed-restore,#ed-guide-v,#ed-guide-h,.wrap,.div-wrap,.show-wrap,.bs-wrap,.applayer,.hero-image-content,.hero-image-vignette,.lay-side,.lay-wrap,.tower,.tower-inner,.hero-image,.hero-ring,.hero-ring2,.loop-wrap,.loop-content',.navbar,.navbar button,.counter,.slide-index,.slide-track,.clockstrip';
+  /* TEXTY = elements that may be inline-edited on double-click */
+  var TEXTY='h1,h2,h3,h4,h5,h6,p,li,span,.div-word,.s-title,.eyebrow,.bp-text,.bs-context,.hero-title,.hero-sub,.div-sub,.div-eyebrow,.ed-textbox,.vl-name,.vl-val,.lay-tx,.pl-tx,.card,.chip,.engine,.step-name,.price-num,.vt-num,.hbar-lbl,.hbar-val,.vs-name,.vs-item,.bs-number,.bs-label',.lede,.cover-sub,.quote,.foot-note,.tag,.badge,.tl-time,.tl-bar,.flow-box,pre';
+
+  function scale(){ var r=deck.getBoundingClientRect(); return (r.width/1920)||1; }
+  function activeSlide(){
+    var slides=document.querySelectorAll('.slide'), mid=window.innerHeight/2, best=null, bestD=Infinity;
+    for(var i=0;i<slides.length;i++){
+      var r=slides[i].getBoundingClientRect();
+      if(r.top<=mid && r.bottom>=mid) return slides[i];
+      var d=Math.min(Math.abs(r.top-mid),Math.abs(r.bottom-mid));
+      if(d<bestD){ bestD=d; best=slides[i]; }
+    }
+    return best||document.querySelector('.slide');
+  }
+  function slideIndex(s){ return [].slice.call(document.querySelectorAll('.slide')).indexOf(s); }
+  function matches(el,sel){ return el && el.matches && el.matches(sel); }
+  function deckXY(cx,cy){ var d=deck.getBoundingClientRect(), s=scale(); return {x:(cx-d.left)/s, y:(cy-d.top)/s}; }
+
+  /* Permissive: deepest element under the cursor that is NOT a denied wrapper.
+     Clicking inside an ADDED element (image/clone/...) grabs the whole unit. */
+  function eligible(el){
+    if(el && el.closest){ var ad=el.closest(ADDED); if(ad) return ad; }
+    var cur=el;
+    while(cur && cur!==deck){
+      if(matches(cur,ADDED)) return cur;
+      if(cur.classList && cur.classList.contains('slide')) return null;
+      if(matches(cur,DENY)){ cur=cur.parentElement; continue; }
+      if(cur.closest && cur.closest('.slide')) return cur;
+      cur=cur.parentElement;
+    }
+    return null;
+  }
+  /* For double-click text editing: deepest texty element (also inside clones) */
+  function eligibleText(el){
+    var cur=el;
+    while(cur && cur!==deck){
+      if(matches(cur,'.ed-textbox')) return cur;
+      if(cur.classList && cur.classList.contains('slide')) return null;
+      if(!matches(cur,DENY) && matches(cur,TEXTY) && cur.closest && cur.closest('.slide')) return cur;
+      cur=cur.parentElement;
+    }
+    return null;
+  }
+  function selectParent(){
+    if(!selected){ toast('בחר אלמנט קודם'); return; }
+    var p=selected.parentElement;
+    while(p && p!==deck){
+      if(p.classList && p.classList.contains('slide')) break;
+      if(!matches(p,DENY) && p.closest('.slide')){ select(p); toast('נבחרה המסגרת'); return; }
+      p=p.parentElement;
+    }
+    toast('אין מסגרת אב');
+  }
+
+  /* ---------- undo / redo (per-slide innerHTML snapshots) ---------- */
+  function snap(){
+    var s=activeSlide(); if(!s) return;
+    var idx=slideIndex(s);
+    undoStack.push({slide:s, idx:idx, html:s.innerHTML});
+    if(undoStack.length>80) undoStack.shift();
+    redoStack.length=0;
+    touched[idx]=1; schedulePersist();
+    toast('');
+  }
+  function undo(){
+    var last=undoStack.pop(); if(!last){ toast('אין מה לבטל'); return; }
+    deselect();
+    if(last.slide!==activeSlide() && last.idx>=0 && typeof show==='function'){ show(last.idx); }
+    redoStack.push({slide:last.slide, idx:last.idx, html:last.slide.innerHTML});
+    last.slide.innerHTML=last.html;
+    touched[last.idx]=1; schedulePersist();
+    toast('בוטל');
+  }
+  function redo(){
+    var nx=redoStack.pop(); if(!nx){ toast('אין מה להחזיר'); return; }
+    deselect();
+    if(nx.slide!==activeSlide() && nx.idx>=0 && typeof show==='function'){ show(nx.idx); }
+    undoStack.push({slide:nx.slide, idx:nx.idx, html:nx.slide.innerHTML});
+    nx.slide.innerHTML=nx.html;
+    touched[nx.idx]=1; schedulePersist();
+    toast('הוחזר');
+  }
+
+  /* ---------- autosave (localStorage, debounced, normalized compare) ---------- */
+  function cleanSlideHTML(slide){
+    var c=slide.cloneNode(true), i, n;
+    n=c.querySelectorAll('.ed-runtime,.ed-handle,.ed-del'); for(i=0;i<n.length;i++) n[i].remove();
+    n=c.querySelectorAll('.ed-hover,.ed-selected'); for(i=0;i<n.length;i++){ n[i].classList.remove('ed-hover'); n[i].classList.remove('ed-selected'); }
+    n=c.querySelectorAll('[contenteditable]'); for(i=0;i<n.length;i++) n[i].removeAttribute('contenteditable');
+    n=c.querySelectorAll('.on'); for(i=0;i<n.length;i++) n[i].classList.remove('on');
+    n=c.querySelectorAll('.anim'); for(i=0;i<n.length;i++) n[i].style.animationDelay='';
+    n=c.querySelectorAll('[data-w]'); for(i=0;i<n.length;i++) n[i].style.width='';
+    var fmt; try{ fmt=new Intl.NumberFormat('he-IL'); }catch(e){ fmt=null; }
+    n=c.querySelectorAll('[data-count]');
+    for(i=0;i<n.length;i++){ var v=parseInt(n[i].getAttribute('data-count'),10); if(isNaN(v)) continue;
+      var out=n[i].querySelector('.cval')||n[i]; out.textContent= fmt?fmt.format(v):(''+v); }
+    n=c.querySelectorAll('[style=""]'); for(i=0;i<n.length;i++) n[i].removeAttribute('style');
+    return c.innerHTML;
+  }
+  function persist(){
+    try{
+      var data; try{ data=JSON.parse(localStorage.getItem(LS_KEY)||'{}'); }catch(e){ data={}; }
+      data.ts=Date.now(); data.slides=data.slides||{};
+      var list=document.querySelectorAll('.slide');
+      for(var k in touched){ if(list[k]) data.slides[k]=cleanSlideHTML(list[k]); }
+      localStorage.setItem(LS_KEY,JSON.stringify(data));
+    }catch(err){
+      if(!persistWarned){ persistWarned=true; toast('גיבוי אוטומטי נכשל - הקובץ גדול, שמור ידנית'); }
+    }
+  }
+  function schedulePersist(){ clearTimeout(persistTimer); persistTimer=setTimeout(persist,800); }
+  function checkRestore(){
+    var data; try{ data=JSON.parse(localStorage.getItem(LS_KEY)||'null'); }catch(e){ return; }
+    if(!data || !data.slides) return;
+    var list=document.querySelectorAll('.slide'), diff=[];
+    for(var k in data.slides){ var i=+k; if(list[i] && cleanSlideHTML(list[i])!==data.slides[k]) diff.push(i); }
+    if(!diff.length) return;
+    var bar=document.createElement('div'); bar.id='ed-restore';
+    var when=new Date(data.ts||Date.now());
+    var hh=('0'+when.getHours()).slice(-2)+':'+('0'+when.getMinutes()).slice(-2);
+    var lbl=document.createElement('span'); lbl.textContent='🕘 נמצאו שינויים לא שמורים ('+hh+') - '+diff.length+' שקפים';
+    var b1=document.createElement('button'); b1.className='ed-btn primary'; b1.textContent='שחזר';
+    var b2=document.createElement('button'); b2.className='ed-btn'; b2.textContent='התעלם ומחק';
+    b1.onclick=function(){
+      for(var j=0;j<diff.length;j++){ list[diff[j]].innerHTML=data.slides[diff[j]]; touched[diff[j]]=1; }
+      var cur=slideIndex(activeSlide());
+      if(typeof activate==='function' && cur>=0) activate(cur);
+      bar.remove(); toast('שוחזר ✓');
+    };
+    b2.onclick=function(){ try{ localStorage.removeItem(LS_KEY); }catch(e){} bar.remove(); };
+    bar.appendChild(lbl); bar.appendChild(b1); bar.appendChild(b2);
+    document.body.appendChild(bar);
+  }
+
+  /* ---------- selection + handles ---------- */
+  function deselect(){
+    if(selected){
+      selected.classList.remove('ed-selected');
+      if(selected.__edRel && !selected.style.zIndex){ selected.style.position=''; selected.__edRel=false; }
+    }
+    var rt=document.querySelectorAll('.ed-runtime'); for(var i=0;i<rt.length;i++) rt[i].remove();
+    selected=null; refreshTb();
+  }
+  function select(el){
+    deselect();
+    selected=el; el.classList.add('ed-selected');
+    if(!matches(el,ADDED) && getComputedStyle(el).position==='static'){ el.style.position='relative'; el.__edRel=true; }
+    var del=document.createElement('div'); del.className='ed-del ed-runtime'; del.textContent='×';
+    del.addEventListener('mousedown',function(e){ e.stopPropagation(); e.preventDefault(); });
+    del.addEventListener('click',function(e){ e.stopPropagation(); snap(); var t=selected; deselect(); if(t) t.remove(); schedulePersist(); });
+    el.appendChild(del);
+    if(matches(el,ADDED)){
+      var h=document.createElement('div'); h.className='ed-handle br ed-runtime';
+      h.addEventListener('mousedown',function(e){ startResize(e,el); });
+      el.appendChild(h);
+    }
+    refreshTb();
+  }
+
+  /* ---------- generic move helper (nudge/center share it) ---------- */
+  function moveBy(el,dx,dy){
+    if(matches(el,ADDED)){
+      el.style.left=((parseFloat(el.style.left)||el.offsetLeft)+dx)+'px';
+      el.style.top=((parseFloat(el.style.top)||el.offsetTop)+dy)+'px';
+    }else{
+      el.style.animation='none';
+      var m=(el.style.transform||'').match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+      var tx=m?parseFloat(m[1]):0, ty=m?parseFloat(m[2]):0;
+      var base=(el.style.transform||'').replace(/translate\([^)]*\)/,'').trim();
+      el.style.transform=(base+' translate('+(tx+dx)+'px,'+(ty+dy)+'px)').trim();
+    }
+  }
+
+  /* ---------- drag move with center snap-guides ---------- */
+  var drag=null, gV=null, gH=null;
+  function hideGuides(){ if(gV) gV.style.display='none'; if(gH) gH.style.display='none'; }
+  function onDown(e){
+    if(!edOn) return;
+    if(e.target.closest && e.target.closest('#ed-toolbar,#ed-fab,#ed-hint,#ed-toast,#ed-restore')) return;
+    if(e.target.classList && (e.target.classList.contains('ed-handle')||e.target.classList.contains('ed-del'))) return;
+    var el;
+    if(selected && selected.contains(e.target)){
+      /* clicking within the current selection drags THAT element (e.g. a group
+         you escalated to with "⤴ מסגרת"), instead of re-grabbing a child */
+      el=selected;
+    } else {
+      el=eligible(e.target);
+      if(!el){ deselect(); return; }
+      if(el.isContentEditable) return;
+      select(el);
+    }
+    var s=scale(), d=deck.getBoundingClientRect();
+    drag={el:el,x:e.clientX,y:e.clientY,moved:false,added:matches(el,ADDED),s:s};
+    var r0=el.getBoundingClientRect();
+    if(drag.added){
+      drag.l=parseFloat(el.style.left)||el.offsetLeft; drag.t=parseFloat(el.style.top)||el.offsetTop;
+      drag.w2=el.offsetWidth/2; drag.h2=el.offsetHeight/2;
+    }else{
+      var m=(el.style.transform||'').match(/translate\(([-\d.]+)px,\s*([-\d.]+)px\)/);
+      drag.tx=m?parseFloat(m[1]):0; drag.ty=m?parseFloat(m[2]):0;
+      drag.base=(el.style.transform||'').replace(/translate\([^)]*\)/,'').trim();
+      /* element center in deck coords EXCLUDING current translate (for snapping) */
+      drag.cx0=((r0.left-d.left)+r0.width/2)/s - drag.tx;
+      drag.cy0=((r0.top-d.top)+r0.height/2)/s - drag.ty;
+    }
+    e.preventDefault();
+    window.addEventListener('mousemove',onMove);
+    window.addEventListener('mouseup',onUp);
+  }
+  function onMove(e){
+    if(!drag) return;
+    var dx=(e.clientX-drag.x)/drag.s, dy=(e.clientY-drag.y)/drag.s;
+    if(!drag.moved){ if((Math.abs(dx)+Math.abs(dy))>2){ drag.moved=true; snap();
+        /* neutralise the entry animation (fadeUp, fill:both) which otherwise
+           pins `transform` and blocks our inline translate */
+        if(!drag.added) drag.el.style.animation='none';
+      } else return; }
+    var SN=7, offX=null, offY=null;
+    if(drag.added){
+      var lx=drag.l+dx, ty=drag.t+dy;
+      if(!e.altKey){
+        var cx=lx+drag.w2, cy=ty+drag.h2;
+        if(Math.abs(960-cx)<SN){ lx+=(960-cx); offX=true; }
+        if(Math.abs(540-cy)<SN){ ty+=(540-cy); offY=true; }
+      }
+      drag.el.style.left=lx+'px'; drag.el.style.top=ty+'px';
+    }else{
+      var txr=drag.tx+dx, tyr=drag.ty+dy;
+      if(!e.altKey){
+        var ecx=drag.cx0+txr, ecy=drag.cy0+tyr;
+        if(Math.abs(960-ecx)<SN){ txr+=(960-ecx); offX=true; }
+        if(Math.abs(540-ecy)<SN){ tyr+=(540-ecy); offY=true; }
+      }
+      drag.el.style.transform=(drag.base+' translate('+txr+'px,'+tyr+'px)').trim();
+    }
+    if(gV) gV.style.display=offX?'block':'none';
+    if(gH) gH.style.display=offY?'block':'none';
+  }
+  function onUp(){
+    window.removeEventListener('mousemove',onMove); window.removeEventListener('mouseup',onUp);
+    hideGuides(); if(drag&&drag.moved) schedulePersist(); drag=null;
+  }
+
+  /* ---------- resize (images keep aspect ratio; Shift = free) ---------- */
+  function startResize(e,el){
+    e.preventDefault(); e.stopPropagation();
+    var s=scale(), w=el.offsetWidth, h=el.offsetHeight, x=e.clientX, y=e.clientY, moved=false;
+    var isImg=matches(el,'.ed-img'), ratio=(h/w)||1;
+    function mv(ev){ var dx=(ev.clientX-x)/s, dy=(ev.clientY-y)/s; if(!moved){moved=true;snap();}
+      var nw=Math.max(40,w+dx), nh=Math.max(28,h+dy);
+      if(isImg && !ev.shiftKey) nh=Math.max(28,Math.round(nw*ratio));
+      el.style.width=nw+'px'; el.style.height=nh+'px'; }
+    function up(){ window.removeEventListener('mousemove',mv); window.removeEventListener('mouseup',up); schedulePersist(); }
+    window.addEventListener('mousemove',mv); window.addEventListener('mouseup',up);
+  }
+
+  /* ---------- inline text edit ---------- */
+  /* if an edited element drives a [data-count] counter, sync the attribute so the
+     deck's re-animation (activate()) lands on the NEW number instead of reverting */
+  function bakeCountFromEdit(el){
+    var dc=el.closest ? el.closest('[data-count]') : null;
+    if(!dc) return;
+    var cv=dc.querySelector('.cval')||dc;
+    var n=parseInt((cv.textContent||'').replace(/[^0-9]/g,''),10);
+    if(!isNaN(n)) dc.setAttribute('data-count', n);
+  }
+  function onDbl(e){
+    if(!edOn) return;
+    var el=eligibleText(e.target)||eligible(e.target);
+    if(!el) return;
+    if(matches(el,ADDED) && !matches(el,'.ed-textbox')) return;
+    if(!matches(el,TEXTY)){ toast('האלמנט הזה לא טקסט לעריכה'); return; }
+    deselect(); snap();
+    editState={el:el, orig:el.innerHTML, cancelled:false};
+    refreshTb();
+    el.setAttribute('contenteditable','true'); el.focus();
+    el.addEventListener('blur',function h(){
+      el.removeAttribute('contenteditable'); el.removeEventListener('blur',h);
+      if(!(editState && editState.cancelled)) bakeCountFromEdit(el);
+      if(editState && editState.el===el) editState=null;
+      refreshTb(); schedulePersist();
+    });
+    e.preventDefault();
+  }
+
+  /* ---------- add elements ---------- */
+  function insertImageFile(f, pos){
+    if(!f || !/^image\//.test(f.type)) return;
+    var rd=new FileReader();
+    rd.onload=function(){ var im=new Image(); im.onload=function(){
+      snap(); var s=activeSlide();
+      var w=560, h=Math.round(560*im.naturalHeight/im.naturalWidth);
+      if(h>820){ h=820; w=Math.round(820*im.naturalWidth/im.naturalHeight); }
+      var box=document.createElement('div'); box.className='ed-img';
+      var lx=pos? Math.round(pos.x-w/2) : Math.round(960-w/2);
+      var ly=pos? Math.round(pos.y-h/2) : Math.round(540-h/2);
+      box.style.left=lx+'px'; box.style.top=ly+'px'; box.style.width=w+'px'; box.style.height=h+'px';
+      var img=document.createElement('img'); img.src=rd.result; box.appendChild(img);
+      s.appendChild(box); select(box); toast('תמונה נוספה'); schedulePersist();
+    }; im.src=rd.result; };
+    rd.readAsDataURL(f);
+  }
+  function addImage(){
+    var inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+    inp.onchange=function(){ insertImageFile(inp.files[0], null); };
+    inp.click();
+  }
+  function addBlur(){ snap(); var s=activeSlide(); var b=document.createElement('div'); b.className='ed-blur'; b.style.cssText='left:760px;top:460px;width:400px;height:150px;'; s.appendChild(b); select(b); toast('טשטוש - גרור מעל נתון'); schedulePersist(); }
+  function addShape(){ snap(); var s=activeSlide(); var b=document.createElement('div'); b.className='ed-shape'; b.style.cssText='left:760px;top:450px;width:420px;height:200px;'; s.appendChild(b); select(b); schedulePersist(); }
+  function mkTextbox(text,x,y){
+    var s=activeSlide(); var t=document.createElement('div'); t.className='ed-textbox';
+    t.style.left=(x!=null?x:720)+'px'; t.style.top=(y!=null?y:480)+'px';
+    t.textContent=text||'טקסט חדש'; s.appendChild(t); select(t); return t;
+  }
+  function addText(){ snap(); mkTextbox('טקסט חדש'); toast('לחץ פעמיים לעריכה'); schedulePersist(); }
+
+  /* ---------- copy / paste (Cmd+C / Cmd+V) ---------- */
+  function cleanOuter(el){
+    var c=el.cloneNode(true), i, n;
+    n=c.querySelectorAll('.ed-runtime,.ed-handle,.ed-del'); for(i=0;i<n.length;i++) n[i].remove();
+    c.classList.remove('ed-selected'); c.classList.remove('ed-hover');
+    c.removeAttribute('contenteditable');
+    n=c.querySelectorAll('[contenteditable]'); for(i=0;i<n.length;i++) n[i].removeAttribute('contenteditable');
+    /* strip our positioning so the stored copy is pristine */
+    if(c.style && c.style.transform) c.style.transform=c.style.transform.replace(/translate\([^)]*\)/,'').trim()||'';
+    if(el.__edRel) c.style.position='';
+    return c.outerHTML;
+  }
+  function copySel(){
+    if(!selected) return false;
+    var d=deck.getBoundingClientRect(), s=scale(), r=selected.getBoundingClientRect();
+    clipInternal={
+      html:cleanOuter(selected),
+      added:matches(selected,ADDED),
+      left:(r.left-d.left)/s, top:(r.top-d.top)/s, width:r.width/s
+    };
+    pasteCount=0;
+    try{ navigator.clipboard.writeText(MARKER).catch(function(){}); }catch(e){}
+    toast('הועתק ✓ (Cmd+V להדבקה)');
+    return true;
+  }
+  function pasteInternal(){
+    if(!clipInternal) return;
+    snap(); pasteCount++;
+    var off=24*pasteCount, s=activeSlide(), el;
+    var tmp=document.createElement('div'); tmp.innerHTML=clipInternal.html;
+    var src=tmp.firstElementChild; if(!src) return;
+    if(clipInternal.added){
+      el=src;
+      el.style.left=Math.round((parseFloat(el.style.left)||clipInternal.left)+off)+'px';
+      el.style.top=Math.round((parseFloat(el.style.top)||clipInternal.top)+off)+'px';
+    }else{
+      el=document.createElement('div'); el.className='ed-clone';
+      el.style.left=Math.round(clipInternal.left+off)+'px';
+      el.style.top=Math.round(clipInternal.top+off)+'px';
+      el.style.width=Math.round(clipInternal.width)+'px';
+      el.appendChild(src);
+    }
+    s.appendChild(el); select(el); toast('הודבק'); schedulePersist();
+  }
+  document.addEventListener('paste',function(e){
+    if(!edOn) return;
+    var ae=document.activeElement;
+    if(ae && ae.isContentEditable) return; /* normal paste inside a text edit */
+    var items=(e.clipboardData&&e.clipboardData.items)||[];
+    for(var i=0;i<items.length;i++){
+      if(items[i].type && items[i].type.indexOf('image')===0){
+        var f=items[i].getAsFile();
+        if(f){ e.preventDefault(); insertImageFile(f,null); return; }
+      }
+    }
+    var txt=''; try{ txt=e.clipboardData.getData('text/plain')||''; }catch(err){}
+    if(clipInternal && (txt===MARKER || txt==='')){ e.preventDefault(); pasteInternal(); return; }
+    if(txt){ e.preventDefault(); snap(); mkTextbox(txt); toast('טקסט הודבק כתיבה חדשה'); schedulePersist(); }
+  });
+  /* drag & drop image files from Finder/desktop */
+  deck.addEventListener('dragover',function(e){ if(edOn){ e.preventDefault(); } });
+  deck.addEventListener('drop',function(e){
+    if(!edOn) return; e.preventDefault();
+    var fs=e.dataTransfer && e.dataTransfer.files;
+    if(!fs || !fs.length) return;
+    for(var i=0;i<fs.length;i++){
+      if(/^image\//.test(fs[i].type)){ insertImageFile(fs[i], deckXY(e.clientX,e.clientY)); return; }
+    }
+  });
+
+  /* ---------- colors (whole element, or selected word while editing) ---------- */
+  var GRAD='linear-gradient(135deg,#71b9c3,#549cbc,#2d70aa,#6556d0,#9c4ed7)';
+  var COLORS=[['לבן','#ffffff'],['טורקיז','#62aabf'],['סגול','#8f4fd7'],['אדום','#ef4444'],['ירוק','#22c55e'],['אפור','#8f8f9b']];
+  function applyColor(c){
+    var ae=document.activeElement, sel=window.getSelection();
+    if(ae && ae.isContentEditable && sel && !sel.isCollapsed){
+      document.execCommand('styleWithCSS',false,true);
+      document.execCommand('foreColor',false,c);
+      return;
+    }
+    if(!selected){ toast('בחר אלמנט או סמן מילה'); return; }
+    snap();
+    if(matches(selected,'.ed-shape')){
+      selected.style.background=c+'33'; selected.style.borderColor=c; schedulePersist(); return;
+    }
+    selected.style.background='none';
+    selected.style.webkitBackgroundClip=''; selected.style.backgroundClip='';
+    selected.style.webkitTextFillColor=c; selected.style.color=c;
+    schedulePersist();
+  }
+  function applyGradient(){
+    var ae=document.activeElement, sel=window.getSelection();
+    if(ae && ae.isContentEditable && sel && !sel.isCollapsed){
+      var t=sel.toString();
+      document.execCommand('insertHTML',false,'<span class="grad">'+t.replace(/&/g,'&amp;').replace(/</g,'&lt;')+'</span>');
+      return;
+    }
+    if(!selected){ toast('בחר אלמנט או סמן מילה'); return; }
+    snap();
+    selected.style.background=GRAD;
+    selected.style.webkitBackgroundClip='text'; selected.style.backgroundClip='text';
+    selected.style.webkitTextFillColor='transparent'; selected.style.color='';
+    schedulePersist();
+  }
+
+  /* ---------- z-order / center / nudge / blur controls ---------- */
+  function zOrder(front){
+    if(!selected){ toast('בחר אלמנט קודם'); return; }
+    snap();
+    if(getComputedStyle(selected).position==='static'){ selected.style.position='relative'; selected.__edRel=true; }
+    selected.style.zIndex= front? (++zTop) : 0;
+    toast(front?'הובא לקדמה':'נשלח לאחור'); schedulePersist();
+  }
+  function centerSel(axis){
+    if(!selected){ toast('בחר אלמנט קודם'); return; }
+    snap();
+    var d=deck.getBoundingClientRect(), s=scale(), r=selected.getBoundingClientRect();
+    var cx=((r.left-d.left)+r.width/2)/s, cy=((r.top-d.top)+r.height/2)/s;
+    if(axis==='h') moveBy(selected, 960-cx, 0); else moveBy(selected, 0, 540-cy);
+    schedulePersist();
+  }
+  function nudge(dx,dy){
+    if(!selected) return false;
+    var now=Date.now();
+    if(lastNudge.el!==selected || now-lastNudge.t>1200) snap();
+    lastNudge={el:selected,t:now};
+    moveBy(selected,dx,dy); schedulePersist();
+    return true;
+  }
+  function blurDelta(d){
+    if(!selected || !matches(selected,'.ed-blur')) return;
+    snap();
+    var cur=parseFloat(((selected.style.backdropFilter||'').match(/[\d.]+/)||[15])[0])||15;
+    var v=Math.min(40,Math.max(2,cur+d));
+    selected.style.backdropFilter='blur('+v+'px)'; selected.style.webkitBackdropFilter='blur('+v+'px)';
+    toast('עוצמת טשטוש: '+v); schedulePersist();
+  }
+  function toggleOpaque(){
+    if(!selected || !matches(selected,'.ed-blur')) return;
+    snap(); selected.classList.toggle('ed-opaque');
+    toast(selected.classList.contains('ed-opaque')?'אטום (מסתיר לגמרי)':'טשטוש שקוף'); schedulePersist();
+  }
+  function imgCorners(){
+    if(!selected || !matches(selected,'.ed-img')) return;
+    snap(); var img=selected.querySelector('img'); if(!img) return;
+    img.style.borderRadius=(img.style.borderRadius==='18px')?'0px':'18px'; schedulePersist();
+  }
+  function cycleOpacity(){
+    if(!selected){ toast('בחר אלמנט קודם'); return; }
+    snap();
+    var cur=parseFloat(selected.style.opacity||'1');
+    var next= cur>0.85?0.75 : cur>0.6?0.5 : cur>0.35?0.25 : 1;
+    selected.style.opacity=(next===1)?'':String(next);
+    toast('שקיפות: '+Math.round(next*100)+'%'); schedulePersist();
+  }
+
+  function fontDelta(d){ if(!selected){ toast('בחר טקסט קודם'); return; } snap();
+    var cs=parseFloat(getComputedStyle(selected).fontSize)||30; selected.style.fontSize=Math.max(10,cs+d)+'px'; schedulePersist(); }
+  function deleteSel(){ if(!selected){ toast('בחר אלמנט קודם'); return; } snap(); var el=selected; deselect(); el.remove(); schedulePersist(); }
+
+  /* ---------- navigation (reuse deck) ---------- */
+  function go(dir){
+    deselect();
+    var list=[].slice.call(document.querySelectorAll('.slide'));
+    var i=list.indexOf(activeSlide());
+    var n=Math.max(0,Math.min(list.length-1,i+dir));
+    if(typeof show==='function') show(n);
+    else { list[i].classList.remove('active'); list[n].classList.add('active'); }
+  }
+
+  /* ---------- export ---------- */
+  /* rewrite every relative url (img src, font/href, css url()) to an absolute
+     file:// path so the saved file keeps its background + fonts from any folder */
+  function absolutizeURLs(root){
+    var base=location.href, keep=/^(data:|https?:|file:|blob:|#)/i;
+    function abs(u){ try{ return new URL(u, base).href; }catch(e){ return u; } }
+    function fixCss(t){ return t.replace(/url\((['"]?)([^'")]+)\1\)/g,function(m,q,u){ return keep.test(u)?m:('url('+q+abs(u)+q+')'); }); }
+    var s=root.querySelectorAll('[src]'); for(var i=0;i<s.length;i++){ var v=s[i].getAttribute('src'); if(v&&!keep.test(v)) s[i].setAttribute('src',abs(v)); }
+    var h=root.querySelectorAll('[href]'); for(var j=0;j<h.length;j++){ var w=h[j].getAttribute('href'); if(w&&!keep.test(w)) h[j].setAttribute('href',abs(w)); }
+    var st=root.querySelectorAll('style'); for(var k=0;k<st.length;k++){ st[k].textContent=fixCss(st[k].textContent); }
+    var il=root.querySelectorAll('[style]'); for(var l=0;l<il.length;l++){ var sv=il[l].getAttribute('style'); if(sv&&sv.indexOf('url(')>-1) il[l].setAttribute('style',fixCss(sv)); }
+  }
+  /* bake every [data-count] to its final formatted number so un-visited stat
+     slides aren't frozen at 0 in the saved file */
+  function bakeCounters(root){
+    var fmt; try{ fmt=new Intl.NumberFormat('he-IL'); }catch(e){ fmt=null; }
+    var n=root.querySelectorAll('[data-count]');
+    for(var i=0;i<n.length;i++){ var v=parseInt(n[i].getAttribute('data-count'),10); if(isNaN(v)) continue;
+      var out=n[i].querySelector('.cval')||n[i]; out.textContent= fmt?fmt.format(v):(''+v); }
+  }
+  function exportHTML(){
+    deselect(); var was=edOn; setEdit(false);
+    var clone=document.documentElement.cloneNode(true);
+    var kill=clone.querySelectorAll('#ed-toolbar,#ed-fab,#ed-hint,#ed-toast,#ed-restore,#ed-guide-v,#ed-guide-h,.ed-runtime,.ed-handle,.ed-del');
+    for(var i=0;i<kill.length;i++) kill[i].remove();
+    var cl=clone.querySelectorAll('.ed-hover,.ed-selected'); for(var j=0;j<cl.length;j++){ cl[j].classList.remove('ed-hover'); cl[j].classList.remove('ed-selected'); }
+    var ce=clone.querySelectorAll('[contenteditable]'); for(var k=0;k<ce.length;k++) ce[k].removeAttribute('contenteditable');
+    var sl=clone.querySelectorAll('.slide'); for(var m=0;m<sl.length;m++){ if(m===0) sl[m].classList.add('active'); else sl[m].classList.remove('active'); }
+    var b=clone.querySelector('body'); if(b) b.classList.remove('ed-on');
+    absolutizeURLs(clone);
+    bakeCounters(clone);
+    var html='<!DOCTYPE html>\n'+clone.outerHTML;
+    var blob=new Blob([html],{type:'text/html;charset=utf-8'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    var fname=(location.pathname.split('/').pop()||'deck.html').replace(/\.html?$/i,'');
+    try{ fname=decodeURIComponent(fname); }catch(e){}
+    a.download=fname+'-edited.html'; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); },3000);
+    if(was) setEdit(true);
+    toast('נשמר! החלף את הקובץ המקורי בקובץ שירד');
+  }
+
+  /* ---------- toolbar UI ---------- */
+  var fab=document.createElement('button'); fab.id='ed-fab'; fab.type='button'; fab.textContent='✏️ עריכה';
+  fab.addEventListener('click',function(){ setEdit(true); });
+  document.body.appendChild(fab);
+
+  var tb=document.createElement('div'); tb.id='ed-toolbar';
+  var toast_el, ctx;
+  function mkBtn(label,fn,cls){ var b=document.createElement('button'); b.type='button'; b.className='ed-btn'+(cls?(' '+cls):''); b.textContent=label;
+    b.addEventListener('mousedown',function(e){e.preventDefault();}); b.addEventListener('click',function(e){e.stopPropagation();fn();}); return b; }
+  function mkSep(){ var s=document.createElement('span'); s.className='ed-sep'; return s; }
+  function mkDot(name,color){ var d=document.createElement('button'); d.type='button'; d.className='ed-dot'; d.title=name; d.style.background=color;
+    d.addEventListener('mousedown',function(e){e.preventDefault();}); d.addEventListener('click',function(e){e.stopPropagation();applyColor(color);}); return d; }
+
+  var row=document.createElement('div'); row.id='ed-row';
+  row.appendChild(mkBtn('› הקודם',function(){go(-1);}));
+  row.appendChild(mkBtn('הבא ‹',function(){go(1);}));
+  row.appendChild(mkSep());
+  row.appendChild(mkBtn('🖼️ תמונה',addImage));
+  row.appendChild(mkBtn('🌫️ טשטוש',addBlur));
+  row.appendChild(mkBtn('▭ צורה',addShape));
+  row.appendChild(mkBtn('🔤 טקסט',addText));
+  row.appendChild(mkSep());
+  row.appendChild(mkBtn('⤴ מסגרת',selectParent));
+  row.appendChild(mkBtn('⬆ קדימה',function(){zOrder(true);}));
+  row.appendChild(mkBtn('⬇ אחורה',function(){zOrder(false);}));
+  row.appendChild(mkBtn('↔ מרכז',function(){centerSel('h');}));
+  row.appendChild(mkBtn('↕ מרכז',function(){centerSel('v');}));
+  row.appendChild(mkSep());
+  row.appendChild(mkBtn('A+',function(){fontDelta(4);}));
+  row.appendChild(mkBtn('A−',function(){fontDelta(-4);}));
+  row.appendChild(mkBtn('🗑️ מחק',deleteSel,'danger'));
+  row.appendChild(mkBtn('↶ ביטול',undo));
+  row.appendChild(mkBtn('↷ חזרה',redo));
+  row.appendChild(mkSep());
+  row.appendChild(mkBtn('💾 שמור',exportHTML,'primary'));
+  row.appendChild(mkBtn('✖ סגור',function(){ setEdit(false); }));
+  tb.appendChild(row);
+
+  ctx=document.createElement('div'); ctx.id='ed-ctx'; tb.appendChild(ctx);
+  document.body.appendChild(tb);
+
+  function buildColors(forShape){
+    var lbl=document.createElement('span'); lbl.className='ed-ctx-lbl'; lbl.textContent= forShape?'צבע צורה:':'צבע:';
+    ctx.appendChild(lbl);
+    if(!forShape){
+      var g=document.createElement('button'); g.type='button'; g.className='ed-dot grad-dot'; g.title='גרדיאנט';
+      g.addEventListener('mousedown',function(e){e.preventDefault();});
+      g.addEventListener('click',function(e){e.stopPropagation();applyGradient();});
+      ctx.appendChild(g);
+    }
+    for(var i=0;i<COLORS.length;i++) ctx.appendChild(mkDot(COLORS[i][0],COLORS[i][1]));
+    if(!forShape && editState){
+      var tip=document.createElement('span'); tip.className='ed-ctx-lbl'; tip.textContent='(סמן מילה כדי לצבוע רק אותה)';
+      ctx.appendChild(tip);
+    }
+  }
+  function refreshTb(){
+    if(!ctx) return;
+    ctx.innerHTML='';
+    var show=false;
+    if(editState){ buildColors(); show=true; }
+    else if(selected){
+      if(matches(selected,'.ed-blur')){
+        ctx.appendChild(mkBtn('עוצמה −',function(){blurDelta(-5);}));
+        ctx.appendChild(mkBtn('עוצמה +',function(){blurDelta(5);}));
+        ctx.appendChild(mkBtn('אטום ◼',toggleOpaque));
+        show=true;
+      } else if(matches(selected,'.ed-img')){
+        ctx.appendChild(mkBtn('פינות ◰',imgCorners));
+        ctx.appendChild(mkBtn('שקיפות 👻',cycleOpacity));
+        show=true;
+      } else if(matches(selected,'.ed-shape')){
+        buildColors(true);
+        ctx.appendChild(mkBtn('שקיפות 👻',cycleOpacity));
+        show=true;
+      } else {
+        buildColors();
+        show=true;
+      }
+    }
+    ctx.style.display=show?'flex':'none';
+  }
+
+  var hint=document.createElement('div'); hint.id='ed-hint';
+  hint.innerHTML='לחיצה = בחירה · גרירה = הזזה (Alt = בלי הצמדה) · לחיצה כפולה = עריכת טקסט · חצים = הזזה עדינה (Shift=10) · Cmd+C/V = העתק/הדבק · Cmd+S = שמור';
+  document.body.appendChild(hint);
+
+  toast_el=document.createElement('div'); toast_el.id='ed-toast'; document.body.appendChild(toast_el);
+  var toastTimer;
+  function toast(msg){ if(!toast_el) return; toast_el.textContent=msg||''; toast_el.classList.toggle('on',!!msg);
+    clearTimeout(toastTimer); if(msg) toastTimer=setTimeout(function(){ toast_el.classList.remove('on'); },2600); }
+
+  /* center snap guide lines (live inside #deck so they scale with it) */
+  gV=document.createElement('div'); gV.id='ed-guide-v'; deck.appendChild(gV);
+  gH=document.createElement('div'); gH.id='ed-guide-h'; deck.appendChild(gH);
+
+  function setEdit(on){
+    edOn=on; document.body.classList.toggle('ed-on',on);
+    tb.classList.toggle('on',on); fab.style.display=on?'none':'block';
+    hideGuides();
+    if(!on){ deselect(); toast(''); }
+    else toast('מצב עריכה פעיל');
+  }
+
+  /* ---------- hover outline ---------- */
+  document.addEventListener('mouseover',function(e){ if(!edOn) return; var el=eligible(e.target);
+    var hv=document.querySelectorAll('.ed-hover'); for(var i=0;i<hv.length;i++){ if(hv[i]!==el) hv[i].classList.remove('ed-hover'); }
+    if(el && el!==selected) el.classList.add('ed-hover'); });
+  document.addEventListener('mouseout',function(e){ if(!edOn) return; var el=eligible(e.target); if(el) el.classList.remove('ed-hover'); });
+
+  /* ---------- bind ---------- */
+  deck.addEventListener('mousedown',onDown);
+  deck.addEventListener('dblclick',onDbl);
+
+  document.addEventListener('keydown',function(e){
+    if(!edOn) return;
+    var editing=document.activeElement && document.activeElement.isContentEditable;
+    var meta=e.metaKey||e.ctrlKey;
+    if(e.key==='ArrowLeft'||e.key==='ArrowRight'||e.key==='ArrowUp'||e.key==='ArrowDown'){
+      if(!editing && selected){
+        e.preventDefault();
+        var st=e.shiftKey?10:1;
+        nudge(e.key==='ArrowLeft'?-st:e.key==='ArrowRight'?st:0, e.key==='ArrowUp'?-st:e.key==='ArrowDown'?st:0);
+      }
+      e.stopImmediatePropagation(); return;
+    }
+    if(meta && (e.key==='z'||e.key==='Z')){
+      e.preventDefault(); e.stopImmediatePropagation();
+      if(e.shiftKey) redo(); else undo();
+      return;
+    }
+    if(meta && (e.key==='s'||e.key==='S')){ e.preventDefault(); e.stopImmediatePropagation(); exportHTML(); return; }
+    if(meta && (e.key==='c'||e.key==='C') && !editing && selected){ copySel(); return; }
+    if(meta && (e.key==='d'||e.key==='D') && !editing && selected){ e.preventDefault(); e.stopImmediatePropagation(); if(copySel()) pasteInternal(); return; }
+    if((e.key==='Delete'||e.key==='Backspace') && !editing){
+      if(selected){ e.preventDefault(); deleteSel(); }
+      return;
+    }
+    if(e.key==='Escape'){
+      if(editing){
+        if(editState && editState.el){ editState.cancelled=true; editState.el.innerHTML=editState.orig; if(undoStack.length) undoStack.pop(); editState.el.blur(); }
+        else document.activeElement.blur();
+      } else deselect();
+    }
+  },true);
+
+  /* optional: auto-enter for screenshot testing via ?edtest */
+  if(location.search.indexOf('edtest')>-1){ setEdit(true); }
+  /* offer to restore unsaved work (after deck init settles) */
+  setTimeout(checkRestore,400);
+})();
+
+</script>
+</body>
+</html>
