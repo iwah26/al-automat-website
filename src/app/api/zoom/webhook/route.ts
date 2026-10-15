@@ -7,6 +7,9 @@ import { createBunnyVideo, fetchBunnyVideoFromUrl } from "@/lib/bunny";
 const SESSION_DATES: Record<string, string> = {
   "2026-07-12": "1",
   "2026-07-19": "2",
+  // מחזור ד׳ (חרדים עובדים) — /sadna/course
+  "2026-10-20": "r4-1",
+  "2026-10-27": "r4-2",
 };
 
 function verifyZoomSignature(rawBody: string, timestamp: string | null, signature: string | null) {
@@ -55,10 +58,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const files = meeting.recording_files || [];
-  const file =
-    files.find((f: { recording_type?: string }) => f.recording_type === "shared_screen_with_speaker_view") ??
-    files.find((f: { file_type?: string }) => f.file_type === "MP4");
+  // הקובץ הגדול ביותר — זום מפצל לפעמים להקלטה קצרה (שניות לפני שהתחלנו) ולהקלטה האמיתית
+  // שנקראת "shared_screen_with_speaker_view(CC)". לפי שם בלבד תפסנו ב-8.10 קטע של 7 שניות.
+  const files: { file_type?: string; file_size?: number; download_url: string }[] = meeting.recording_files || [];
+  const file = files
+    .filter((f) => f.file_type === "MP4")
+    .sort((a, b) => (b.file_size ?? 0) - (a.file_size ?? 0))[0];
 
   if (!file) {
     return NextResponse.json({ error: "No MP4 recording file found" }, { status: 400 });
