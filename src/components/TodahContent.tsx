@@ -210,15 +210,15 @@ export function TodahContent() {
         <section className="p-5 rounded-2xl bg-brand-card border border-brand-accent/20">
           <h2 className="text-xl font-bold text-white mb-3">📅 פרטי הסדנה</h2>
           <ul className="text-slate-300 space-y-1">
-            <li>מפגש ראשון: {forWorkers ? "שישי 9.10" : "12.7 (כ״ז תמוז)"}</li>
-            <li>מפגש שני: {forWorkers ? "שישי 16.10" : "19.7 (ה׳ אב)"}</li>
-            <li>שעה: {forWorkers ? "9:30–12:30 בבוקר" : "18:00–21:00 שעון ישראל"}</li>
+            <li>מפגש ראשון: {forWorkers ? "שלישי 20.10" : "12.7 (כ״ז תמוז)"}</li>
+            <li>מפגש שני: {forWorkers ? "שלישי 27.10" : "19.7 (ה׳ אב)"}</li>
+            <li>שעה: {forWorkers ? "16:00–19:00" : "18:00–21:00 שעון ישראל"}</li>
             <li>
               לינק זום (לשני המפגשים):{" "}
               <a
                 href={
                   forWorkers
-                    ? "https://us02web.zoom.us/j/85992619266"
+                    ? "https://us02web.zoom.us/j/86198091857"
                     : "https://us02web.zoom.us/j/81000618945?pwd=hCmFZOH5MbK3B4FwwKSmBpVTLyB1Um.1"
                 }
                 className="text-brand-accent underline"

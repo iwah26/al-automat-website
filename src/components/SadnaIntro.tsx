@@ -53,8 +53,8 @@ export function SadnaIntro({ referralCode }: { referralCode?: string }) {
         </p>
 
         <div className="p-5 rounded-2xl bg-brand-card border border-brand-accent/20 space-y-1">
-          <p className="font-semibold text-white">📅 שישי 9.10 + שישי 16.10</p>
-          <p className="font-semibold text-white">🕘 9:30–12:30 בבוקר</p>
+          <p className="font-semibold text-white">📅 שלישי 20.10 + שלישי 27.10</p>
+          <p className="font-semibold text-white">🕓 16:00–19:00</p>
           <p className="font-semibold text-white">💻 בזום</p>
         </div>
 

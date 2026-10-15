@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
         email,
         phone: localPhone,
         amount: isPriceTest ? 1 : getPriceILS(cohort),
-        description: `${isPriceTest ? "בדיקה — " : ""}סדנת Claude Code לחרדים — 9.10 + 16.10`,
+        description: `${isPriceTest ? "בדיקה — " : ""}סדנת Claude Code לחרדים — 20.10 + 27.10`,
         method,
         origin,
         failurePath: COHORT_FORM_PATH[cohort] ?? COHORT_FORM_PATH.round1,

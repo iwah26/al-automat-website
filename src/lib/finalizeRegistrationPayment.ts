@@ -51,9 +51,9 @@ const COHORT_DETAILS: Record<string, CohortDetails> = {
     coursePath: "/course",
   },
   round4: {
-    dates: "שישי 9.10 + שישי 16.10",
-    hours: "9:30–12:30 בבוקר",
-    zoomLink: "https://us02web.zoom.us/j/85992619266",
+    dates: "שלישי 20.10 + שלישי 27.10",
+    hours: "16:00–19:00",
+    zoomLink: "https://us02web.zoom.us/j/86198091857",
     greeting: "שלום",
     workshopName: "Claude Code לחרדים",
     group: { name: "סדנת Claude Code לחרדים 🧠", link: "https://chat.whatsapp.com/HZtXYzt0bRg22cgSYOBYb7" },

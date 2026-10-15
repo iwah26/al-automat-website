@@ -5,7 +5,7 @@ import { getPriceILS } from "@/lib/rabanimPricing";
 
 export const metadata = {
   title: "הרשמה לסדנת Claude Code לחרדים | על אוטומט",
-  description: "הרשמה לסדנה — שישי 9.10 + 16.10, 9:30–12:30, בזום",
+  description: "הרשמה לסדנה — שלישי 20.10 + 27.10, 16:00–19:00, בזום",
 };
 
 export default async function SadnaFormPage({

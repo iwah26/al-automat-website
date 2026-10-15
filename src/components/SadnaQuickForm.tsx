@@ -66,7 +66,7 @@ export function SadnaQuickForm({ referralCode, price, testCode }: { referralCode
         )}
       </h1>
       <p className="text-slate-300 mt-2 mb-1 text-lg">
-        הרשמה לסדנת Claude Code לחרדים · שישי 9.10 + 16.10 · 9:30–12:30
+        הרשמה לסדנת Claude Code לחרדים · שלישי 20.10 + 27.10 · 16:00–19:00
       </p>
       <p className="text-slate-400 mb-8">
         ממלאים 4 פרטים ועוברים לתשלום. את שאר השאלות תמלא מיד אחרי התשלום.

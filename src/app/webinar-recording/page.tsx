@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 
 export const metadata = {
   title: "הקלטת הוובינר: קלוד קוד לחרדים | על אוטומט",
-  description: "הקלטת הוובינר — איך בונים מערכות ואפליקציות לעבודה, בלי לדעת קוד. ופרטי הסדנה: שישי 9.10 + 16.10.",
+  description: "הקלטת הוובינר — איך בונים מערכות ואפליקציות לעבודה, בלי לדעת קוד. ופרטי הסדנה: שלישי 20.10 + 27.10.",
 };
 
 // וובינר 8.10.26 — הועלה מהקלטת הענן של זום לספריית באני (695009)
@@ -60,7 +60,7 @@ export default async function WebinarRecordingPage({
 
           <div className="p-6 rounded-2xl bg-brand-card border border-brand-accent/20 text-right">
             <p className="text-white font-bold text-xl mb-2">הסדנה המעשית — בונים, לא רק מסתכלים</p>
-            <p className="text-slate-300 leading-relaxed mb-1">📅 שישי 9.10 + שישי 16.10 · 9:30–12:30 בבוקר · בזום</p>
+            <p className="text-slate-300 leading-relaxed mb-1">📅 שלישי 20.10 + שלישי 27.10 · 16:00–19:00 · בזום</p>
             <p className="text-slate-300 leading-relaxed mb-5">💰 800₪ · אשראי (אפשר ב-2 תשלומים) או ביט</p>
             <Link
               href={sadnaHref}
