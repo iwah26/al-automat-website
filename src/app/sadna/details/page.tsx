@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { RegistrationWizard } from "@/components/RegistrationWizard";
 import { getRabanimSupabase } from "@/lib/rabanimSupabase";
 import { verifyRegistrationSignature } from "@/lib/morning";
+import { verifyDetails } from "@/lib/manualVoucher";
 
 export const metadata = {
   title: "השלמת פרטים — סדנת Claude Code לחרדים | על אוטומט",
@@ -16,7 +17,7 @@ export default async function SadnaDetailsPage({
   searchParams: Promise<{ rid?: string; sig?: string }>;
 }) {
   const { rid = "", sig = "" } = await searchParams;
-  const valid = rid && sig && verifyRegistrationSignature(rid, sig);
+  const valid = rid && sig && (verifyRegistrationSignature(rid, sig) || verifyDetails(rid, sig));
   const { data: reg } = valid
     ? await getRabanimSupabase()
         .from("rabanim_registrations")

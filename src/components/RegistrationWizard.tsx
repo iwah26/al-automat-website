@@ -14,8 +14,6 @@ export interface RegistrationDetails {
   email: string;
 }
 
-const WEBHOOK_URL =
-  "https://hook.integrator.boost.space/otgpr8yi5mzx38k4n76s3d97wzq3wjp0";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -220,13 +218,7 @@ export function RegistrationWizard({
   async function handleDetailsSubmit(d: RegistrationDetails) {
     setStatus("loading");
     try {
-      await fetch(WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify([
-          { source: "workers-registration-details", ...data, aiTools: data.aiTools.join(", "), timestamp: new Date().toISOString() },
-        ]),
-      }).catch(() => undefined);
+      // כל התשובות נשמרות אצלנו (Vercel Blob) — לא נשלחות יותר ל-Boost.space (בקשת יצחק 20.10)
       const res = await fetch("/api/rabanim/details", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -236,6 +228,18 @@ export function RegistrationWizard({
           role: data.role,
           communityName: data.communityName,
           location: `${data.city}, ${data.country}`,
+          answers: {
+            usesAI: data.usesAI,
+            aiTools: data.aiTools,
+            paysForAI: data.paysForAI,
+            aiLevel: data.aiLevel,
+            usesCodeAI: data.usesCodeAI,
+            paysForClaude: data.paysForClaude,
+            usesClaudeAPI: data.usesClaudeAPI,
+            workChallenge: data.communityChallenge,
+            wishedSystem: data.communicationChallenge,
+            expectations: data.expectations,
+          },
         }),
       });
       if (!res.ok) throw new Error("details failed");
@@ -259,19 +263,6 @@ export function RegistrationWizard({
     if (details) return handleDetailsSubmit(details);
     setStatus("loading");
     try {
-      // שליחת נתונים ל-Boost.space
-      await fetch(WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify([
-          {
-            source: forWorkers ? "workers-registration" : "rabanim-registration",
-            ...data,
-            aiTools: data.aiTools.join(", "),
-            timestamp: new Date().toISOString(),
-          },
-        ]),
-      });
 
       localStorage.setItem("rabanim_firstName", data.firstName);
       localStorage.setItem("rabanim_lastName", data.lastName);

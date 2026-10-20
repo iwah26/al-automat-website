@@ -14,3 +14,15 @@ export function verifyVoucher(voucher: string, seats: number, sig: string): bool
   const b = Buffer.from(sig);
   return a.length === b.length && timingSafeEqual(a, b);
 }
+
+/** חתימה לקישור השאלון (/sadna/details) שאפשר לייצר גם מקומית — נוסף לחתימה של מורנינג */
+export function signDetails(rid: string): string {
+  return createHmac("sha256", SECRET).update(`details:${rid}`).digest("hex").slice(0, 24);
+}
+
+export function verifyDetails(rid: string, sig: string): boolean {
+  if (!rid || !sig) return false;
+  const a = Buffer.from(signDetails(rid));
+  const b = Buffer.from(sig);
+  return a.length === b.length && timingSafeEqual(a, b);
+}
