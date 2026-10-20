@@ -43,12 +43,15 @@ export async function POST(req: NextRequest) {
     }
 
     const method: PaymentMethod = paymentMethod === "bit" || paymentMethod === "credit2" ? paymentMethod : "credit";
-    const url = await createPaymentForm({
+    let url: string;
+    try {
+      url = await createPaymentForm({
       registrationId: orderId,
       name: businessName.trim(),
       email: email.trim(),
       phone: String(phone).replace(/^\+?972/, "0"),
-      clientTaxId: taxId ? String(taxId).trim() : undefined,
+      // מורנינג דורש בדיוק 9 ספרות — 3333333 נדחה, 003333333 עובר (נבדק 20.10)
+      clientTaxId: taxId ? String(taxId).replace(/\D/g, "").padStart(9, "0") : undefined,
       amount: UNIT_PRICE * list.length,
       quantity: 1,
       unitPrice: UNIT_PRICE * list.length,
@@ -58,7 +61,14 @@ export async function POST(req: NextRequest) {
       failurePath: `/pay/group?k=${k}`,
       successPath: () => "/pay/group/thanks",
       notifyPath: "/api/rabanim/group-notify",
-    });
+      });
+    } catch (err) {
+      // מורנינג דחה (למשל ח.פ לא תקין) — מוחקים את השורות שנוצרו ומחזירים את ההודעה שלו
+      await getRabanimSupabase().from("rabanim_registrations").delete().eq("referral_code", code);
+      const msg = String((err as Error).message || "").replace(/^Morning \/payments\/form failed: \d+ \d* ?/, "").trim();
+      console.error("group-checkout: morning rejected", err);
+      return NextResponse.json({ error: msg || "התשלום נדחה" }, { status: 400 });
+    }
     return NextResponse.json({ url });
   } catch (err) {
     console.error("group-checkout", err);

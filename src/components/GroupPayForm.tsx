@@ -8,6 +8,20 @@ const input =
   "w-full px-4 py-3 rounded-xl bg-brand-card border border-brand-accent/30 text-white placeholder-slate-400 focus:outline-none focus:border-brand-accent transition-colors text-right";
 
 interface Learner { firstName: string; lastName: string; phone: string; email: string }
+
+// ח.פ / ע.מ ישראלי: 9 ספרות (משלימים אפסים משמאל) + ספרת ביקורת
+function validTaxId(v: string): boolean {
+  const d = v.replace(/\D/g, "");
+  if (!d || d.length > 9) return false;
+  const p = d.padStart(9, "0");
+  let sum = 0;
+  for (let i = 0; i < 9; i++) {
+    let x = Number(p[i]) * (i % 2 === 0 ? 1 : 2);
+    if (x > 9) x -= 9;
+    sum += x;
+  }
+  return sum % 10 === 0;
+}
 const emptyLearner = (): Learner => ({ firstName: "", lastName: "", phone: "", email: "" });
 
 export function GroupPayForm({ k }: { k: string }) {
@@ -18,13 +32,15 @@ export function GroupPayForm({ k }: { k: string }) {
   const [phone, setPhone] = useState("");
   const [learners, setLearners] = useState<Learner[]>([emptyLearner(), emptyLearner()]);
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+  const taxOk = !taxId.trim() || validTaxId(taxId);
 
   const filled = learners.filter((l) => l.firstName.trim() && l.lastName.trim());
   const learnersOk = filled.length > 0 && learners.every((l) => {
     const any = l.firstName || l.lastName || l.phone || l.email;
     return !any || (l.firstName.trim() && l.lastName.trim() && l.phone.trim() && EMAIL_REGEX.test(l.email));
   });
-  const valid = businessName.trim() && contactName.trim() && phone.trim() && EMAIL_REGEX.test(email) && learnersOk;
+  const valid = businessName.trim() && taxOk && contactName.trim() && phone.trim() && EMAIL_REGEX.test(email) && learnersOk;
   const total = UNIT_PRICE * filled.length;
 
   const setL = (i: number, key: keyof Learner, v: string) =>
@@ -38,10 +54,15 @@ export function GroupPayForm({ k }: { k: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ k, businessName, taxId, contactName, email, phone, learners: filled, paymentMethod }),
       });
-      if (!res.ok) throw new Error("failed");
-      const { url } = await res.json();
-      window.location.href = url;
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url) {
+        setErrorMsg(data.error || "");
+        setStatus("error");
+        return;
+      }
+      window.location.href = data.url;
     } catch {
+      setErrorMsg("");
       setStatus("error");
     }
   }
@@ -56,7 +77,10 @@ export function GroupPayForm({ k }: { k: string }) {
       <h2 className="text-white font-bold text-lg mb-3">פרטי המשלם (לקבלה)</h2>
       <div className="space-y-3">
         <input className={input} placeholder="שם העסק (כפי שיופיע בקבלה)" value={businessName} onChange={(e) => setBusinessName(e.target.value)} />
-        <input className={input} placeholder="ח.פ / ע.מ" inputMode="numeric" value={taxId} onChange={(e) => setTaxId(e.target.value)} />
+        <div>
+          <input className={input} placeholder="ח.פ / ע.מ" inputMode="numeric" value={taxId} onChange={(e) => setTaxId(e.target.value)} />
+          {!taxOk && <p className="text-red-400 text-sm mt-1">מספר ח.פ / ע.מ לא תקין — 9 ספרות</p>}
+        </div>
         <input className={input} placeholder="שם איש הקשר" value={contactName} onChange={(e) => setContactName(e.target.value)} />
         <div className="grid grid-cols-2 gap-3">
           <input className={input} type="tel" placeholder="טלפון" value={phone} onChange={(e) => setPhone(e.target.value)} />
@@ -106,7 +130,9 @@ export function GroupPayForm({ k }: { k: string }) {
         </button>
       </div>
       {status === "loading" && <p className="text-slate-300 text-center mt-3">מעביר לתשלום...</p>}
-      {status === "error" && <p className="text-red-400 text-center mt-3">משהו השתבש. נסה שוב.</p>}
+      {status === "error" && (
+        <p className="text-red-400 text-center mt-3">{errorMsg ? `התשלום לא נפתח: ${errorMsg}` : "משהו השתבש. נסה שוב."}</p>
+      )}
       <p className="text-slate-500 text-sm mt-3">התשלום מאובטח דרך מורנינג (חשבונית ירוקה). הקבלה נשלחת למייל של המשלם.</p>
     </div>
   );
