@@ -60,9 +60,10 @@ export function priceTestCode(): string {
   return createHmac("sha256", process.env.MORNING_API_SECRET ?? "").update("price-test").digest("hex").slice(0, 12);
 }
 
-/** קוד לקישור התשלום הקבוצתי (כמה לומדים, קבלה על שם עסק) */
+/** קוד לקישור התשלום הקבוצתי (כמה לומדים, קבלה על שם עסק).
+ *  קבוע ולא נגזר מהמפתח של מורנינג — המפתח ב-Vercel וב-.env.local לא תמיד זהים (20.10.26). */
 export function groupPayCode(): string {
-  return createHmac("sha256", process.env.MORNING_API_SECRET ?? "").update("group-pay").digest("hex").slice(0, 12);
+  return "82cb5f878790";
 }
 
 export function verifyRegistrationSignature(registrationId: string, sig: string): boolean {
