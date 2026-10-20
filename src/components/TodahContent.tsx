@@ -73,7 +73,8 @@ function DownloadLink({ href, label }: { href: string; label: string }) {
   );
 }
 
-export function TodahContent() {
+/** cohort — כופה מחזור (לדף ההכנה הקבוע /sadna/prep), במקום לנחש מ-localStorage */
+export function TodahContent({ cohort }: { cohort?: string } = {}) {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [role, setRole] = useState("");
@@ -86,7 +87,7 @@ export function TodahContent() {
     setFirstName(localStorage.getItem("rabanim_firstName") ?? "");
     setLastName(localStorage.getItem("rabanim_lastName") ?? "");
     setRole(localStorage.getItem("rabanim_role") ?? "");
-    setForWorkers(WORKER_COHORTS.has(localStorage.getItem("rabanim_cohort") ?? ""));
+    setForWorkers(WORKER_COHORTS.has(cohort ?? localStorage.getItem("rabanim_cohort") ?? ""));
     setNeedsClaude(localStorage.getItem("rabanim_paysForClaude") !== "כן, יש לי Pro");
     setNeedsAPI(localStorage.getItem("rabanim_usesClaudeAPI") !== "כן, יש לי גישה");
     ["claude", "vscode", "claudeDesktop", "api", "whatsapp", "recordings"].forEach((k) =>
