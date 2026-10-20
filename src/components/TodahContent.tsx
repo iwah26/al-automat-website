@@ -23,6 +23,8 @@ const LINKS = {
   vscodeMac: "https://update.code.visualstudio.com/latest/darwin-universal/stable",
   claudeDesktopWin: "https://claude.ai/api/desktop/win32/x64/setup/latest/redirect",
   claudeDesktopMac: "https://claude.ai/api/desktop/darwin/universal/dmg/latest/redirect",
+  zoomWin: "https://zoom.us/client/latest/ZoomInstallerFull.exe",
+  zoomMac: "https://zoom.us/client/latest/Zoom.pkg",
 };
 
 function CheckItem({
@@ -90,7 +92,7 @@ export function TodahContent({ cohort }: { cohort?: string } = {}) {
     setForWorkers(WORKER_COHORTS.has(cohort ?? localStorage.getItem("rabanim_cohort") ?? ""));
     setNeedsClaude(localStorage.getItem("rabanim_paysForClaude") !== "כן, יש לי Pro");
     setNeedsAPI(localStorage.getItem("rabanim_usesClaudeAPI") !== "כן, יש לי גישה");
-    ["claude", "vscode", "claudeDesktop", "api", "whatsapp", "recordings"].forEach((k) =>
+    ["claude", "vscode", "claudeDesktop", "zoom", "api", "whatsapp", "recordings"].forEach((k) =>
       localStorage.removeItem(`rabanim_${k}`)
     );
     ["rabanim_firstName", "rabanim_lastName", "rabanim_role", "rabanim_cohort", "rabanim_paysForClaude", "rabanim_usesClaudeAPI"].forEach(
@@ -132,6 +134,17 @@ export function TodahContent({ cohort }: { cohort?: string } = {}) {
         >
           <p className="text-slate-400 text-sm mb-1">דרוש לשימוש מלא בסדנה</p>
           <DownloadLink href={LINKS.claudeUpgrade} label="שדרג כאן" />
+        </CheckItem>
+
+        <CheckItem
+          label="Zoom מותקן על המחשב"
+          done={!!checked["zoom"]}
+          onToggle={() => toggle("zoom")}
+        >
+          <div className="flex gap-4">
+            <DownloadLink href={LINKS.zoomWin} label="Windows" />
+            <DownloadLink href={LINKS.zoomMac} label="Mac" />
+          </div>
         </CheckItem>
 
         <CheckItem
