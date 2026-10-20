@@ -6,7 +6,8 @@ import { createPaymentForm, groupPayCode, type PaymentMethod } from "@/lib/morni
 // תשלום קבוצתי: משלם אחד (עסק) על כמה לומדים. כל לומד נרשם למחזור ד׳ כשורה נפרדת,
 // וכולם מקושרים בקוד הזמנה משותף (referral_code = grp-<orderId>).
 const UNIT_PRICE = 800;
-const PRODUCT = "שיעור בנושא המקוואות";
+// בקבלה: שורה אחת בלבד עם הסכום הכולל (בקשת יצחק 20.10)
+const PRODUCT = "שיעור מקוואות";
 
 interface Learner { firstName: string; lastName: string; phone: string; email: string }
 
@@ -49,8 +50,8 @@ export async function POST(req: NextRequest) {
       phone: String(phone).replace(/^\+?972/, "0"),
       clientTaxId: taxId ? String(taxId).trim() : undefined,
       amount: UNIT_PRICE * list.length,
-      quantity: list.length,
-      unitPrice: UNIT_PRICE,
+      quantity: 1,
+      unitPrice: UNIT_PRICE * list.length,
       description: PRODUCT,
       method,
       origin: req.nextUrl.origin,
