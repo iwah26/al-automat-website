@@ -104,6 +104,57 @@
   .prompt{ background:#120b20; border:1px solid rgba(224,183,104,0.35); border-radius:var(--radius); padding:22px 24px; direction:rtl; }
   .prompt .prompt-label{ font-size:12px; font-weight:700; letter-spacing:0.1em; color:var(--gold); margin-bottom:10px; display:block; }
   .prompt pre{ margin:0; white-space:pre-wrap; word-break:break-word; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; font-size:15px; font-weight:400; line-height:1.65; color:#f3ecff; direction:rtl; text-align:right; }
+  /* slide 20 — inspect demo */
+  .inspect-demo{ margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+  .inspect-steps{ font-size:17px; line-height:1.6; padding:12px 18px; border-radius:var(--radius); border:1px dashed var(--lavender); }
+  .inspect-tag{ font-weight:700; color:var(--gold); margin-left:6px; }
+  .inspect-warn{ font-size:18px; line-height:1.5; padding:10px 18px; border-right:4px solid #ef4444; background:rgba(239,68,68,0.08); border-radius:6px; }
+  /* connect-any-platform logo grid */
+  .logo-grid{ display:grid; grid-template-columns:repeat(10,1fr); gap:10px; }
+  .logo-tile{ background:#fff; border-radius:12px; padding:10px 6px 8px; display:flex; flex-direction:column; align-items:center; gap:6px; }
+  .logo-tile svg{ width:34px; height:34px; }
+  .logo-tile span{ font-size:10.5px; color:#333; font-weight:600; text-align:center; line-height:1.2; }
+  .logo-tile.text-only{ justify-content:center; }
+  .logo-tile.text-only b{ font-size:14px; color:#222; text-align:center; }
+  .prompt-row.cols-1{ grid-template-columns:1fr; }
+  @media (max-width:900px){ .logo-grid{ grid-template-columns:repeat(5,1fr); } }
+  /* whatsapp section */
+  .wa-card{ align-items:flex-start; }
+  .wa-logo svg{ display:block; }
+  .wa-big{ font-size:56px !important; font-weight:800 !important; color:var(--white) !important; line-height:1 !important; font-variant-numeric:tabular-nums; }
+  .wa-flow > span:not(.flow-arrow){ font-size:16px; padding:10px 16px; }
+  /* practice slides — rows of copyable prompts */
+  .prompt-row{ display:grid; gap:12px; margin-top:10px; }
+  .prompt-row.cols-2{ grid-template-columns:1fr 1fr; }
+  .prompt-row.build-row{ grid-template-columns:3fr 2fr; }
+  .prompt-row.build-row .mini-prompt pre{ font-size:15px; }
+  .prompt-row.cols-3{ grid-template-columns:1fr 1fr 1fr; }
+  .mini-prompt{ padding:12px 14px; }
+  .mini-prompt pre{ font-size:14px; line-height:1.55; }
+  .prompt-row.cols-2 .mini-prompt pre{ font-size:16px; }
+  .mini-prompt .sec-prompt-head{ position:static; background:none; padding:0; margin-bottom:6px; }
+  .mini-prompt .prompt-label{ font-size:13px; letter-spacing:0.04em; }
+  .mini-prompt .copy-btn{ padding:4px 9px; font-size:13px; }
+  .flow-steps{ display:flex; flex-wrap:wrap; align-items:center; gap:8px; margin-top:12px; font-size:15px; }
+  .flow-steps > span:not(.flow-arrow){ padding:6px 12px; border:1px solid rgba(224,183,104,0.4); border-radius:999px; }
+  @media (max-width:900px){ .prompt-row.cols-2,.prompt-row.cols-3{ grid-template-columns:1fr; } }
+  /* security prompt — collapsible with copy */
+  .sec-check{ margin-top:14px; }
+  .sec-q{ font-size:22px; font-weight:700; margin-bottom:10px; }
+  .sec-prompt summary{ cursor:pointer; list-style:none; display:inline-flex; align-items:center; gap:10px; padding:10px 18px; border:1px solid rgba(224,183,104,0.5); border-radius:999px; color:var(--gold); font-weight:700; font-size:16px; }
+  .sec-prompt summary::-webkit-details-marker{ display:none; }
+  .sec-prompt summary::before{ content:"◀"; font-size:12px; transition:transform .2s; }
+  .sec-prompt[open] summary::before{ transform:rotate(-90deg); }
+  .sec-prompt .prompt{ position:fixed; top:7vh; left:50%; transform:translateX(-50%); width:min(1100px,86vw); max-height:80vh; overflow:auto; z-index:60; box-shadow:0 24px 80px rgba(0,0,0,0.7); border-color:var(--gold); }
+  .sec-prompt[open]::after{ content:""; position:fixed; inset:0; background:rgba(8,4,16,0.72); z-index:59; }
+  .sec-prompt-head{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:10px; position:sticky; top:-22px; background:#120b20; padding-top:4px; }
+  .sec-prompt-head .prompt-label{ margin:0; }
+  .copy-btn{ font:inherit; font-size:14px; font-weight:700; cursor:pointer; padding:7px 14px; border-radius:8px; border:1px solid var(--gold); background:transparent; color:var(--gold); }
+  .gh-prompts{ gap:14px; }
+  .gh-prompts .prompt{ padding:14px 18px; }
+  .gh-prompts .prompt pre{ font-size:13.5px; line-height:1.55; }
+  .gh-prompts .sec-prompt-head{ position:static; background:none; padding:0; margin-bottom:6px; }
+  .copy-btn:hover{ background:rgba(224,183,104,0.15); }
 
   .quote{ border-right:4px solid var(--gold); padding:6px 28px; font-size:clamp(22px,2.6vw,32px); font-weight:700; line-height:1.42; color:var(--white); max-width:900px; }
 
@@ -191,7 +242,7 @@ body.ed-on .ed-img,body.ed-on .ed-blur,body.ed-on .ed-shape,body.ed-on .ed-textb
 
   <!-- 1 — COVER -->
   <section class="slide" data-clock="16:00–16:01">
-    <span class="slide-index">01 / 49</span>
+    <span class="slide-index">01 / 57</span>
     <div style="display:flex;flex-direction:column;align-items:flex-start;gap:34px;max-width:820px;">
       <div class="logo"><span class="dot"></span> אל אוטומט · תוכנית הדרכה</div>
       <span class="badge">מפגש ב' · גומרים, בודקים, משיקים</span>
@@ -206,7 +257,7 @@ body.ed-on .ed-img,body.ed-on .ed-blur,body.ed-on .ed-shape,body.ed-on .ed-textb
 
   <!-- 2 — STRUCTURE (scaffold, to be filled) -->
   <section class="slide dark" data-clock="16:01–16:02">
-    <span class="slide-index">02 / 49</span>
+    <span class="slide-index">02 / 57</span>
     <span class="eyebrow">מה נעבור היום</span>
     <h2>איך נחלק את המפגש</h2>
     <div class="content checklist">
@@ -226,7 +277,7 @@ body.ed-on .ed-img,body.ed-on .ed-blur,body.ed-on .ed-shape,body.ed-on .ed-textb
 
   <!-- PART A DIVIDER -->
   <section class="slide dark" data-clock="16:02–16:03">
-    <span class="slide-index">03 / 49</span>
+    <span class="slide-index">03 / 57</span>
     <span class="slide-track">חלק א'</span>
     <div class="divider-wrap">
       <div class="divider-num">א'</div>
@@ -239,7 +290,7 @@ body.ed-on .ed-img,body.ed-on .ed-blur,body.ed-on .ed-shape,body.ed-on .ed-textb
 
   <!-- 3 — QUICK RECAP OF SESSION 1 -->
   <section class="slide" data-clock="16:03–16:08">
-    <span class="slide-index">04 / 49</span>
+    <span class="slide-index">04 / 57</span>
     <span class="eyebrow">מה למדנו במפגש א'</span>
     <h2>סיכום מהיר</h2>
     <div class="content grid grid-2">
@@ -252,7 +303,7 @@ body.ed-on .ed-img,body.ed-on .ed-blur,body.ed-on .ed-shape,body.ed-on .ed-textb
 
   <!-- PART B DIVIDER -->
   <section class="slide dark" data-clock="16:08–16:08">
-    <span class="slide-index">05 / 49</span>
+    <span class="slide-index">05 / 57</span>
     <span class="slide-track">חלק ב'</span>
     <div class="divider-wrap">
       <div class="divider-num">ב'</div>
@@ -265,7 +316,7 @@ body.ed-on .ed-img,body.ed-on .ed-blur,body.ed-on .ed-shape,body.ed-on .ed-textb
 
   <!-- 4 — TOKENS / COST REAL TIME (imported from session1 slide 26/48) -->
   <section class="slide" data-clock="16:08–16:12">
-    <span class="slide-index">06 / 49</span>
+    <span class="slide-index">06 / 57</span>
     <span class="eyebrow">מצב טוקנים ועלויות בזמן אמת</span>
     <h2>רואים כמה זה עולה, בזמן אמת</h2>
     <div class="content grid grid-3">
@@ -283,7 +334,7 @@ body.ed-on .ed-img,body.ed-on .ed-blur,body.ed-on .ed-shape,body.ed-on .ed-textb
 
   <!-- 5 — CONTEXT + COMPACT -->
   <section class="slide dark" data-clock="16:12–16:18">
-    <span class="slide-index">07 / 49</span>
+    <span class="slide-index">07 / 57</span>
     <span class="eyebrow">קונטקסט + Compact</span>
     <h2>כל סשן הוא עולם בפני עצמו</h2>
     <div class="content grid grid-2">
@@ -309,7 +360,7 @@ body.ed-on .ed-img,body.ed-on .ed-blur,body.ed-on .ed-shape,body.ed-on .ed-textb
 
   <!-- PART C DIVIDER -->
   <section class="slide dark" data-clock="16:18–16:19">
-    <span class="slide-index">08 / 49</span>
+    <span class="slide-index">08 / 57</span>
     <span class="slide-track">חלק ג'</span>
     <div class="divider-wrap">
       <div class="divider-num">ג'</div>
@@ -322,7 +373,7 @@ body.ed-on .ed-img,body.ed-on .ed-blur,body.ed-on .ed-shape,body.ed-on .ed-textb
 
   <!-- 6 — INTRO TO AUTOMATION -->
   <section class="slide" data-clock="16:19–16:22">
-    <span class="slide-index">09 / 49</span>
+    <span class="slide-index">09 / 57</span>
     <span class="eyebrow">הקדמה לעולם האוטומציה</span>
     <h2>מה זה אוטומציה?</h2>
     <div class="quote content">"אוטומציה = לגרום למערכות לדבר ולפעול אחת בשביל השנייה — בלי שאתה נמצא באמצע ומעביר מידע ידנית."</div>
@@ -360,7 +411,7 @@ body.ed-on .ed-img,body.ed-on .ed-blur,body.ed-on .ed-shape,body.ed-on .ed-textb
   </section>
 
   <section class="slide" data-clock="16:22–16:24">
-    <span class="slide-index">10 / 49</span>
+    <span class="slide-index">10 / 57</span>
     <span class="eyebrow">מושג חובה באוטומציה</span>
     <h2>טריגר (Trigger) — מה מפעיל את האוטומציה</h2>
     <div class="quote content">"כל אוטומציה מתחילה ב'כש...': <strong>כש</strong>קורה משהו (הטריגר) ← המערכת עושה פעולה. בלי טריגר — שום דבר לא זז."</div>
@@ -372,10 +423,22 @@ body.ed-on .ed-img,body.ed-on .ed-blur,body.ed-on .ed-shape,body.ed-on .ed-textb
     <div class="foot-note content">כשמתכננים אוטומציה, שואלים קודם: מה הטריגר? ורק אחר כך: מה הפעולה?</div>
   </section>
 
+  <!-- 10b — WEBHOOK (a kind of trigger) -->
+  <section class="slide" data-clock="16:24–16:29">
+    <span class="slide-index">11 / 57</span>
+    <span class="eyebrow">סוג מיוחד של טריגר</span>
+    <h2>מה זה Webhook?</h2>
+    <div class="content grid grid-2">
+      <div class="card"><h3>בלי Webhook — אתה בודק</h3><p>אתה (או קלוד קוד) פונה לשירות כל פעם מחדש ושואל — "קרה משהו חדש?" זו יוזמה שלך, בכל פעם שאתה בוחר לבדוק.</p></div>
+      <div class="card" style="border-color:var(--gold);"><h3>Webhook — הוא מספר לך</h3><p>השירות עצמו פונה אליך אוטומטית, ברגע שקורה משהו — בלי שאתה שואל. כמו פעמון בדלת, במקום לדפוק כל כמה דקות ולבדוק אם מישהו הגיע.</p></div>
+    </div>
+    <div class="foot-note content">המערכת שנבנה בחלק הבא יכולה גם היא לקבל מידע דרך webhook — למשל פנייה חדשה מטופס באתר, הודעת וואטסאפ נכנסת, או עדכון תשלום, מגיעים אליה מיד ברגע שהם קורים.</div>
+  </section>
+
 
   <!-- 7 — API EXPLAINED (house example) -->
-  <section class="slide dark" data-clock="16:22–16:26">
-    <span class="slide-index">11 / 49</span>
+  <section class="slide dark" data-clock="16:29–16:31">
+    <span class="slide-index">12 / 57</span>
     <span class="eyebrow">איך זה קורה בפועל</span>
     <h2>הדבר שמחבר בין המערכות נקרא API</h2>
     <div class="content" style="display:flex;gap:40px;flex-wrap:wrap;align-items:center;">
@@ -408,8 +471,8 @@ body.ed-on .ed-img,body.ed-on .ed-blur,body.ed-on .ed-shape,body.ed-on .ed-textb
   </section>
 
   <!-- 8 — API vs MCP vs CLI (imported from session1 slide 34/48, with icons added) -->
-  <section class="slide dark" data-clock="16:26–16:30">
-    <span class="slide-index">12 / 49</span>
+  <section class="slide dark" data-clock="16:31–16:35">
+    <span class="slide-index">13 / 57</span>
     <span class="eyebrow">באיזו דלת נכנסים</span>
     <h2>API, MCP ו-CLI — שלוש דרכים לדבר עם הבית</h2>
     <div class="content grid grid-3">
@@ -430,8 +493,8 @@ body.ed-on .ed-img,body.ed-on .ed-blur,body.ed-on .ed-shape,body.ed-on .ed-textb
   </section>
 
   <!-- 9 — TOKENS ARE THE MOST SENSITIVE THING -->
-  <section class="slide" data-clock="16:30–16:33">
-    <span class="slide-index">13 / 49</span>
+  <section class="slide" data-clock="16:35–16:38">
+    <span class="slide-index">14 / 57</span>
     <span class="eyebrow">אבטחה</span>
     <h2>הטוקנים הם הדבר הכי רגיש במערכת</h2>
     <div class="content" style="display:flex;gap:32px;flex-wrap:wrap;align-items:center;">
@@ -446,8 +509,8 @@ body.ed-on .ed-img,body.ed-on .ed-blur,body.ed-on .ed-shape,body.ed-on .ed-textb
   </section>
 
   <!-- 10 — THE SOLUTION: .env + gitignore + permanent rule -->
-  <section class="slide dark" data-clock="16:33–16:40">
-    <span class="slide-index">14 / 49</span>
+  <section class="slide dark" data-clock="16:38–16:45">
+    <span class="slide-index">15 / 57</span>
     <span class="eyebrow">הפתרון</span>
     <h2>קובץ <code>.env</code> — כל הטוקנים במקום אחד, מוגן</h2>
     <div class="content grid grid-2">
@@ -456,39 +519,61 @@ body.ed-on .ed-img,body.ed-on .ed-blur,body.ed-on .ed-shape,body.ed-on .ed-textb
     </div>
     <div class="foot-note content">איך מעלים את הטוקנים בבטחה גם לענן (Vercel / Render וכו') — נסביר בהמשך, לא עכשיו.</div>
     <div class="quote content" style="border-color:#ef4444;">"לעולם לא כותבים את טוקן ה-Claude Code עצמו — לא בקוד, לא בצ'אט, לא בשום מקום שרואים."</div>
-    <div class="content prompt">
-      <span class="prompt-label">פרומפט לזיכרון הקבוע של העוזר האישי שלך</span>
-      <pre>מהיום זה כלל קבוע: לעולם אל תבקש ממני טוקן או מפתח API
-בתוך הצ'אט, ואל תדפיס טוקן קיים או חדש בצ'אט או בפקודת Bash —
-לא משנה מה. כל טוקן נכנס רק דרך קובץ .env.
+    <div class="content sec-check">
+      <div class="sec-q">🔐 הכנסתם לעוזר האישי את <strong>פרומפט האבטחה</strong> ששלחנו בקבוצה?</div>
+      <details class="sec-prompt">
+        <summary>לא? פתחו כאן את הפרומפט להעתקה</summary>
+        <div class="prompt">
+          <div class="sec-prompt-head"><span class="prompt-label">פרומפט האבטחה — כמו שנשלח בקבוצת הוואטסאפ</span><span style="display:flex;gap:8px;"><button type="button" class="copy-btn" onclick="copySecPrompt(this)">📋 העתקה</button><button type="button" class="copy-btn" onclick="this.closest('details').open=false" aria-label="סגירה">✕</button></span></div>
+          <pre id="sec-prompt-text">מהיום אתה העוזר האישי שלי, ואלה כללי אבטחה קבועים שאתה שומר תמיד — בכל שיחה, בכל פרויקט, בלי יוצא מן הכלל.
 
-כשאתה צריך שאני אכניס טוקן לקובץ .env — תמיד תן לי את המיקום
-המדויק של הקובץ, כולל הנתיב המלא, בתור קישור לחיץ שמוביל
-ישירות לתיקייה שבה הוא נמצא.
+🔐 טוקנים ומפתחות (הם כמו הסיסמה שלי)
+1. טוקן או מפתח API — לעולם לא בצ'אט. אתה לא מבקש ממני להדביק טוקן בצ'אט, אתה לא כותב טוקן בתשובה, לא בפקודה ולא בקוד גלוי. גם אם אני בטעות מדביק טוקן בצ'אט — תעצור אותי ותגיד לי למחוק אותו מהמערכת ולייצר חדש.
+2. כל הטוקנים נשמרים רק בקובץ ‎.env של הפרויקט. כשצריך טוקן חדש — אתה כותב בעצמך בקובץ ‎.env את השורה עם השם והסימן = (בלי ערך), ואני רק מדביק את הערך אחרי ה-=.
+3. בכל פעם שאתה מבקש ממני להדביק משהו ב-‎.env — תן לי את הנתיב המלא לקובץ, ותסביר לי איך לפתוח אותו (הקובץ מוסתר כי השם מתחיל בנקודה).
+4. בכל פעם שאתה כותב לי נתיב של קובץ או תיקייה — תעשה אותו קישור לחיץ, כך שבלחיצה הוא נפתח בחלון נפרד ב-VS Code, או באפליקציה שמתאימה לקובץ.
+5. הקובץ ‎.env תמיד רשום ב-‎.gitignore, ולעולם לא עולה ל-GitHub. מאגרי GitHub שלי — תמיד Private.
+6. טוקן שנחשף (הוצג על המסך, הוקלט, נשלח למישהו) — מוחקים אותו מיד במערכת שלו ומייצרים חדש.
+7. כשמערכת מאפשרת — מעדיפים טוקן עם תוקף (שבוע / חודש / שנה) ועם ההרשאות המינימליות שצריך, ולא טוקן "לכל החיים".
+8. סודות בענן (כמו Vercel או Supabase) — נכנסים רק דרך מסך ההגדרות של השירות עצמו, לא דרך הצ'אט.
 
-וכשצריך טוקן חדש בקובץ .env — אתה כותב בעצמך את שורת
-KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדביק את הערך.</pre>
+🔌 כשאני רוצה לחבר מערכת חדשה (מייל, יומן, סליקה, CRM...)
+9. קודם תחפש בעצמך איך מתחברים למערכת הזו (API), ואז תדריך אותי צעד אחר צעד, לאט, בעברית פשוטה: לאן להיכנס, על מה ללחוץ, ומה להעתיק. אני רק מעתיק את המפתחות ומדביק אותם ב-‎.env — לא בצ'אט.
+
+🧠 הזיכרון שלך
+10. תשמור את כל הכללים האלה עכשיו בזיכרון הקבוע שלך (קובץ CLAUDE.md), ותזכור אותם תמיד.
+11. כל דבר חשוב שאנחנו עושים או מחליטים — תרשום בזיכרון (קובץ Brain.md), כדי שבשיחה הבאה תדע איפה עצרנו.
+
+🙋 ועכשיו — בוא נאפיין אותך
+אחרי ששמרת את הכללים, תשאל אותי, שאלה אחת בכל פעם:
+- איך אני רוצה לקרוא לך?
+- במה אני עובד, ומה הדבר שלוקח לי הכי הרבה זמן ביום?
+- אילו מערכות אני רוצה שתחבר בהמשך (מייל, יומן, סליקה, וואטסאפ...)?
+את התשובות תשמור גם הן ב-CLAUDE.md. בסוף תסכם לי בקצרה מה שמרת.</pre>
+        </div>
+      </details>
     </div>
   </section>
 
   <!-- 11 — EXERCISE: build a dummy .env, then can't find it -->
-  <section class="slide" data-clock="16:40–16:45">
-    <span class="slide-index">15 / 49</span>
+  <section class="slide" data-clock="16:45–16:50">
+    <span class="slide-index">16 / 57</span>
     <span class="eyebrow">תרגול · יחד</span>
     <h2>בונים קובץ .env דמה</h2>
     <div class="content prompt">
       <span class="prompt-label">פרומפט — כל אחד מבקש מהעוזר האישי שלו</span>
       <pre>בנה לי קובץ .env דמה בתוך תיקיית הפרויקט, עם משתנה
-אחד לדוגמה (למשל DEMO_KEY=12345), ותן לי את הנתיב המלא
-לתיקייה שבו הוא נמצא.</pre>
+אחד לדוגמה (למשל DEMO_KEY=12345).
+אחר כך תן לי את הנתיב המלא של הקובץ שיצרת,
+ותן לי אותו כקישור לחיץ.</pre>
     </div>
     <div class="quote content" style="margin-top:8px;">עכשיו כל אחד פותח את התיקייה שקיבל — <strong>אתם רואים את הקובץ?</strong></div>
     <div class="foot-note content">רוב הסיכויים שלא. למה? — בדף הבא.</div>
   </section>
 
   <!-- 12 — ANSWER: hidden files, Mac + Windows -->
-  <section class="slide dark" data-clock="16:45–16:48">
-    <span class="slide-index">16 / 49</span>
+  <section class="slide dark" data-clock="16:50–16:53">
+    <span class="slide-index">17 / 57</span>
     <span class="eyebrow">למה לא רואים אותו</span>
     <h2>קבצים שמתחילים בנקודה — מוסתרים כברירת מחדל</h2>
     <div class="content"><div class="card" style="max-width:820px;border-color:var(--gold);"><p>קובץ ששמו מתחיל ב-<code>.</code> (כמו <code>.env</code>) מסומן על ידי המערכת כקובץ מוסתר — כדי שלא יפריע ולא יימחק בטעות. צריך לבקש מהמערכת במפורש להראות אותו.</p></div></div>
@@ -506,21 +591,10 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
     </div>
   </section>
 
-  <!-- 15b — WHAT IS A WEBHOOK -->
-  <section class="slide" data-clock="16:48–16:53">
-    <span class="slide-index">17 / 49</span>
-    <span class="eyebrow">עוד דרך לקבל מידע</span>
-    <h2>מה זה Webhook?</h2>
-    <div class="content grid grid-2">
-      <div class="card"><h3>API רגיל — אתה שואל</h3><p>אתה (או קלוד קוד) פונה לשירות ומבקש מידע — "מה קורה אצלך?" זו יוזמה שלך, בכל פעם שאתה בוחר לבדוק.</p></div>
-      <div class="card" style="border-color:var(--gold);"><h3>Webhook — הוא מספר לך</h3><p>השירות עצמו פונה אליך אוטומטית, ברגע שקורה משהו — בלי שאתה שואל. כמו פעמון בדלת, במקום לדפוק כל כמה דקות ולבדוק אם מישהו הגיע.</p></div>
-    </div>
-    <div class="foot-note content">המערכת שנבנה בחלק הבא יכולה גם היא לקבל מידע דרך webhook — למשל פנייה חדשה מטופס באתר, הודעת וואטסאפ נכנסת, או עדכון תשלום, מגיעים אליה מיד ברגע שהם קורים.</div>
-  </section>
 
   <!-- PART D DIVIDER -->
   <section class="slide dark" data-clock="16:53–16:53">
-    <span class="slide-index">18 / 49</span>
+    <span class="slide-index">18 / 57</span>
     <span class="slide-track">חלק ד'</span>
     <div class="divider-wrap">
       <div class="divider-num">ד'</div>
@@ -533,7 +607,7 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
 
   <!-- 13 — LOCAL VS CLOUD (question, no answer yet) -->
   <section class="slide dark" data-clock="16:53–16:56">
-    <span class="slide-index">19 / 49</span>
+    <span class="slide-index">19 / 57</span>
     <span class="eyebrow">מקומי מול ענן</span>
     <h2>כל זה יפה — כשעובדים על המחשב שלך</h2>
     <div class="quote content">אבל מה קורה כשהמערכת עוברת לענן, ורצה על שרת שאינו המחשב שלך — איך היא מקבלת גישה לטוקנים בלי קובץ <code>.env</code> יושב שם על המחשב?</div>
@@ -542,7 +616,7 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
 
   <!-- 14 — FRONTEND / BACKEND with illustration -->
   <section class="slide" data-clock="16:56–17:01">
-    <span class="slide-index">20 / 49</span>
+    <span class="slide-index">20 / 57</span>
     <span class="eyebrow">מילון מושגים</span>
     <h2>Frontend ו-Backend</h2>
     <div class="content" style="display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center;">
@@ -578,11 +652,15 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
       <div class="card"><h3>Frontend</h3><p>רץ בדפדפן של המשתמש. כל מה שכתוב שם — כל אחד יכול לראות דרך "קליק ימני ← Inspect". לכן טוקנים וסודות אף פעם לא יושבים כאן.</p></div>
       <div class="card" style="border-color:var(--gold);"><h3>Backend</h3><p>רץ על השרת, לא אצל המשתמש. כאן חי הטוקן, כאן קורית הלוגיקה הרגישה — אף אחד מבחוץ לא יכול לגשת אליו ישירות.</p></div>
     </div>
+    <div class="content inspect-demo">
+      <div class="inspect-steps"><span class="inspect-tag">🔍 דוגמה — נסו עכשיו</span> ב-Chrome: <strong>לחצן ימני</strong> על הדף ← <strong>Inspect</strong> (בעברית "בדיקה", בספרדית "Inspeccionar") ← נפתח לכם כל ה-Frontend של האתר, כ-HTML.</div>
+      <div class="inspect-warn">⛔ כל מה שיש ב-Frontend — כל אחד רואה. לכן <strong>בשום פנים ואופן לא מכניסים טוקנים ב-Frontend.</strong></div>
+    </div>
   </section>
 
   <!-- 15 — THREE TOOLS: SHOW ONLY -->
   <section class="slide dark" data-clock="17:01–17:03">
-    <span class="slide-index">21 / 49</span>
+    <span class="slide-index">21 / 57</span>
     <span class="eyebrow">הכלים שכל פרויקט חי עליהם</span>
     <h2>GitHub · Vercel · Supabase</h2>
     <div class="content" style="display:flex;align-items:center;gap:36px;flex-wrap:wrap;justify-content:center;margin-top:10px;">
@@ -608,80 +686,9 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
     <div class="foot-note content" style="text-align:center;">נכיר כל אחד מהם לעומק בדפים הבאים.</div>
   </section>
 
-  <!-- 16 — WHAT IS GITHUB -->
-  <section class="slide" data-clock="17:03–17:08">
-    <span class="slide-index">22 / 49</span>
-    <span class="eyebrow">GitHub</span>
-    <h2>איפה חי הקוד שלך</h2>
-    <div class="lede content">מקום בענן ששומר את כל הקוד של הפרויקט — עם היסטוריה מלאה של כל שינוי, כמו Google Docs לקוד.</div>
-    <div class="content grid grid-2">
-      <div class="card"><h3>מה כן נמצא ב-GitHub</h3><p>הקוד עצמו, קבצי ההגדרה של הפרויקט, תיעוד. כל מה שצריך כדי שהפרויקט ירוץ — חוץ מהסודות.</p></div>
-      <div class="card" style="border-color:#ef4444;"><h3>מה אסור שיהיה שם</h3><p>קובץ <code>.env</code>, טוקנים, סיסמאות. בזכות <code>.gitignore</code> הם פשוט לא נשלחים ל-GitHub מלכתחילה.</p></div>
-    </div>
-    <div class="content grid grid-2">
-      <div class="card" style="border-color:var(--gold);"><h3>גרסאות (Commits)</h3><p>כל שמירה היא גרסה חדשה, לא מוחקת ולא דורסת את הקודמת. כל הגרסאות נשמרות — תמיד אפשר לחזור אחורה לגרסה ישנה אם משהו נשבר.</p></div>
-      <div class="card"><h3>Private, לא Public</h3><p>ברירת המחדל היא מאגר (Repository) פרטי — רק אתה (וקלוד קוד מטעמך) רואים אותו. אף אחד אחר לא יכול לראות את הקוד או להוריד אותו.</p></div>
-    </div>
-  </section>
-
-  <!-- 17 — HOW TO DEPLOY TO GITHUB -->
-  <section class="slide dark" data-clock="17:08–17:14">
-    <span class="slide-index">23 / 49</span>
-    <span class="eyebrow">בפועל</span>
-    <h2>איך מעלים את הפרויקט ל-GitHub</h2>
-    <div class="content card" style="max-width:820px;border-color:var(--gold);">
-      <h3>קודם כל — מחברים את קלוד קוד ל-GitHub</h3>
-      <p>לפני שאפשר להעלות משהו, קלוד קוד צריך הרשאה לדבר עם חשבון ה-GitHub שלכם. מריצים פעם אחת <code>gh auth login</code> — זה פותח דפדפן, מתחברים עם חשבון ה-GitHub שלכם, ומאשרים. שוב — בלי להדביק שום טוקן בצ'אט.</p>
-    </div>
-    <div class="content prompt">
-      <span class="prompt-label">פרומפט — מבקשים מהעוזר האישי</span>
-      <pre>תוודא שיש לך גישה ל-GitHub (gh auth login אם עוד לא),
-ואז תעלה את הפרויקט הזה כמאגר חדש ופרטי (private) — לא public.
-לפני זה תוודא שקובץ ה-.env לא נכלל בהעלאה
-(בדוק שהוא ברשימת ה-.gitignore).</pre>
-    </div>
-    <div class="content checklist">
-      <div class="check-item"><span class="check-mark">1</span> מחברים חשבון GitHub לקלוד קוד — פעם אחת, דרך הדפדפן</div>
-      <div class="check-item"><span class="check-mark">2</span> יוצרים מאגר (repository) חדש, מסומן Private</div>
-      <div class="check-item"><span class="check-mark">3</span> Claude Code מכין את הקוד ושומר גרסה ראשונה (commit)</div>
-      <div class="check-item"><span class="check-mark">4</span> דוחפים (push) את הגרסה ל-GitHub</div>
-      <div class="check-item"><span class="check-mark">5</span> בודקים ב-GitHub עצמו שה-<code>.env</code> באמת לא שם</div>
-    </div>
-  </section>
-
-  <!-- 18 — WHAT IS VERCEL -->
-  <section class="slide" data-clock="17:14–17:21">
-    <span class="slide-index">24 / 49</span>
-    <span class="eyebrow">Vercel</span>
-    <h2>המקום שבו האתר/המערכת רצים בפועל</h2>
-    <div class="lede content">Vercel לוקח את הקוד מ-GitHub ומריץ אותו בענן, בכתובת אמיתית באינטרנט — במקום שירוץ רק על המחשב שלך.</div>
-    <div class="content grid grid-2">
-      <div class="card" style="border-color:var(--gold);"><h3>איפה יושבים הטוקנים ב-Vercel</h3><p>בהגדרות הפרויקט בענן, תחת <strong>Environment Variables</strong> — נפרד לגמרי מקובץ ה-.env המקומי, ולא נראה בקוד או בצ'אט.</p></div>
-      <div class="card"><h3>דומיין אישי</h3><p>אפשר לחבר דומיין משלכם (למשל <span dir="ltr" style="unicode-bidi:isolate;">my-business.co.il</span>) ל-Vercel, כדי שהאתר ירוץ תחת הכתובת שלכם — לא כתובת גנרית.</p></div>
-    </div>
-    <div class="content checklist">
-      <div class="check-item"><span class="check-mark">1</span> מתחברים פעם אחת דרך הדפדפן (<code>vercel login</code>) — לא מדביקים טוקן בצ'אט</div>
-      <div class="check-item"><span class="check-mark">2</span> אחרי החיבור, קלוד קוד יכול להריץ <code>vercel deploy</code> ישירות, בלי שאתם מעבירים לו טוקן בעצמכם</div>
-      <div class="check-item"><span class="check-mark">3</span> משתני הסביבה בענן מוגדרים דרך <code>vercel env add</code> — גם זה לא עובר דרך הצ'אט</div>
-    </div>
-    <div class="foot-note content">הכלל מדף 10 בתוקף גם כאן: קלוד קוד לא צריך לדעת את טוקן ה-Vercel עצמו כדי לדבר איתו.</div>
-  </section>
-
-  <!-- 19 — WHAT IS SUPABASE -->
-  <section class="slide dark" data-clock="17:21–17:23">
-    <span class="slide-index">25 / 49</span>
-    <span class="eyebrow">Supabase</span>
-    <h2>מסד הנתונים בענן של הפרויקט</h2>
-    <div class="lede content">המקום שבו נשמר המידע עצמו — לקוחות, פניות, טבלאות. לא הקוד — הנתונים.</div>
-    <div class="content grid grid-2">
-      <div class="card"><h3>מה מותר שיהיה שם</h3><p>הנתונים עצמם — טבלת לקוחות, פניות, היסטוריית שיחות ותזכורות. מוגנים בהרשאות גישה (RLS) כך שרק המערכת שלכם יכולה לגעת בהם.</p></div>
-      <div class="card" style="border-color:#ef4444;"><h3>מה אסור שיהיה שם</h3><p>ה-<strong>service key</strong> של Supabase נותן גישה מלאה לכל הנתונים בלי הגבלה — לעולם לא נחשף בפרונטאנד, בקוד גלוי או בצ'אט. גם הוא שייך רק ל-<code>.env</code>.</p></div>
-    </div>
-  </section>
-
   <!-- 19b — SERVER LOCATION (נוסף 17.10.26 לבקשת יצחק) -->
-  <section class="slide" data-clock="17:23–17:25">
-    <span class="slide-index">26 / 49</span>
+  <section class="slide" data-clock="17:03–17:05">
+    <span class="slide-index">22 / 57</span>
     <span class="eyebrow">איפה השרת יושב</span>
     <h2>שרתים קרוב לארץ — ובאותו מקום</h2>
     <div class="lede content">גם בענן יש מקום פיזי. אם מסד הנתונים בהודו והאתר בארצות הברית, כל לחיצה עוברת חצי עולם הלוך וחזור — והמערכת זוחלת.</div>
@@ -696,9 +703,120 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
     </div>
   </section>
 
+  <!-- 16 — WHAT IS GITHUB -->
+  <section class="slide" data-clock="17:05–17:10">
+    <span class="slide-index">23 / 57</span>
+    <span class="eyebrow">GitHub</span>
+    <h2>איפה חי הקוד שלך</h2>
+    <div class="lede content">מקום בענן ששומר את כל הקוד של הפרויקט — עם היסטוריה מלאה של כל שינוי, כמו Google Docs לקוד.</div>
+    <div class="content grid grid-2">
+      <div class="card"><h3>מה כן נמצא ב-GitHub</h3><p>הקוד עצמו, קבצי ההגדרה של הפרויקט, תיעוד. כל מה שצריך כדי שהפרויקט ירוץ — חוץ מהסודות.</p></div>
+      <div class="card" style="border-color:#ef4444;"><h3>מה אסור שיהיה שם</h3><p>קובץ <code>.env</code>, טוקנים, סיסמאות. בזכות <code>.gitignore</code> הם פשוט לא נשלחים ל-GitHub מלכתחילה.</p></div>
+    </div>
+    <div class="content grid grid-2">
+      <div class="card" style="border-color:var(--gold);"><h3>גרסאות (Commits)</h3><p>כל שמירה היא גרסה חדשה, לא מוחקת ולא דורסת את הקודמת. כל הגרסאות נשמרות — תמיד אפשר לחזור אחורה לגרסה ישנה אם משהו נשבר.</p></div>
+      <div class="card"><h3>Private, לא Public</h3><p>ברירת המחדל היא מאגר (Repository) פרטי — רק אתה (וקלוד קוד מטעמך) רואים אותו. אף אחד אחר לא יכול לראות את הקוד או להוריד אותו.</p></div>
+    </div>
+  </section>
+
+  <!-- 17 — HOW TO DEPLOY TO GITHUB -->
+  <section class="slide dark" data-clock="17:10–17:16">
+    <span class="slide-index">24 / 57</span>
+    <span class="eyebrow">בפועל</span>
+    <h2>איך מעלים את הפרויקט ל-GitHub</h2>
+    <div class="content prompt-row cols-2">
+      <div class="prompt mini-prompt">
+        <div class="sec-prompt-head"><span class="prompt-label">1 · חיבור חד-פעמי ל-GitHub</span><button type="button" class="copy-btn" onclick="copyPromptBox(this)" aria-label="העתקה">📋</button></div>
+        <pre>אני רוצה לחבר אותך ל-GitHub שלי, כך שתהיה לך
+גישה מלאה לעבוד איתו.
+קודם תסביר לי במילים פשוטות מה התהליך,
+ואז תדריך אותי צעד אחר צעד.
+בלי להדביק שום טוקן בצ'אט — רק התחברות דרך הדפדפן.
+בסוף תבדוק שהחיבור עובד, ותגיד לי לאיזה חשבון התחברת.</pre>
+      </div>
+      <div class="prompt mini-prompt">
+        <div class="sec-prompt-head"><span class="prompt-label">2 · פרויקט דמה קטן ← GitHub</span><button type="button" class="copy-btn" onclick="copyPromptBox(this)" aria-label="העתקה">📋</button></div>
+        <pre>תבנה לי פרויקט דמה קטן ופשוט מאוד — דף אחד
+שכתוב בו "שלום, זה הפרויקט הראשון שלי".
+נשתמש בו כדי לבדוק שהכל עובד: GitHub, Vercel ו-Supabase.
+תעלה אותו ל-GitHub כמאגר חדש ופרטי (private) — לא public.
+לפני ההעלאה תוודא שקובץ ה-.env ברשימת ה-.gitignore.
+בסוף תן לי קישור לחיץ למאגר ב-GitHub.</pre>
+      </div>
+    </div>
+    <div class="foot-note content">החיבור (1) עושים פעם אחת בלבד. אחר כך בודקים ב-GitHub עצמו: המאגר מסומן <strong>Private</strong>, וקובץ ה-<code>.env</code> לא נמצא שם.</div>
+  </section>
+
+  <!-- 18 — WHAT IS VERCEL -->
+  <section class="slide" data-clock="17:16–17:18">
+    <span class="slide-index">25 / 57</span>
+    <span class="eyebrow">Vercel</span>
+    <h2>המקום שבו האתר/המערכת רצים בפועל</h2>
+    <div class="lede content">Vercel לוקח את הקוד מ-GitHub ומריץ אותו בענן, בכתובת אמיתית באינטרנט — במקום שירוץ רק על המחשב שלך.</div>
+    <div class="content grid grid-2">
+      <div class="card" style="border-color:var(--gold);"><h3>איפה יושבים הטוקנים ב-Vercel</h3><p>בהגדרות הפרויקט בענן, תחת <strong>Environment Variables</strong> — נפרד לגמרי מקובץ ה-.env המקומי, ולא נראה בקוד או בצ'אט.</p></div>
+      <div class="card"><h3>דומיין אישי</h3><p>אפשר לחבר דומיין משלכם (למשל <span dir="ltr" style="unicode-bidi:isolate;">my-business.co.il</span>) ל-Vercel, כדי שהאתר ירוץ תחת הכתובת שלכם — לא כתובת גנרית.</p></div>
+    </div>
+    <div class="foot-note content">הכלל של ה-<code>.env</code> בתוקף גם כאן: הטוקן עובר מהקובץ ל-Vercel דרך מסך ההגדרות — לא דרך הצ'אט, ולא ב-Frontend.</div>
+  </section>
+
+  <!-- 18b — VERCEL IN PRACTICE (27.10) -->
+  <section class="slide dark" data-clock="17:18–17:23">
+    <span class="slide-index">26 / 57</span>
+    <span class="eyebrow">בפועל</span>
+    <h2>Vercel — מחברים, מעלים, ומכניסים טוקן דמה</h2>
+    <div class="content prompt-row cols-3">
+      <div class="prompt mini-prompt">
+        <div class="sec-prompt-head"><span class="prompt-label">1 · חיבור חד-פעמי ל-Vercel</span><button type="button" class="copy-btn" onclick="copyPromptBox(this)" aria-label="העתקה">📋</button></div>
+        <pre>אני רוצה לחבר אותך ל-Vercel שלי, כך שתהיה לך
+גישה מלאה לעבוד איתו.
+קודם תסביר לי במילים פשוטות מה התהליך,
+ואז תדריך אותי צעד אחר צעד.
+בלי להדביק שום טוקן בצ'אט — רק התחברות דרך הדפדפן.
+בסוף תבדוק שהחיבור עובד, ותגיד לי לאיזה חשבון התחברת.</pre>
+      </div>
+      <div class="prompt mini-prompt">
+        <div class="sec-prompt-head"><span class="prompt-label">2 · מעלים את הדמה לאוויר</span><button type="button" class="copy-btn" onclick="copyPromptBox(this)" aria-label="העתקה">📋</button></div>
+        <pre>תחבר את פרויקט הדמה שהעלינו ל-GitHub ל-Vercel,
+באזור Frankfurt (fra1), ותעלה אותו לאוויר.
+בסוף תן לי קישור לחיץ לאתר.</pre>
+      </div>
+      <div class="prompt mini-prompt">
+        <div class="sec-prompt-head"><span class="prompt-label">3 · טוקן דמה: .env ← Vercel</span><button type="button" class="copy-btn" onclick="copyPromptBox(this)" aria-label="העתקה">📋</button></div>
+        <pre>עכשיו נתרגל טוקן.
+תוסיף לקובץ ה-.env של פרויקט הדמה שורה ריקה DEMO_TOKEN=
+ותן לי את הנתיב המלא כקישור לחיץ — אני אדביק ערך ואשמור.
+תוסיף לאתר בדיקה בצד השרת שמציגה רק
+"✅ הטוקן נמצא" או "❌ הטוקן חסר" — לעולם לא את הטוקן עצמו.
+אחר כך תדריך אותי איך אני מכניס בעצמי את אותו ערך
+ל-Environment Variables בהגדרות הפרויקט ב-Vercel,
+ותעלה שוב.</pre>
+      </div>
+    </div>
+    <div class="content flow-steps">
+      <span>קלוד כותב <code>DEMO_TOKEN=</code> ב-.env</span><span class="flow-arrow">←</span>
+      <span>אתם מדביקים ערך ושומרים</span><span class="flow-arrow">←</span>
+      <span>מעתיקים אותו ל-Vercel ← Settings ← Environment Variables</span><span class="flow-arrow">←</span>
+      <span>מעלים שוב ← <strong>✅ הטוקן נמצא</strong></span>
+    </div>
+  </section>
+
+  <!-- 19 — WHAT IS SUPABASE -->
+  <section class="slide dark" data-clock="17:23–17:25">
+    <span class="slide-index">27 / 57</span>
+    <span class="eyebrow">Supabase</span>
+    <h2>מסד הנתונים בענן של הפרויקט</h2>
+    <div class="lede content">המקום שבו נשמר המידע עצמו — לקוחות, פניות, טבלאות. לא הקוד — הנתונים.</div>
+    <div class="content grid grid-2">
+      <div class="card"><h3>מה מותר שיהיה שם</h3><p>הנתונים עצמם — טבלת לקוחות, פניות, היסטוריית שיחות ותזכורות. מוגנים בהרשאות גישה (RLS) כך שרק המערכת שלכם יכולה לגעת בהם.</p></div>
+      <div class="card" style="border-color:#ef4444;"><h3>מה אסור שיהיה שם</h3><p>ה-<strong>service key</strong> של Supabase נותן גישה מלאה לכל הנתונים בלי הגבלה — לעולם לא נחשף בפרונטאנד, בקוד גלוי או בצ'אט. גם הוא שייך רק ל-<code>.env</code>.</p></div>
+    </div>
+  </section>
+
+
   <!-- 20 — CLAUDE CODE + SUPABASE: TABLES + DATA -->
-  <section class="slide dark" data-clock="17:25–17:30">
-    <span class="slide-index">27 / 49</span>
+  <section class="slide dark" data-clock="17:25–17:27">
+    <span class="slide-index">28 / 57</span>
     <span class="eyebrow">בפועל</span>
     <h2>איך קלוד קוד עובד מול Supabase</h2>
     <div class="content grid grid-2">
@@ -714,10 +832,48 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
     <div class="foot-note content">מומלץ להפעיל הרשאות (RLS) על כל טבלה, כך שרק המערכת שלכם — לא כל מי שמצליח להשיג את ה-URL — יכולה לגעת בנתונים.</div>
   </section>
 
+  <!-- 20b — SUPABASE IN PRACTICE + CLEANUP (27.10) -->
+  <section class="slide" data-clock="17:27–17:30">
+    <span class="slide-index">29 / 57</span>
+    <span class="eyebrow">בפועל</span>
+    <h2>Supabase — מחברים, טבלה קטנה, ומנקים בסוף</h2>
+    <div class="content prompt-row cols-3">
+      <div class="prompt mini-prompt">
+        <div class="sec-prompt-head"><span class="prompt-label">1 · חיבור חד-פעמי ל-Supabase</span><button type="button" class="copy-btn" onclick="copyPromptBox(this)" aria-label="העתקה">📋</button></div>
+        <pre>אני רוצה לחבר אותך ל-Supabase שלי, כך שתהיה לך
+גישה מלאה לעבוד איתו.
+קודם תסביר לי במילים פשוטות מה התהליך,
+ואז תדריך אותי צעד אחר צעד.
+בלי להדביק שום טוקן בצ'אט — רק התחברות דרך הדפדפן.
+בסוף תבדוק שהחיבור עובד, ותגיד לי לאיזה חשבון התחברת.</pre>
+      </div>
+      <div class="prompt mini-prompt">
+        <div class="sec-prompt-head"><span class="prompt-label">2 · טבלה קטנה באתר הדמה</span><button type="button" class="copy-btn" onclick="copyPromptBox(this)" aria-label="העתקה">📋</button></div>
+        <pre>תיצור ב-Supabase פרויקט דמה חדש באזור Frankfurt.
+תיצור בו טבלה קטנה "הודעות" עם 3 שורות לדוגמה,
+ותחבר אותה לאתר הדמה — שיציג את ההודעות מהטבלה.
+המפתחות של Supabase — רק ב-.env (אני מדביק),
+והמפתח הסודי (service key) רק בצד השרת, לא ב-Frontend.
+אחר כך תדריך אותי איך להכניס אותם ל-Environment Variables
+ב-Vercel, תעלה שוב, ותן לי קישור לחיץ לאתר.</pre>
+      </div>
+      <div class="prompt mini-prompt">
+        <div class="sec-prompt-head"><span class="prompt-label">3 · בסוף: מוחקים את כל הדמה</span><button type="button" class="copy-btn" onclick="copyPromptBox(this)" aria-label="העתקה">📋</button></div>
+        <pre>סיימנו לבדוק. עכשיו תמחק את כל פרויקט הדמה:
+את הפרויקט ב-Supabase, את הפרויקט ב-Vercel,
+את המאגר ב-GitHub ואת התיקייה במחשב.
+לפני שאתה מוחק — תראה לי רשימה מדויקת של מה שיימחק,
+ותחכה לאישור שלי.
+אם צריך הרשאה נוספת כדי למחוק — תדריך אותי צעד אחר צעד.</pre>
+      </div>
+    </div>
+    <div class="foot-note content">אם הכל עבד — GitHub, Vercel ו-Supabase מחוברים אצלכם, ואפשר לבנות את המערכת האמיתית.</div>
+  </section>
+
   <!-- 21 — SECURITY RULES SUMMARY PROMPT -->
   <!-- TODO (יצחק, 21.10): כלל 6 כאן ("login בדפדפן, לא דרך טוקן") סותר את מה שנלמד במפגש א׳ — להוריד/לתקן כשמסדרים את מצגת מפגש ב׳. בפרומפט שנשלח לקבוצה הוא כבר הוסר. -->
   <section class="slide dark" data-clock="17:30–17:34">
-    <span class="slide-index">28 / 49</span>
+    <span class="slide-index">30 / 57</span>
     <span class="eyebrow">סיכום · אבטחה</span>
     <h2>מטמיעים את כל כללי האבטחה בעוזר האישי — אחת ולתמיד</h2>
     <div class="content prompt">
@@ -750,7 +906,7 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
 
   <!-- PART E DIVIDER -->
   <section class="slide dark" data-clock="17:34–17:35">
-    <span class="slide-index">29 / 49</span>
+    <span class="slide-index">31 / 57</span>
     <span class="slide-track">חלק ה'</span>
     <div class="divider-wrap">
       <div class="divider-num">ה'</div>
@@ -761,60 +917,43 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
     </div>
   </section>
 
-  <!-- 22 — BUILD THE CLIENTS & INQUIRIES SYSTEM (before break) -->
+  <!-- 22 — BUILD YOUR OWN SYSTEM FROM SPEC.md (before break) -->
   <section class="slide" data-clock="17:35–17:45">
-    <span class="slide-index">30 / 49</span>
+    <span class="slide-index">32 / 57</span>
     <span class="eyebrow">עכשיו — בונים</span>
     <h2>לפני ההפסקה: מריצים את הפרומפט, והמערכת נבנית לבד</h2>
-    <div class="content prompt">
-      <span class="prompt-label">פרומפט — לפי האפיון שכל אחד הביא</span>
-      <pre>על בסיס האפיון שהכנתי, בנה לי מערכת לניהול לקוחות ופניות
-לעבודה שלי, עם טבלת לקוחות: שם, חברה/תחום, טלפון, מייל.
-
-לכל לקוח יכולות להיות כמה פניות. כל פנייה כוללת: תאריך, מקור
-(טלפון / מייל / וואטסאפ / טופס באתר), נושא, סכום משוער אם יש,
-וסטטוס: חדשה / בטיפול / הצעת מחיר נשלחה / נסגרה בהצלחה / לא
-רלוונטית. כל שינוי סטטוס נשמר בהיסטוריה עם תאריך — לא נדרס.
-
-בנה גם טופס (form) שאפשר לשים באתר או לשלוח בקישור ללקוחות.
-בטופס, הלקוח ממלא שם, טלפון, מייל ובמה הוא צריך עזרה, והפנייה
-נכנסת ישר למערכת בסטטוס "חדשה". אם הטלפון או המייל כבר מוכרים
-— הפנייה משויכת ללקוח הקיים. אם לא — נפתח לקוח חדש אוטומטית.
-
-לכל פנייה פתוחה יש תאריך "מעקב הבא" — מתי לחזור ללקוח. כשאני
-מעדכן פנייה (למשל: "דיברתי איתו, ביקש שאחזור אליו ביום ראשון"),
-המערכת מבקשת ממני תאריך מעקב חדש, ולא נותנת להשאיר פנייה
-פתוחה בלי תאריך כזה. פנייה שתאריך המעקב שלה עבר ולא טופלה —
-מסומנת באדום כ"באיחור".
-
-חשוב: לכל לקוח נשמרת היסטוריה מלאה — כל הפניות, כל השיחות
-וכל הסיכומים, לפי סדר כרונולוגי. שום רשומה לא נמחקת ולא נדרסת.
-לקוח שכבר לא פעיל מסומן "ארכיון" ויורד מהרשימה הראשית, אבל כל
-ההיסטוריה שלו נשארת זמינה לחיפוש. כך כשלקוח ישן חוזר אחרי שנה,
-אני רואה מיד מה סיכמנו איתו בפעם הקודמת.
-
-כשפנייה נסגרת בהצלחה — המערכת מציעה לשלוח ללקוח הודעת תודה
-קצרה, ואחרי חודש תזכורת אליי לבדוק איתו אם הוא צריך עוד משהו.
-כך הלקוחות הקיימים ממשיכים לעבוד בשבילי לאורך זמן, בלי שאני
-צריך לזכור הכל לבד.
-
-תוסיף גם דרך לרשום שיחה עם לקוח — סיכום קצר של מה דובר ומה
-הצעד הבא. להתחלה תבנה את הדרך הכי פשוטה: שדה טקסט ידני אחרי
-כל שיחה. לחיבור אוטומטי בעתיד (תמלול שיחות טלפון, משיכת מיילים
-מהתיבה, או הודעות וואטסאפ) — רק תשאיר את המבנה פתוח להרחבה,
-לא לבנות עכשיו.
-
-תבנה גם את הפרונט הבסיסי של המערכת הזאת, כולל הטופס שאפשר
-לשלוח ללקוחות.
-
-תעבוד ללא הפסקה. תעבוד באנגלית — רק התשובות שלך בסוף בעברית.</pre>
+    <div class="content prompt-row build-row">
+      <div class="prompt mini-prompt">
+        <div class="sec-prompt-head"><span class="prompt-label">1 · בונים לפי האפיון שלי</span><button type="button" class="copy-btn" onclick="copyPromptBox(this)" aria-label="העתקה">📋</button></div>
+        <pre>קרא את קובץ ה-SPEC.md שהכנו באפיון (ואת הסקיצה, אם יש).
+על בסיסו תבנה לי גרסה ראשונה של המערכת —
+רק מה שסימנו ל"גרסה הראשונה", לא יותר.
+תעבוד בדיוק כמו בפרויקט הדמה:
+– הקוד ב-GitHub, מאגר private
+– האתר ב-Vercel, באזור Frankfurt (fra1)
+– הנתונים ב-Supabase, באזור Frankfurt
+– כל טוקן רק ב-.env: אתה כותב KEY= ריק, ואני מדביק
+קודם תראה לי תוכנית קצרה של מה שאתה הולך לבנות,
+ותחכה לאישור שלי.
+אחרי שאישרתי — תעבוד ברצף בלי לעצור.
+תעבוד באנגלית — רק התשובות שלך אליי בעברית.
+בסוף תן לי קישור לחיץ לאתר וסיכום קצר.</pre>
+      </div>
+      <div class="prompt mini-prompt">
+        <div class="sec-prompt-head"><span class="prompt-label">2 · אין לי עדיין אפיון?</span><button type="button" class="copy-btn" onclick="copyPromptBox(this)" aria-label="העתקה">📋</button></div>
+        <pre>עוד אין לי אפיון.
+תשאל אותי 5 שאלות קצרות, אחת בכל פעם,
+על העבודה שלי ומה הכי מעייף בה.
+לפי התשובות תכתוב SPEC.md קצר לגרסה ראשונה,
+ואז תמשיך לבנות כמו בפרומפט הקודם.</pre>
+      </div>
     </div>
-    <div class="foot-note content">מריצים את זה עכשיו ויוצאים להפסקה — המערכת נבנית ברקע, וכשחוזרים ממשיכים משם.</div>
+    <div class="foot-note content">מריצים, מאשרים את התוכנית שהוא מציג — ויוצאים להפסקה. המערכת נבנית ברקע, וכשחוזרים ממשיכים משם.</div>
   </section>
 
   <!-- 23 — BREAK -->
   <section class="slide dark" data-clock="17:45–17:52">
-    <span class="slide-index">31 / 49</span>
+    <span class="slide-index">33 / 57</span>
     <div class="divider-wrap">
       <div class="divider-num">☕</div>
       <div>
@@ -825,12 +964,181 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
     <div class="foot-note content" style="text-align:center;">אין לו תלונות על שעות נוספות. תיהנו מהקפה.</div>
   </section>
 
-  <!-- PART F DIVIDER -->
+  <!-- PART F DIVIDER — WHATSAPP (27.10) -->
   <section class="slide dark" data-clock="17:52–17:52">
-    <span class="slide-index">32 / 49</span>
+    <span class="slide-index">34 / 57</span>
     <span class="slide-track">חלק ו'</span>
     <div class="divider-wrap">
       <div class="divider-num">ו'</div>
+      <div>
+        <span class="eyebrow">לתקשר עם הלקוחות</span>
+        <h1 style="margin-top:10px;">וואטסאפ</h1>
+      </div>
+    </div>
+  </section>
+
+  <!-- WA1 — WHATSAPP VS WHATSAPP BUSINESS -->
+  <section class="slide" data-clock="17:52–17:55">
+    <span class="slide-index">35 / 57</span>
+    <span class="eyebrow">וואטסאפ</span>
+    <h2>וואטסאפ, כמו שאנחנו מכירים — יש שניים</h2>
+    <div class="content grid grid-2">
+      <div class="card wa-card">
+        <div class="wa-logo"><svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><path d="M32 6C17.6 6 6 17.3 6 31.3c0 4.9 1.4 9.4 3.9 13.3L7 57l12.8-3.2c3.6 1.9 7.8 3 12.2 3 14.4 0 26-11.3 26-25.4S46.4 6 32 6z" fill="#25D366"/><path d="M24.6 19.6c-.6-1.3-1.2-1.3-1.8-1.3h-1.5c-.5 0-1.4.2-2.1 1-.7.8-2.8 2.7-2.8 6.6s2.9 7.7 3.3 8.2c.4.5 5.6 8.7 13.8 11.9 6.8 2.6 8.2 2.1 9.7 2s4.8-1.9 5.4-3.8c.7-1.9.7-3.5.5-3.8-.2-.3-.7-.5-1.5-.9s-4.8-2.3-5.5-2.6c-.7-.3-1.3-.4-1.8.4-.5.8-2.1 2.6-2.6 3.1-.5.5-.9.6-1.7.2-.8-.4-3.4-1.2-6.5-3.9-2.4-2.1-4-4.7-4.5-5.5-.5-.8 0-1.2.4-1.6.4-.4.8-.9 1.2-1.4.4-.5.5-.8.8-1.3.3-.5.1-1-.1-1.4-.2-.4-1.7-4.2-2.4-5.9z" fill="#fff"/></svg></div>
+        <h3>WhatsApp (רגיל)</h3>
+        <p>שולחים הודעות, פותחים קבוצות, ושולחים רשימות תפוצה.</p>
+      </div>
+      <div class="card wa-card" style="border-color:var(--gold);">
+        <div class="wa-logo"><svg viewBox="0 0 64 64" width="64" height="64" aria-hidden="true"><path d="M32 6C17.6 6 6 17.3 6 31.3c0 4.9 1.4 9.4 3.9 13.3L7 57l12.8-3.2c3.6 1.9 7.8 3 12.2 3 14.4 0 26-11.3 26-25.4S46.4 6 32 6z" fill="#25D366"/><path d="M25 18h9.6c5 0 8 2.4 8 6.2 0 2.6-1.5 4.4-3.8 5.1v.1c2.9.5 4.8 2.6 4.8 5.6 0 4.3-3.3 7-8.8 7H25V18zm5.2 9.6h3.4c2.2 0 3.4-1 3.4-2.6s-1.2-2.5-3.3-2.5h-3.5v5.1zm0 9.7h4c2.4 0 3.7-1 3.7-2.9 0-1.8-1.3-2.8-3.8-2.8h-3.9v5.7z" fill="#fff"/></svg></div>
+        <h3>WhatsApp Business</h3>
+        <p>אותו דבר — ובנוסף בעיקר בשביל העסקים: פרופיל של העסק (שם, כתובת, שעות פתיחה, קטלוג), תשובות מהירות והודעת "לא זמין".</p>
+      </div>
+    </div>
+    <div class="quote content" style="margin-top:14px;">אבל ברמת העיקרון — שניהם נועדו לשימוש <strong>בטלפון</strong>, ביד, על ידי בן אדם.</div>
+  </section>
+
+  <!-- WA2 — WHATSAPP WEB = MIRROR -->
+  <section class="slide dark" data-clock="17:55–17:58">
+    <span class="slide-index">36 / 57</span>
+    <span class="eyebrow">וואטסאפ</span>
+    <h2>WhatsApp Web — מראה של הטלפון</h2>
+    <div class="content flow-steps wa-flow">
+      <span>📱 הוואטסאפ בטלפון</span><span class="flow-arrow">←</span>
+      <span>סורקים קוד QR</span><span class="flow-arrow">←</span>
+      <span>💻 WhatsApp Web — בדפדפן או באפליקציה למחשב</span>
+    </div>
+    <div class="content grid grid-2" style="margin-top:14px;">
+      <div class="card"><h3>מה זה עושה</h3><p>נכנסים לאתר (או לאפליקציה במחשב), סורקים את הקוד מהוואטסאפ בטלפון — ומה שיש בטלפון מוכפל למחשב.</p></div>
+      <div class="card" style="border-color:var(--gold);"><h3>כמו חלון ראווה</h3><p>כמו מראה: כל מה שקורה בוואטסאפ בטלפון — רואים ועונים גם מהמחשב. עובד גם עם WhatsApp רגיל וגם עם WhatsApp Business.</p></div>
+    </div>
+  </section>
+
+  <!-- WA3 — TWO WAYS TO CONNECT A SYSTEM -->
+  <section class="slide" data-clock="17:58–18:00">
+    <span class="slide-index">37 / 57</span>
+    <span class="eyebrow">וואטסאפ + API</span>
+    <h2>רוצים שהמערכת שלכם תדבר בוואטסאפ? יש שתי דרכים</h2>
+    <div class="lede content">כדי שמערכת (בוט, CRM, תזכורות) תשלח ותקבל הודעות בוואטסאפ לבד — צריך להתממשק דרך API.</div>
+    <div class="content grid grid-2">
+      <div class="card" style="border-color:#ef4444;"><span class="tag">דרך 1</span><h3>הלא-רשמי</h3><p>פלטפורמה שמתחברת לוואטסאפ שלכם כמו WhatsApp Web.</p></div>
+      <div class="card" style="border-color:var(--gold);"><span class="tag">דרך 2</span><h3>הרשמי</h3><p>ה-API של Meta עצמה — החברה של וואטסאפ ופייסבוק.</p></div>
+    </div>
+  </section>
+
+  <!-- WA4 — UNOFFICIAL EXPLAINED -->
+  <section class="slide dark" data-clock="18:00–18:03">
+    <span class="slide-index">38 / 57</span>
+    <span class="eyebrow">דרך 1 · הלא-רשמי</span>
+    <h2>הלא-רשמי — בדיוק כמו WhatsApp Web</h2>
+    <div class="content flow-steps wa-flow">
+      <span>📱 הוואטסאפ שלכם</span><span class="flow-arrow">⇄</span>
+      <span>הפלטפורמה (למשל Green API) — מחוברת כמו WhatsApp Web</span><span class="flow-arrow">⇄</span>
+      <span>💻 המערכת שלכם</span>
+    </div>
+    <div class="content grid grid-2" style="margin-top:14px;">
+      <div class="card"><h3>הודעה נכנסת</h3><p>כל הודעה שמגיעה לטלפון — נכנסת גם לפלטפורמה, והיא מעבירה אותה מיד למערכת שלכם (כמו Webhook).</p></div>
+      <div class="card"><h3>הודעה יוצאת</h3><p>המערכת שולחת הודעה דרך ה-API של הפלטפורמה — וזה יוצא כאילו כתבתם אותה ב-WhatsApp Web.</p></div>
+    </div>
+    <div class="foot-note content">סוג של "קומבינה": וואטסאפ חושב שזה סתם WhatsApp Web פתוח. דוגמה לפלטפורמה כזו: <strong>Green API</strong>.</div>
+  </section>
+
+  <!-- WA5 — UNOFFICIAL PROS & CONS -->
+  <section class="slide" data-clock="18:03–18:06">
+    <span class="slide-index">39 / 57</span>
+    <span class="eyebrow">דרך 1 · הלא-רשמי</span>
+    <h2>הלא-רשמי — יתרונות וחסרונות</h2>
+    <div class="content table-wrap">
+      <table>
+        <thead><tr><th>✅ יתרונות</th><th>⛔ חסרונות</th></tr></thead>
+        <tbody>
+          <tr><td>חינם או כמעט חינם</td><td class="hl">וואטסאפ יכול לחסום את המספר — בלי הודעה מוקדמת, ולפעמים לתמיד</td></tr>
+          <tr><td>בלי תהליך אישור — מתחברים בסריקת QR</td><td>שליחת הרבה הודעות דומות = סיכון גבוה לחסימה</td></tr>
+          <tr><td>אין כמעט כללים וחוקים</td><td>הסיבה: עוקפים את הדרך שעליה Meta גובה כסף — והם לא אוהבים את זה</td></tr>
+          <tr><td>עובד על המספר שכבר יש לכם</td><td>אם המספר נחסם — הולכים איתו כל אנשי הקשר והקבוצות</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- WA6 — OFFICIAL: META API -->
+  <section class="slide dark" data-clock="18:06–18:09">
+    <span class="slide-index">40 / 57</span>
+    <span class="eyebrow">דרך 2 · הרשמי</span>
+    <h2>הרשמי — ה-API של Meta</h2>
+    <div class="lede content">Meta (החברה של וואטסאפ ופייסבוק) נותנת לכם גישה רשמית ל-API של וואטסאפ. אבל כמובן — הם רוצים תמורה.</div>
+    <div class="content grid grid-2">
+      <div class="card"><h3>💰 כסף</h3><p>משלמים על הודעות (פירוט בכלל מס׳ 3).</p></div>
+      <div class="card" style="border-color:#ef4444;"><h3>📜 כללים נוקשים</h3><p>הם לא רוצים שמישהו יתחזה לאחר או יזייף זהות. יש רשימה ארוכה של מה מותר ומה אסור — למשל: אסור למכור תרופות, אסור לעשות הגרלות והימורים.</p></div>
+    </div>
+    <div class="foot-note content">יש כמה כללים חשובים שחייבים להכיר — בשקפים הבאים.</div>
+  </section>
+
+  <!-- WA7 — RULE 1: TEMPLATE VS REPLY -->
+  <section class="slide" data-clock="18:09–18:13">
+    <span class="slide-index">41 / 57</span>
+    <span class="eyebrow">הרשמי · כלל מס׳ 1</span>
+    <h2>הודעה יזומה מול תשובה ללקוח</h2>
+    <div class="content grid grid-2">
+      <div class="card" style="border-color:var(--gold);"><span class="tag">אתם פונים ראשונים</span><h3>הודעה יזומה = הודעת Template</h3><p>קודם שולחים את נוסח ההודעה ל-Meta, והם צריכים לאשר אותו. ההודעה יכולה להיות קבועה, או דינמית — עם שדות כמו שם, טלפון ועוד. רק אחרי האישור — שולחים אותה, ורק לאנשים שנרשמו לקבל מכם הודעות. אחרת — זה ספאם.</p></div>
+      <div class="card"><span class="tag">הלקוח פונה ראשון</span><h3>תשובה בתוך 24 שעות</h3><p>כשמישהו כותב לכם בוואטסאפ — נפתח חלון של 24 שעות, ובתוכו אפשר לענות לו כמעט כל דבר, בלי אישור מראש.</p></div>
+    </div>
+  </section>
+
+  <!-- WA8 — RULE 2: DAILY LIMITS -->
+  <section class="slide dark" data-clock="18:13–18:16">
+    <span class="slide-index">42 / 57</span>
+    <span class="eyebrow">הרשמי · כלל מס׳ 2</span>
+    <h2>כמה אנשים אפשר לפנות אליהם ביום</h2>
+    <div class="content grid grid-2">
+      <div class="card"><h3>עסק לא מאומת</h3><p class="wa-big">250</p><p>אנשים שונים ביום — בהודעות יזומות.</p></div>
+      <div class="card" style="border-color:var(--gold);"><h3>עסק מאומת</h3><p class="wa-big">1,000</p><p>מתחילים מ-1,000 ביום, והמכסה עולה לבד (10,000, 100,000 ויותר) כשהאיכות טובה.</p></div>
+    </div>
+    <div class="foot-note content">אימות העסק (Business Verification) הוא תהליך מול Meta — וגם בו קלוד קוד יכול להדריך אתכם צעד אחר צעד.</div>
+  </section>
+
+  <!-- WA9 — RULE 3: PRICING -->
+  <section class="slide" data-clock="18:16–18:19">
+    <span class="slide-index">43 / 57</span>
+    <span class="eyebrow">הרשמי · כלל מס׳ 3</span>
+    <h2>משלמים על כל הודעה — גם בתוך 24 שעות</h2>
+    <div class="lede content">מ-1 באוקטובר 2026 Meta גובים גם על תשובות בתוך חלון 24 השעות. היום כמעט כל הודעה עולה כסף.</div>
+    <div class="content grid grid-3">
+      <div class="card" style="border-color:var(--gold);"><h3>💰 הודעה יזומה (Template)</h3><p>בתשלום, כל הודעה בנפרד. המחיר לפי סוג ההודעה (שיווק / עדכון / קוד אימות) והמדינה של מי שמקבל.</p></div>
+      <div class="card" style="border-color:var(--gold);"><h3>💰 תשובה בתוך 24 שעות</h3><p>גם בתשלום. 1,000 התשובות הראשונות בכל חודש — חינם, לכל מספר.</p></div>
+      <div class="card"><h3>🤖 בוט מול כתיבה ידנית</h3><p>יש הבדל בתמחור: תשובה שכתבתם ביד או שבוט שבניתם שלח — לפי הודעה. הבוט של Meta עצמה (Business AI) — לפי כמות טקסט (טוקנים).</p></div>
+    </div>
+  </section>
+
+  <!-- WA10 — RULE 4: COEXISTENCE -->
+  <section class="slide dark" data-clock="18:19–18:22">
+    <span class="slide-index">44 / 57</span>
+    <span class="eyebrow">הרשמי · כלל מס׳ 4</span>
+    <h2>Coexistence — אותו מספר, גם באפליקציה וגם ב-API</h2>
+    <div class="content grid grid-2">
+      <div class="card"><span class="tag">פעם</span><h3>מספר נפרד</h3><p>מי שרצה את הרשמי היה צריך מספר טלפון נוסף, נפרד מהוואטסאפ שבטלפון.</p></div>
+      <div class="card" style="border-color:var(--gold);"><span class="tag">היום</span><h3>Coexistence</h3><p>אותו מספר של WhatsApp Business — ממשיכים לעבוד איתו בטלפון, ובמקביל משלבים בו את ה-API הרשמי של Meta.</p></div>
+    </div>
+    <div class="quote content" style="margin-top:14px;">בפועל זה עובד דרך פלטפורמות צד ג׳ כמו ManyChat — ולכן צריך מנוי נוסף אצלן.</div>
+    <div class="foot-note content">דרך ה-API הרגיל של Meta לבד, בינתיים, אי אפשר. (אפשר להירשם בעצמכם כ-Tech Provider אצל Meta — אבל זה תהליך ארוך.)</div>
+  </section>
+
+  <!-- WA11 — TWO WAYS TO USE THE OFFICIAL API -->
+  <section class="slide" data-clock="18:22–18:25">
+    <span class="slide-index">45 / 57</span>
+    <span class="eyebrow">הרשמי · איך משתמשים</span>
+    <h2>שתי צורות לעבוד עם הרשמי</h2>
+    <div class="content grid grid-2">
+      <div class="card" style="border-color:var(--gold);"><span class="tag">ישירות</span><h3>Cloud API של Meta</h3><p>מחברים את ה-API של Meta ישירות דרך קלוד קוד, ובונים בוט שעונה ועושה כל מה שתרצו. בלי מנוי נוסף — אבל בלי Coexistence.</p></div>
+      <div class="card"><span class="tag">דרך פלטפורמה</span><h3>ManyChat וכדומה</h3><p>פלטפורמות שעושות את כל התהליך בשבילכם, כולל Coexistence. גם אליהן קלוד קוד יכול להתחבר ולבנות לכם את כל התהליך. בתשלום חודשי.</p></div>
+    </div>
+  </section>
+
+  <!-- PART F DIVIDER -->
+  <section class="slide dark" data-clock="18:25–18:25">
+    <span class="slide-index">46 / 57</span>
+    <span class="slide-track">חלק ז'</span>
+    <div class="divider-wrap">
+      <div class="divider-num">ז'</div>
       <div>
         <span class="eyebrow">עובדים חכם יותר</span>
         <h1 style="margin-top:10px;">ייעול עבודה<br><span class="accent" style="font-weight:100;">עם קלוד</span></h1>
@@ -839,22 +1147,23 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
   </section>
 
   <!-- 24 — DICTATION TOOLS (Whisper) -->
-  <section class="slide" data-clock="17:52–17:55">
-    <span class="slide-index">33 / 49</span>
-    <span class="eyebrow">כלי דיבור לקלוד קוד</span>
+  <section class="slide" data-clock="18:25–18:28">
+    <span class="slide-index">47 / 57</span>
+    <span class="eyebrow">טיפ מס׳ 1 · כלי דיבור לקלוד קוד</span>
     <h2>מדברים במקום להקליד</h2>
     <div class="lede content">כלי שממיר דיבור לטקסט בזמן אמת — מקישים על קיצור מקלדת, מדברים, משחררים, והטקסט מוקלד לבד בדיוק במקום שהסמן נמצא. עובד בכל מקום שיש שדה טקסט — כולל בתוך הצ'אט עם קלוד קוד.</div>
-    <div class="content grid grid-2">
+    <div class="content grid grid-3">
       <div class="card"><h3>Mac — MacWhisper</h3><p><a href="https://goodsnooze.gumroad.com/l/macwhisper" style="color:var(--lavender);">goodsnooze.gumroad.com/l/macwhisper</a><br>מורידים, פותחים, מחזיקים את קיצור המקלדת שהוגדר, מדברים, משחררים — הטקסט מופיע איפה שהסמן נמצא.</p></div>
       <div class="card" style="border-color:var(--gold);"><h3>Windows — Wispr Flow</h3><p><a href="https://wisprflow.ai/downloads" style="color:var(--lavender);">wisprflow.ai/downloads</a><br>מורידים, פותחים, מחזיקים את קיצור המקלדת שהוגדר, מדברים, משחררים — הטקסט מופיע איפה שהסמן נמצא.</p></div>
+      <div class="card" style="border-color:#e8459a;"><span class="tag">חדש · חינם</span><h3>Mac + Windows — Fireflies Talk</h3><p><!-- TODO: להחליף בקישור השותפים של יצחק --><a href="https://fireflies.ai" style="color:var(--lavender);">fireflies.ai</a><br>חדש מ-Fireflies: הכתבה בקול, חינם ובלי הגבלה, גם בעברית. מחזיקים <strong>Fn</strong> (Mac) או <strong>Ctrl+Win</strong> (Windows), מדברים, משחררים.</p></div>
     </div>
     <div class="foot-note content">קישורים נוספים ישלחו בקבוצת הסדנה.</div>
   </section>
 
   <!-- 25 — SCREENSHOTS (Mac + Windows, reused from session1 end-of-session slide) -->
-  <section class="slide dark" data-clock="17:55–17:58">
-    <span class="slide-index">34 / 49</span>
-    <span class="eyebrow">מצלמים מסך לקלוד קוד</span>
+  <section class="slide dark" data-clock="18:28–18:31">
+    <span class="slide-index">48 / 57</span>
+    <span class="eyebrow">טיפ מס׳ 2 · מצלמים מסך לקלוד קוד</span>
     <h2>כשמשהו שבור על המסך — מראים לו, לא מתארים במילים</h2>
     <div class="content grid grid-2">
       <div class="card" style="border-color:var(--gold);"><h3>Screenshot ל-Claude Code — Mac</h3><p><strong>Cmd+Shift+4</strong> — בוחרים אזור במסך, התמונה נשמרת לשולחן העבודה. <strong>Cmd+Ctrl+Shift+4</strong> — אותו דבר, אבל ישר ללוח (Clipboard) — אפשר להדביק ישירות בצ'אט עם <strong>Cmd+V</strong>.</p></div>
@@ -863,12 +1172,34 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
     <div class="foot-note content">זו הדרך המהירה ביותר להראות לקלוד קוד בדיוק מה קורה, בלי לתאר במילים.</div>
   </section>
 
+  <!-- 25b — TIP 3: TALK TO CLAUDE LIKE A CEO (27.10) -->
+  <section class="slide" data-clock="18:31–18:35">
+    <span class="slide-index">49 / 57</span>
+    <span class="eyebrow">טיפ מס׳ 3 · איך מדברים איתו</span>
+    <h2>מדברים לקלוד קוד כמו מנכ״ל שמדבר עם העובדים שלו</h2>
+    <div class="quote content">"אני רוצה תוצאות — אתה תדאג לדרך."</div>
+    <div class="content grid grid-2" style="margin-top:12px;">
+      <div class="card" style="border-color:var(--gold);"><h3>🤖 הוא</h3><p>עושה כמה שיותר דברים לבד. המגמה תמיד: הוא עושה, לא אתם.</p></div>
+      <div class="card"><h3>🙋 אתם</h3><p>רק מה שחייב אתכם (התחברות, אישור, תשלום) — והוא מדריך אתכם לאט, צעד אחר צעד.</p></div>
+    </div>
+    <div class="content prompt-row cols-1" style="margin-top:12px;">
+      <div class="prompt mini-prompt">
+        <div class="sec-prompt-head"><span class="prompt-label">פרומפט — לזיכרון הקבוע של העוזר האישי</span><button type="button" class="copy-btn" onclick="copyPromptBox(this)" aria-label="העתקה">📋</button></div>
+        <pre>מהיום כך אנחנו עובדים: אני אומר לך איזו תוצאה אני רוצה, ואתה דואג לדרך.
+כל מה שאתה יכול לעשות בעצמך — תעשה לבד, בלי לשאול אותי.
+אם יש משהו ספציפי שרק אני יכול לעשות — תדריך אותי לאט, צעד אחר צעד, ואני אעשה.
+אבל המגמה תמיד: אתה עושה לבד.
+תשמור את זה בזיכרון הקבוע שלך (CLAUDE.md).</pre>
+      </div>
+    </div>
+  </section>
+
   <!-- PART G DIVIDER -->
-  <section class="slide dark" data-clock="17:58–17:59">
-    <span class="slide-index">35 / 49</span>
-    <span class="slide-track">חלק ז'</span>
+  <section class="slide dark" data-clock="18:35–18:36">
+    <span class="slide-index">50 / 57</span>
+    <span class="slide-track">חלק ח'</span>
     <div class="divider-wrap">
-      <div class="divider-num">ז'</div>
+      <div class="divider-num">ח'</div>
       <div>
         <span class="eyebrow">לא לבד בעולם</span>
         <h1 style="margin-top:10px;">חיבור מערכות</h1>
@@ -876,150 +1207,52 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
     </div>
   </section>
 
-  <!-- 26 — CONNECT TO EMAIL -->
-  <section class="slide" data-clock="17:59–18:05">
-    <span class="slide-index">36 / 49</span>
-    <span class="eyebrow">מחברים למייל</span>
-    <h2>המערכת מדברת עם המייל שלכם — Gmail או Hotmail/Outlook</h2>
-    <div class="content card" style="max-width:820px;border-color:var(--gold);">
-      <h3>איפה מחברים — שלב אחד לפני הכל</h3>
-      <p>ב-Claude (claude.ai או Desktop): <strong dir="ltr" style="unicode-bidi:isolate;display:inline-block;">Settings → Connectors</strong>. שם מחפשים את שירות המייל הרלוונטי ולוחצים <strong>Connect</strong>.</p>
+  <!-- 26b — CONNECT ANY PLATFORM (logos, 27.10) -->
+  <section class="slide" data-clock="18:36–18:40">
+    <span class="slide-index">51 / 57</span>
+    <span class="eyebrow">חיבור מערכות</span>
+    <h2>אפשר לחבר ולהתממשק לכל הפלטפורמות האלה</h2>
+    <div class="content logo-grid">
+        <div class="logo-tile" title="Gmail"><svg aria-hidden="true" fill="#EA4335" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/></svg><span>Gmail</span></div>
+        <div class="logo-tile" title="Google Calendar"><svg aria-hidden="true" fill="#4285F4" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.316 5.684H24v12.632h-5.684V5.684zM5.684 24h12.632v-5.684H5.684V24zM18.316 5.684V0H1.895A1.894 1.894 0 0 0 0 1.895v16.421h5.684V5.684h12.632zm-7.207 6.25v-.065c.272-.144.5-.349.687-.617s.279-.595.279-.982c0-.379-.099-.72-.3-1.025a2.05 2.05 0 0 0-.832-.714 2.703 2.703 0 0 0-1.197-.257c-.6 0-1.094.156-1.481.467-.386.311-.65.671-.793 1.078l1.085.452c.086-.249.224-.461.413-.633.189-.172.445-.257.767-.257.33 0 .602.088.816.264a.86.86 0 0 1 .322.703c0 .33-.12.589-.36.778-.24.19-.535.284-.886.284h-.567v1.085h.633c.407 0 .748.109 1.02.327.272.218.407.499.407.843 0 .336-.129.614-.387.832s-.565.327-.924.327c-.351 0-.651-.103-.897-.311-.248-.208-.422-.502-.521-.881l-1.096.452c.178.616.505 1.082.977 1.401.472.319.984.478 1.538.477a2.84 2.84 0 0 0 1.293-.291c.382-.193.684-.458.902-.794.218-.336.327-.72.327-1.149 0-.429-.115-.797-.344-1.105a2.067 2.067 0 0 0-.881-.689zm2.093-1.931l.602.913L15 10.045v5.744h1.187V8.446h-.827l-2.158 1.557zM22.105 0h-3.289v5.184H24V1.895A1.894 1.894 0 0 0 22.105 0zm-3.289 23.5l4.684-4.684h-4.684V23.5zM0 22.105C0 23.152.848 24 1.895 24h3.289v-5.184H0v3.289z"/></svg><span>Google Calendar</span></div>
+        <div class="logo-tile" title="Google Drive"><svg aria-hidden="true" fill="#4285F4" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.01 1.485c-2.082 0-3.754.02-3.743.047.01.02 1.708 3.001 3.774 6.62l3.76 6.574h3.76c2.081 0 3.753-.02 3.742-.047-.005-.02-1.708-3.001-3.775-6.62l-3.76-6.574zm-4.76 1.73a789.828 789.861 0 0 0-3.63 6.319L0 15.868l1.89 3.298 1.885 3.297 3.62-6.335 3.618-6.33-1.88-3.287C8.1 4.704 7.255 3.22 7.25 3.214zm2.259 12.653-.203.348c-.114.198-.96 1.672-1.88 3.287a423.93 423.948 0 0 1-1.698 2.97c-.01.026 3.24.042 7.222.042h7.244l1.796-3.157c.992-1.734 1.85-3.23 1.906-3.323l.104-.167h-7.249z"/></svg><span>Google Drive</span></div>
+        <div class="logo-tile" title="Google Sheets"><svg aria-hidden="true" fill="#34A853" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.318 12.545H7.91v-1.909h3.41v1.91zM14.728 0v6h6l-6-6zm1.363 10.636h-3.41v1.91h3.41v-1.91zm0 3.273h-3.41v1.91h3.41v-1.91zM20.727 6.5v15.864c0 .904-.732 1.636-1.636 1.636H4.909a1.636 1.636 0 0 1-1.636-1.636V1.636C3.273.732 4.005 0 4.909 0h9.318v6.5h6.5zm-3.273 2.773H6.545v7.909h10.91v-7.91zm-6.136 4.636H7.91v1.91h3.41v-1.91z"/></svg><span>Google Sheets</span></div>
+        <div class="logo-tile" title="WhatsApp"><svg aria-hidden="true" fill="#25D366" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg><span>WhatsApp</span></div>
+        <div class="logo-tile" title="Zoom"><svg aria-hidden="true" fill="#0B5CFF" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M5.033 14.649H.743a.74.74 0 0 1-.686-.458.74.74 0 0 1 .16-.808L3.19 10.41H1.06A1.06 1.06 0 0 1 0 9.35h3.957c.301 0 .57.18.686.458a.74.74 0 0 1-.161.808L1.51 13.59h2.464c.585 0 1.06.475 1.06 1.06zM24 11.338c0-1.14-.927-2.066-2.066-2.066-.61 0-1.158.265-1.537.686a2.061 2.061 0 0 0-1.536-.686c-1.14 0-2.066.926-2.066 2.066v3.311a1.06 1.06 0 0 0 1.06-1.06v-2.251a1.004 1.004 0 0 1 2.013 0v2.251c0 .586.474 1.06 1.06 1.06v-3.311a1.004 1.004 0 0 1 2.012 0v2.251c0 .586.475 1.06 1.06 1.06zM16.265 12a2.728 2.728 0 1 1-5.457 0 2.728 2.728 0 0 1 5.457 0zm-1.06 0a1.669 1.669 0 1 0-3.338 0 1.669 1.669 0 0 0 3.338 0zm-4.82 0a2.728 2.728 0 1 1-5.458 0 2.728 2.728 0 0 1 5.457 0zm-1.06 0a1.669 1.669 0 1 0-3.338 0 1.669 1.669 0 0 0 3.338 0z"/></svg><span>Zoom</span></div>
+        <div class="logo-tile" title="Notion"><svg aria-hidden="true" fill="#000000" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4.459 4.208c.746.606 1.026.56 2.428.466l13.215-.793c.28 0 .047-.28-.046-.326L17.86 1.968c-.42-.326-.981-.7-2.055-.607L3.01 2.295c-.466.046-.56.28-.374.466zm.793 3.08v13.904c0 .747.373 1.027 1.214.98l14.523-.84c.841-.046.935-.56.935-1.167V6.354c0-.606-.233-.933-.748-.887l-15.177.887c-.56.047-.747.327-.747.933zm14.337.745c.093.42 0 .84-.42.888l-.7.14v10.264c-.608.327-1.168.514-1.635.514-.748 0-.935-.234-1.495-.933l-4.577-7.186v6.952L12.21 19s0 .84-1.168.84l-3.222.186c-.093-.186 0-.653.327-.746l.84-.233V9.854L7.822 9.76c-.094-.42.14-1.026.793-1.073l3.456-.233 4.764 7.279v-6.44l-1.215-.139c-.093-.514.28-.887.747-.933zM1.936 1.035l13.31-.98c1.634-.14 2.055-.047 3.082.7l4.249 2.986c.7.513.934.653.934 1.213v16.378c0 1.026-.373 1.634-1.68 1.726l-15.458.934c-.98.047-1.448-.093-1.962-.747l-3.129-4.06c-.56-.747-.793-1.306-.793-1.96V2.667c0-.839.374-1.54 1.447-1.632z"/></svg><span>Notion</span></div>
+        <div class="logo-tile" title="Trello"><svg aria-hidden="true" fill="#0052CC" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21.147 0H2.853A2.86 2.86 0 000 2.853v18.294A2.86 2.86 0 002.853 24h18.294A2.86 2.86 0 0024 21.147V2.853A2.86 2.86 0 0021.147 0zM10.34 17.287a.953.953 0 01-.953.953h-4a.954.954 0 01-.954-.953V5.38a.953.953 0 01.954-.953h4a.954.954 0 01.953.953zm9.233-5.467a.944.944 0 01-.953.947h-4a.947.947 0 01-.953-.947V5.38a.953.953 0 01.953-.953h4a.954.954 0 01.953.953z"/></svg><span>Trello</span></div>
+        <div class="logo-tile" title="Airtable"><svg aria-hidden="true" fill="#18BFFF" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.992 1.966c-.434 0-.87.086-1.28.257L1.779 5.917c-.503.208-.49.908.012 1.116l8.982 3.558a3.266 3.266 0 0 0 2.454 0l8.982-3.558c.503-.196.503-.908.012-1.116l-8.957-3.694a3.255 3.255 0 0 0-1.272-.257zM23.4 8.056a.589.589 0 0 0-.222.045l-10.012 3.877a.612.612 0 0 0-.38.564v8.896a.6.6 0 0 0 .821.552L23.62 18.1a.583.583 0 0 0 .38-.551V8.653a.6.6 0 0 0-.6-.596zM.676 8.095a.644.644 0 0 0-.48.19C.086 8.396 0 8.53 0 8.69v8.355c0 .442.515.737.908.54l6.27-3.006.307-.147 2.969-1.436c.466-.22.43-.908-.061-1.092L.883 8.138a.57.57 0 0 0-.207-.044z"/></svg><span>Airtable</span></div>
+        <div class="logo-tile" title="Stripe"><svg aria-hidden="true" fill="#635BFF" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z"/></svg><span>Stripe</span></div>
+        <div class="logo-tile" title="PayPal"><svg aria-hidden="true" fill="#002991" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.607 4.653H8.941L6.645 19.251H1.82L4.862 0h7.995c3.754 0 6.375 2.294 6.473 5.513-.648-.478-2.105-.86-3.722-.86m6.57 5.546c0 3.41-3.01 6.853-6.958 6.853h-2.493L11.595 24H6.74l1.845-11.538h3.592c4.208 0 7.346-3.634 7.153-6.949a5.24 5.24 0 0 1 2.848 4.686M9.653 5.546h6.408c.907 0 1.942.222 2.363.541-.195 2.741-2.655 5.483-6.441 5.483H8.714Z"/></svg><span>PayPal</span></div>
+        <div class="logo-tile" title="Shopify"><svg aria-hidden="true" fill="#7AB55C" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M15.337 23.979l7.216-1.561s-2.604-17.613-2.625-17.73c-.018-.116-.114-.192-.211-.192s-1.929-.136-1.929-.136-1.275-1.274-1.439-1.411c-.045-.037-.075-.057-.121-.074l-.914 21.104h.023zM11.71 11.305s-.81-.424-1.774-.424c-1.447 0-1.504.906-1.504 1.141 0 1.232 3.24 1.715 3.24 4.629 0 2.295-1.44 3.76-3.406 3.76-2.354 0-3.54-1.465-3.54-1.465l.646-2.086s1.245 1.066 2.28 1.066c.675 0 .975-.545.975-.932 0-1.619-2.654-1.694-2.654-4.359-.034-2.237 1.571-4.416 4.827-4.416 1.257 0 1.875.361 1.875.361l-.945 2.715-.02.01zM11.17.83c.136 0 .271.038.405.135-.984.465-2.064 1.639-2.508 3.992-.656.213-1.293.405-1.889.578C7.697 3.75 8.951.84 11.17.84V.83zm1.235 2.949v.135c-.754.232-1.583.484-2.394.736.466-1.777 1.333-2.645 2.085-2.971.193.501.309 1.176.309 2.1zm.539-2.234c.694.074 1.141.867 1.429 1.755-.349.114-.735.231-1.158.366v-.252c0-.752-.096-1.371-.271-1.871v.002zm2.992 1.289c-.02 0-.06.021-.078.021s-.289.075-.714.21c-.423-1.233-1.176-2.37-2.508-2.37h-.115C12.135.209 11.669 0 11.265 0 8.159 0 6.675 3.877 6.21 5.846c-1.194.365-2.063.636-2.16.674-.675.213-.694.232-.772.87-.075.462-1.83 14.063-1.83 14.063L15.009 24l.927-21.166z"/></svg><span>Shopify</span></div>
+        <div class="logo-tile" title="WordPress"><svg aria-hidden="true" fill="#21759B" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21.469 6.825c.84 1.537 1.318 3.3 1.318 5.175 0 3.979-2.156 7.456-5.363 9.325l3.295-9.527c.615-1.54.82-2.771.82-3.864 0-.405-.026-.78-.07-1.11m-7.981.105c.647-.03 1.232-.105 1.232-.105.582-.075.514-.93-.067-.899 0 0-1.755.135-2.88.135-1.064 0-2.85-.15-2.85-.15-.585-.03-.661.855-.075.885 0 0 .54.061 1.125.09l1.68 4.605-2.37 7.08L5.354 6.9c.649-.03 1.234-.1 1.234-.1.585-.075.516-.93-.065-.896 0 0-1.746.138-2.874.138-.2 0-.438-.008-.69-.015C4.911 3.15 8.235 1.215 12 1.215c2.809 0 5.365 1.072 7.286 2.833-.046-.003-.091-.009-.141-.009-1.06 0-1.812.923-1.812 1.914 0 .89.513 1.643 1.06 2.531.411.72.89 1.643.89 2.977 0 .915-.354 1.994-.821 3.479l-1.075 3.585-3.9-11.61.001.014zM12 22.784c-1.059 0-2.081-.153-3.048-.437l3.237-9.406 3.315 9.087c.024.053.05.101.078.149-1.12.393-2.325.609-3.582.609M1.211 12c0-1.564.336-3.05.935-4.39L7.29 21.709C3.694 19.96 1.212 16.271 1.211 12M12 0C5.385 0 0 5.385 0 12s5.385 12 12 12 12-5.385 12-12S18.615 0 12 0"/></svg><span>WordPress</span></div>
+        <div class="logo-tile" title="Wix"><svg aria-hidden="true" fill="#0C6EFC" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m0 7.354 2.113 9.292h.801a1.54 1.54 0 0 0 1.506-1.218l1.351-6.34a.171.171 0 0 1 .167-.137c.08 0 .15.058.167.137l1.352 6.34a1.54 1.54 0 0 0 1.506 1.218h.805l2.113-9.292h-.565c-.62 0-1.159.43-1.296 1.035l-1.26 5.545-1.106-5.176a1.76 1.76 0 0 0-2.19-1.324c-.639.176-1.113.716-1.251 1.365l-1.094 5.127-1.26-5.537A1.33 1.33 0 0 0 .563 7.354H0zm13.992 0a.951.951 0 0 0-.951.95v8.342h.635a.952.952 0 0 0 .951-.95V7.353h-.635zm1.778 0 3.158 4.66-3.14 4.632h1.325c.368 0 .712-.181.918-.486l1.756-2.59a.12.12 0 0 1 .197 0l1.754 2.59c.206.305.55.486.918.486h1.326l-3.14-4.632L24 7.354h-1.326c-.368 0-.712.181-.918.486l-1.772 2.617a.12.12 0 0 1-.197 0L18.014 7.84a1.108 1.108 0 0 0-.918-.486H15.77z"/></svg><span>Wix</span></div>
+        <div class="logo-tile" title="Calendly"><svg aria-hidden="true" fill="#006BFF" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M19.655 14.262c.281 0 .557.023.828.064 0 .005-.005.01-.005.014-.105.267-.234.534-.381.786l-1.219 2.106c-1.112 1.936-3.177 3.127-5.411 3.127h-2.432c-2.23 0-4.294-1.191-5.412-3.127l-1.218-2.106a6.251 6.251 0 0 1 0-6.252l1.218-2.106C6.736 4.832 8.8 3.641 11.035 3.641h2.432c2.23 0 4.294 1.191 5.411 3.127l1.219 2.106c.147.252.271.519.381.786 0 .004.005.009.005.014-.267.041-.543.064-.828.064-1.816 0-2.501-.607-3.291-1.306-.764-.676-1.711-1.517-3.44-1.517h-1.029c-1.251 0-2.387.455-3.2 1.278-.796.805-1.233 1.904-1.233 3.099v1.411c0 1.196.437 2.295 1.233 3.099.813.823 1.949 1.278 3.2 1.278h1.034c1.729 0 2.676-.841 3.439-1.517.791-.703 1.471-1.306 3.287-1.301Zm.005-3.237c.399 0 .794-.036 1.179-.11-.002-.004-.002-.01-.002-.014-.073-.414-.193-.823-.349-1.218.731-.12 1.407-.396 1.986-.819 0-.004-.005-.013-.005-.018-.331-1.085-.832-2.101-1.489-3.03-.649-.915-1.435-1.719-2.331-2.395-1.867-1.398-4.088-2.138-6.428-2.138-1.448 0-2.855.28-4.175.841-1.273.543-2.423 1.315-3.407 2.299S2.878 6.552 2.341 7.83c-.557 1.324-.842 2.726-.842 4.175 0 1.448.281 2.855.842 4.174.542 1.274 1.314 2.423 2.298 3.407s2.129 1.761 3.407 2.299c1.324.556 2.727.841 4.175.841 2.34 0 4.561-.74 6.428-2.137a10.815 10.815 0 0 0 2.331-2.396c.652-.929 1.158-1.949 1.489-3.03 0-.004.005-.014.005-.018-.579-.423-1.255-.699-1.986-.819.161-.395.276-.804.349-1.218.005-.009.005-.014.005-.023.869.166 1.692.506 2.404 1.035.685.505.552 1.075.446 1.416C22.184 20.437 17.619 24 12.221 24c-6.625 0-12-5.375-12-12s5.37-12 12-12c5.398 0 9.963 3.563 11.471 8.464.106.341.239.915-.446 1.421-.717.529-1.535.873-2.404 1.034.128.716.128 1.45 0 2.166-.387-.074-.782-.11-1.182-.11-4.184 0-3.968 2.823-6.736 2.823h-1.029c-1.899 0-3.15-1.357-3.15-3.095v-1.411c0-1.738 1.251-3.094 3.15-3.094h1.034c2.768 0 2.552 2.823 6.731 2.827Z"/></svg><span>Calendly</span></div>
+        <div class="logo-tile" title="Telegram"><svg aria-hidden="true" fill="#26A5E4" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg><span>Telegram</span></div>
+        <div class="logo-tile" title="Facebook"><svg aria-hidden="true" fill="#0866FF" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg><span>Facebook</span></div>
+        <div class="logo-tile" title="Instagram"><svg aria-hidden="true" fill="#FF0069" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg><span>Instagram</span></div>
+        <div class="logo-tile" title="YouTube"><svg aria-hidden="true" fill="#FF0000" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg><span>YouTube</span></div>
+        <div class="logo-tile" title="Dropbox"><svg aria-hidden="true" fill="#0061FF" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M6 1.807L0 5.629l6 3.822 6.001-3.822L6 1.807zM18 1.807l-6 3.822 6 3.822 6-3.822-6-3.822zM0 13.274l6 3.822 6.001-3.822L6 9.452l-6 3.822zM18 9.452l-6 3.822 6 3.822 6-3.822-6-3.822zM6 18.371l6.001 3.822 6-3.822-6-3.822L6 18.371z"/></svg><span>Dropbox</span></div>
+        <div class="logo-tile" title="HubSpot"><svg aria-hidden="true" fill="#FF7A59" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.164 7.93V5.084a2.198 2.198 0 001.267-1.978v-.067A2.2 2.2 0 0017.238.845h-.067a2.2 2.2 0 00-2.193 2.193v.067a2.196 2.196 0 001.252 1.973l.013.006v2.852a6.22 6.22 0 00-2.969 1.31l.012-.01-7.828-6.095A2.497 2.497 0 104.3 4.656l-.012.006 7.697 5.991a6.176 6.176 0 00-1.038 3.446c0 1.343.425 2.588 1.147 3.607l-.013-.02-2.342 2.343a1.968 1.968 0 00-.58-.095h-.002a2.033 2.033 0 102.033 2.033 1.978 1.978 0 00-.1-.595l.005.014 2.317-2.317a6.247 6.247 0 104.782-11.134l-.036-.005zm-.964 9.378a3.206 3.206 0 113.215-3.207v.002a3.206 3.206 0 01-3.207 3.207z"/></svg><span>HubSpot</span></div>
+        <div class="logo-tile" title="Mailchimp"><svg aria-hidden="true" fill="#FFE01B" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11.267 0C6.791-.015-1.82 10.246 1.397 12.964l.79.669a3.88 3.88 0 0 0-.22 1.792c.084.84.518 1.644 1.22 2.266.666.59 1.542.964 2.392.964 1.406 3.24 4.62 5.228 8.386 5.34 4.04.12 7.433-1.776 8.854-5.182.093-.24.488-1.316.488-2.267 0-.956-.54-1.352-.885-1.352-.01-.037-.078-.286-.172-.586-.093-.3-.19-.51-.19-.51.375-.563.382-1.065.332-1.35-.053-.353-.2-.653-.496-.964-.296-.311-.902-.63-1.753-.868l-.446-.124c-.002-.019-.024-1.053-.043-1.497-.014-.32-.042-.822-.197-1.315-.186-.668-.508-1.253-.911-1.627 1.112-1.152 1.806-2.422 1.804-3.511-.003-2.095-2.576-2.729-5.746-1.416l-.672.285A678.22 678.22 0 0 0 12.7.504C12.304.159 11.817.002 11.267 0zm.073.873c.166 0 .322.019.465.058.297.084 1.28 1.224 1.28 1.224s-1.826 1.013-3.52 2.426c-2.28 1.757-4.005 4.311-5.037 7.082-.811.158-1.526.618-1.963 1.253-.261-.218-.748-.64-.834-.804-.698-1.326.761-3.902 1.781-5.357C5.834 3.44 9.37.867 11.34.873zm3.286 3.273c.04-.002.06.05.028.074-.143.11-.299.26-.413.414a.04.04 0 0 0 .031.064c.659.004 1.587.235 2.192.574.041.023.012.103-.034.092-.915-.21-2.414-.369-3.97.01-1.39.34-2.45.863-3.224 1.426-.04.028-.086-.023-.055-.06.896-1.035 1.999-1.935 2.987-2.44.034-.018.07.019.052.052-.079.143-.23.447-.278.678-.007.035.032.063.062.042.615-.42 1.684-.868 2.622-.926zm3.023 3.205l.056.001a.896.896 0 0 1 .456.146c.534.355.61 1.216.638 1.845.015.36.059 1.229.074 1.478.034.571.184.651.487.751.17.057.33.098.563.164.706.198 1.125.4 1.39.658.157.162.23.333.253.497.083.608-.472 1.36-1.942 2.041-1.607.746-3.557.935-4.904.785l-.471-.053c-1.078-.145-1.693 1.247-1.046 2.201.417.615 1.552 1.015 2.688 1.015 2.604 0 4.605-1.111 5.35-2.072a.987.987 0 0 0 .06-.085c.036-.055.006-.085-.04-.054-.608.416-3.31 2.069-6.2 1.571 0 0-.351-.057-.672-.182-.255-.1-.788-.344-.853-.891 2.333.72 3.801.039 3.801.039a.072.072 0 0 0 .042-.072.067.067 0 0 0-.074-.06s-1.911.283-3.718-.378c.197-.64.72-.408 1.51-.345a11.045 11.045 0 0 0 3.647-.394c.818-.234 1.892-.697 2.727-1.356.281.618.38 1.299.38 1.299s.219-.04.4.073c.173.106.299.326.213.895-.176 1.063-.628 1.926-1.387 2.72a5.714 5.714 0 0 1-1.666 1.244c-.34.18-.704.334-1.087.46-2.863.935-5.794-.093-6.739-2.3a3.545 3.545 0 0 1-.189-.522c-.403-1.455-.06-3.2 1.008-4.299.065-.07.132-.153.132-.256 0-.087-.055-.179-.102-.243-.374-.543-1.669-1.466-1.409-3.254.187-1.284 1.31-2.189 2.357-2.135.089.004.177.01.266.015.453.027.85.085 1.223.1.625.028 1.187-.063 1.853-.618.225-.187.405-.35.71-.401.028-.005.092-.028.215-.028zm.022 2.18a.42.42 0 0 0-.06.005c-.335.054-.347.468-.228 1.04.068.32.187.595.32.765.175-.02.343-.022.498 0 .089-.205.104-.557.024-.942-.112-.535-.261-.872-.554-.868zm-3.66 1.546a1.724 1.724 0 0 0-1.016.326c-.16.117-.311.28-.29.378.008.032.031.056.088.063.131.015.592-.217 1.122-.25.374-.023.684.094.923.2.239.104.386.173.443.113.037-.038.026-.11-.031-.204-.118-.192-.36-.387-.618-.497a1.601 1.601 0 0 0-.621-.129zm4.082.81c-.171-.003-.313.186-.317.42-.004.236.131.43.303.432.172.003.314-.185.318-.42.004-.236-.132-.429-.304-.432zm-3.58.172c-.05 0-.102.002-.155.008-.311.05-.483.152-.593.247-.094.082-.152.173-.152.237a.075.075 0 0 0 .075.076c.07 0 .228-.063.228-.063a1.98 1.98 0 0 1 1.001-.104c.157.018.23.027.265-.026.01-.016.022-.049-.01-.1-.063-.103-.311-.269-.66-.275zm2.26.4c-.127 0-.235.051-.283.148-.075.154.035.363.246.466.21.104.443.063.52-.09.075-.155-.035-.364-.246-.467a.542.542 0 0 0-.237-.058zm-11.635.024c.048 0 .098 0 .149.003.73.04 1.806.6 2.052 2.19.217 1.41-.128 2.843-1.449 3.069-.123.02-.248.029-.374.026-1.22-.033-2.539-1.132-2.67-2.435-.145-1.44.591-2.548 1.894-2.811.117-.024.252-.04.398-.042zm-.07.927a1.144 1.144 0 0 0-.847.364c-.38.418-.439.988-.366 1.19.027.073.07.094.1.098.064.008.16-.039.22-.2a1.2 1.2 0 0 0 .017-.052 1.58 1.58 0 0 1 .157-.37.689.689 0 0 1 .955-.199c.266.174.369.5.255.81-.058.161-.154.469-.133.721.043.511.357.717.64.738.274.01.466-.143.515-.256.029-.067.005-.107-.011-.125-.043-.053-.113-.037-.18-.021a.638.638 0 0 1-.16.022.347.347 0 0 1-.294-.148c-.078-.12-.073-.3.013-.504.011-.028.025-.058.04-.092.138-.308.368-.825.11-1.317-.195-.37-.513-.602-.894-.65a1.135 1.135 0 0 0-.138-.01z"/></svg><span>Mailchimp</span></div>
+        <div class="logo-tile" title="Zapier"><svg aria-hidden="true" fill="#FF4F00" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M4.157 0A4.151 4.151 0 0 0 0 4.161v15.678A4.151 4.151 0 0 0 4.157 24h15.682A4.152 4.152 0 0 0 24 19.839V4.161A4.152 4.152 0 0 0 19.839 0H4.157Zm10.61 8.761h.03a.577.577 0 0 1 .23.038.585.585 0 0 1 .201.124.63.63 0 0 1 .162.431.612.612 0 0 1-.162.435.58.58 0 0 1-.201.128.58.58 0 0 1-.23.042.529.529 0 0 1-.235-.042.585.585 0 0 1-.332-.328.559.559 0 0 1-.038-.235.613.613 0 0 1 .17-.431.59.59 0 0 1 .405-.162Zm2.853 1.572c.03.004.061.004.095.004.325-.011.646.064.937.219.238.144.431.355.552.609.128.279.189.582.185.888v.193a2 2 0 0 1 0 .219h-2.498c.003.227.075.45.204.642a.78.78 0 0 0 .646.265.714.714 0 0 0 .484-.136.642.642 0 0 0 .23-.318l.915.257a1.398 1.398 0 0 1-.28.537c-.14.159-.321.284-.521.355a2.234 2.234 0 0 1-.836.136 1.923 1.923 0 0 1-1.001-.245 1.618 1.618 0 0 1-.665-.703 2.221 2.221 0 0 1-.227-1.036 1.95 1.95 0 0 1 .48-1.398 1.9 1.9 0 0 1 1.3-.488Zm-9.607.023c.162.004.325.026.48.079.207.065.4.174.563.314.26.302.393.692.366 1.088v2.276H8.53l-.109-.711h-.065c-.064.163-.155.31-.272.439a1.122 1.122 0 0 1-.374.264 1.023 1.023 0 0 1-.453.083 1.334 1.334 0 0 1-.866-.264.965.965 0 0 1-.329-.801.993.993 0 0 1 .076-.431 1.02 1.02 0 0 1 .242-.363 1.478 1.478 0 0 1 1.043-.303h.952v-.181a.696.696 0 0 0-.136-.454.553.553 0 0 0-.438-.154.695.695 0 0 0-.378.086.48.48 0 0 0-.193.254l-.99-.144a1.26 1.26 0 0 1 .257-.563c.14-.174.321-.302.533-.378.261-.091.54-.136.82-.129.053-.003.106-.007.163-.007Zm4.384.007c.174 0 .347.038.506.114.182.083.34.211.458.374.257.423.377.911.351 1.406a2.53 2.53 0 0 1-.355 1.448 1.148 1.148 0 0 1-1.009.517c-.204 0-.401-.045-.582-.136a1.052 1.052 0 0 1-.48-.457 1.298 1.298 0 0 1-.114-.234h-.045l.004 1.784h-1.059v-4.713h.904l.117.805h.057c.068-.208.177-.401.328-.56a1.129 1.129 0 0 1 .843-.344h.076v-.004Zm7.559.084h.903l.113.805h.053a1.37 1.37 0 0 1 .235-.484.813.813 0 0 1 .313-.242.82.82 0 0 1 .39-.076h.234v1.051h-.401a.662.662 0 0 0-.313.008.623.623 0 0 0-.272.155.663.663 0 0 0-.174.26.683.683 0 0 0-.027.314v1.875h-1.054v-3.666Zm-17.515.003h3.262v.896L3.73 13.104l.034.113h1.973l.042.9H2.4v-.9l1.931-1.754-.045-.117H2.441v-.896Zm11.815 0h1.055v3.659h-1.055V10.45Zm3.443.684.019.016a.69.69 0 0 0-.351.045.756.756 0 0 0-.287.204c-.11.155-.174.336-.189.522h1.545c-.034-.526-.257-.787-.74-.787h.003Zm-5.718.163c-.026 0-.057 0-.083.004a.78.78 0 0 0-.31.053.746.746 0 0 0-.257.189 1.016 1.016 0 0 0-.204.695v.064c-.015.257.057.507.204.711a.634.634 0 0 0 .253.196.638.638 0 0 0 .314.061.644.644 0 0 0 .578-.265c.14-.223.204-.48.189-.74a1.216 1.216 0 0 0-.181-.711.677.677 0 0 0-.503-.257Zm-4.509 1.266a.464.464 0 0 0-.268.102.373.373 0 0 0-.114.276c0 .053.008.106.027.155a.375.375 0 0 0 .087.132.576.576 0 0 0 .397.11v.004a.863.863 0 0 0 .563-.182.573.573 0 0 0 .211-.457v-.14h-.903Z"/></svg><span>Zapier</span></div>
+        <div class="logo-tile" title="Make"><svg aria-hidden="true" fill="#6D00CC" role="img" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13.38 3.498c-.27 0-.511.19-.566.465L9.85 18.986a.578.578 0 0 0 .453.678l4.095.826a.58.58 0 0 0 .682-.455l2.963-15.021a.578.578 0 0 0-.453-.678l-4.096-.826a.589.589 0 0 0-.113-.012zm-5.876.098a.576.576 0 0 0-.516.318L.062 17.697a.575.575 0 0 0 .256.774l3.733 1.877a.578.578 0 0 0 .775-.258l6.926-13.781a.577.577 0 0 0-.256-.776L7.762 3.658a.571.571 0 0 0-.258-.062zm11.74.115a.576.576 0 0 0-.576.576v15.426c0 .318.258.578.576.578h4.178a.58.58 0 0 0 .578-.578V4.287a.578.578 0 0 0-.578-.576Z"/></svg><span>Make</span></div>
+        <div class="logo-tile text-only"><b>Outlook</b></div>
+        <div class="logo-tile text-only"><b>Green API</b></div>
+        <div class="logo-tile text-only"><b>Morning</b></div>
+        <div class="logo-tile text-only"><b>Cardcom</b></div>
+        <div class="logo-tile text-only"><b>ManyChat</b></div>
+        <div class="logo-tile text-only"><b>Fireflies</b></div>
     </div>
-    <div class="content grid grid-2">
-      <div class="card"><h3>Gmail</h3><p>מחפשים "Gmail" ברשימת ה-Connectors, לוחצים Connect — נפתח חלון של Google, מתחברים עם החשבון ואישרים הרשאות. זהו, בלי טוקן, בלי סיסמה בצ'אט.</p></div>
-      <div class="card"><h3>Hotmail / Outlook</h3><p>מחפשים "Outlook" או "Microsoft" ברשימת ה-Connectors, לוחצים Connect — נפתח חלון של Microsoft, מתחברים עם החשבון ואישרים הרשאות. אותו עיקרון בדיוק.</p></div>
-    </div>
-    <div class="content checklist">
-      <div class="check-item"><span class="check-mark">1</span> מתחברים פעם אחת דרך הדפדפן — לא מדביקים סיסמה או טוקן בצ'אט</div>
-      <div class="check-item"><span class="check-mark">2</span> מרגע שמחובר — קלוד קוד יכול לקרוא, לחפש ולשלוח מיילים בשמכם, לפי מה שתבקשו</div>
-    </div>
-    <div class="content prompt">
-      <span class="prompt-label">פרומפט לדוגמה</span>
-      <pre>תבדוק אם הגיע מייל חדש מ[שם/נושא], ותסכם לי מה כתוב בו.</pre>
-    </div>
-  </section>
-
-  <!-- 27 — CONNECT TO CALENDAR -->
-  <section class="slide dark" data-clock="18:05–18:10">
-    <span class="slide-index">37 / 49</span>
-    <span class="eyebrow">מחברים גם את היומן</span>
-    <h2>Google Calendar או Outlook Calendar — אותו עיקרון בדיוק</h2>
-    <div class="content card" style="max-width:820px;border-color:var(--gold);">
-      <p>אותו מקום בדיוק: <strong dir="ltr" style="unicode-bidi:isolate;display:inline-block;">Settings → Connectors</strong>. מחפשים את שם היומן שלכם, לוחצים Connect, מתחברים בחלון שנפתח — ואישרים הרשאות.</p>
-    </div>
-    <div class="content grid grid-2">
-      <div class="card"><h3>Google Calendar</h3><p>מחפשים "Calendar" ברשימת ה-Connectors, מתחברים עם חשבון Google — אותו חשבון כמו ה-Gmail.</p></div>
-      <div class="card"><h3>Outlook Calendar</h3><p>מחפשים "Outlook" ברשימת ה-Connectors, מתחברים עם חשבון Microsoft — אותו חשבון כמו ה-Hotmail/Outlook.</p></div>
-    </div>
-    <div class="content checklist">
-      <div class="check-item"><span class="check-mark">1</span> מתחברים פעם אחת דרך הדפדפן — לא טוקן בצ'אט</div>
-      <div class="check-item"><span class="check-mark">2</span> מרגע שמחובר — קלוד קוד יכול לקרוא וליצור אירועים ביומן שלכם</div>
-    </div>
-    <div class="content prompt">
-      <span class="prompt-label">פרומפט לדוגמה</span>
-      <pre>תבדוק מה יש לי ביומן השבוע.</pre>
-    </div>
-    <div class="foot-note content">זה הבסיס לאוטומציית התזכורות שנבנה בעוד כמה דפים.</div>
-  </section>
-
-  <!-- 28 — SERVICES WITHOUT A CONNECTOR: PROJECT-LEVEL VS FULL ACCESS -->
-  <section class="slide" data-clock="18:10–18:15">
-    <span class="slide-index">38 / 49</span>
-    <span class="eyebrow">מה עם שירותים שלא ברשימה?</span>
-    <h2>אין Connector ל-Green API וכדומה — אז מה עושים?</h2>
-    <div class="content grid grid-2">
-      <div class="card" style="border-color:var(--gold);">
-        <h3>שירות בלי Connector רשמי</h3>
-        <p>פותחים חשבון בשירות עצמו (למשל Green API), מוציאים משם מפתח API, שומרים אותו ב-<code>.env</code> <strong>של הפרויקט הספציפי</strong>. קלוד קוד כותב קוד שקורא לשירות דרך המפתח הזה. הגישה נשארת אוטומטית ברמת הפרויקט בלבד — פרויקט אחר לא רואה את הטוקן הזה, אלא אם מעתיקים אליו את ה-.env בעצמכם.</p>
-      </div>
-      <div class="card">
-        <h3>Connector רשמי (Gmail/Calendar/וכו')</h3>
-        <p>מחובר ברמת כל חשבון ה-Claude שלכם, לא רק לפרויקט אחד — ברגע שמחברים, זמין בכל שיחה ובכל פרויקט. נוח יותר, אבל רחב יותר. רוצים לצמצם? מנתקים אותו ב-<strong dir="ltr" style="unicode-bidi:isolate;display:inline-block;">Settings → Connectors → Disconnect</strong> כשלא בשימוש.</p>
-      </div>
-    </div>
-    <div class="content checklist">
-      <div class="check-item"><span class="check-mark">1</span> יש Connector רשמי לשירות? עדיפות ראשונה — אין בכלל טוקן שעובר דרך הצ'אט</div>
-      <div class="check-item"><span class="check-mark">2</span> אין Connector? הולכים על <code>.env</code> בפרויקט הספציפי — זה ממילא נשאר מוגבל לפרויקט</div>
-      <div class="check-item"><span class="check-mark">3</span> Connector שנפתח רחב מדי? מנתקים אותו כשלא צריך, במקום להשאיר גישה פתוחה</div>
-    </div>
-  </section>
-
-  <!-- PART H DIVIDER -->
-  <section class="slide dark" data-clock="18:15–18:15">
-    <span class="slide-index">39 / 49</span>
-    <span class="slide-track">חלק ח'</span>
-    <div class="divider-wrap">
-      <div class="divider-num">ח'</div>
-      <div>
-        <span class="eyebrow">לתקשר עם הלקוחות</span>
-        <h1 style="margin-top:10px;">וואטסאפ <span class="accent" style="font-weight:100;">מול</span> SMS</h1>
-      </div>
-    </div>
-  </section>
-
-  <!-- 29 — WHATSAPP OFFICIAL VS UNOFFICIAL + SMS -->
-  <section class="slide dark" data-clock="18:15–18:20">
-    <span class="slide-index">40 / 49</span>
-    <span class="eyebrow">וואטסאפ</span>
-    <h2>רשמי מול לא-רשמי — ולמה זה משנה</h2>
-    <div class="content grid grid-2">
-      <div class="card"><h3>רשמי (WhatsApp Business API)</h3><p>ערוץ מאושר על ידי Meta, יציב ובטוח — אבל דורש תהליך אישור עסקי, ולעיתים עלות לכל הודעה ואישור מראש לתבניות שיווקיות.</p></div>
-      <div class="card" style="border-color:#ef4444;"><h3>לא-רשמי (חיבור מספר אישי)</h3><p>מתחברים במספר סריקת QR, מהיר וזול — אבל וואטסאפ יכול לזהות ולחסום (yellowCard) שימוש שנראה אוטומטי, במיוחד שליחה המונית או פנייה למספרים חדשים בכמות.</p></div>
-    </div>
-    <div class="foot-note content">מי שבוחר בכל זאת בלא-רשמי — מתחברים דרך שירות תיווך (כמו Green API) בסריקת QR חד-פעמית, ואז שולחים בקצב איטי ומדוד, לא בהמון בבת אחת.</div>
-    <div class="content card" style="max-width:820px;border-color:var(--gold);"><h3>אלטרנטיבה — SMS</h3><p>שירות SMS לרוב יציב יותר מוואטסאפ לא-רשמי, בלי סיכון חסימה. המחיר והתנאים משתנים מספק לספק — כדאי להשוות לפני שבוחרים.</p></div>
-  </section>
-
-  <!-- PART I DIVIDER -->
-  <section class="slide dark" data-clock="18:20–18:21">
-    <span class="slide-index">41 / 49</span>
-    <span class="slide-track">חלק ט'</span>
-    <div class="divider-wrap">
-      <div class="divider-num">ט'</div>
-      <div>
-        <span class="eyebrow">עוד אפשרויות</span>
-        <h1 style="margin-top:10px;">תוספות פיצ'רים<br><span class="accent" style="font-weight:100;">למערכת</span></h1>
-      </div>
-    </div>
-  </section>
-
-  <!-- 28 — DASHBOARD -->
-  <section class="slide" data-clock="18:21–18:27">
-    <span class="slide-index">42 / 49</span>
-    <span class="eyebrow">דשבורד</span>
-    <h2>מסך אחד שמראה הכל בבוקר</h2>
-    <div class="content grid grid-3">
-      <div class="card"><h3>מה יש היום</h3><p>לקוחות לחזור אליהם, פניות באיחור, פגישות</p></div>
-      <div class="card"><h3>מה יש השבוע</h3><p>תצוגה קדימה, לא רק להיום</p></div>
-      <div class="card" style="border-color:var(--gold);"><h3>מי לא שמענו ממנו זמן רב</h3><p>"כדאי ליצור קשר" — מזהה לקוח שהקשר איתו נחלש</p></div>
-    </div>
-    <div class="content prompt">
-      <span class="prompt-label">פרומפט לדוגמה</span>
-      <pre>בנה לי עמוד דשבורד שמראה כל בוקר: לאילו לקוחות צריך לחזור
-היום, אילו פניות באיחור, ומי מהלקוחות לא היה בקשר הרבה זמן.</pre>
-    </div>
-  </section>
-
-  <!-- 29 — CALENDAR EVENT REMINDER AUTOMATION -->
-  <section class="slide dark" data-clock="18:27–18:33">
-    <span class="slide-index">43 / 49</span>
-    <span class="eyebrow">אוטומציה</span>
-    <h2>תזכורות אוטומטיות לפני פגישה</h2>
-    <div class="content prompt">
-      <span class="prompt-label">פרומפט — בונים ביחד</span>
-      <pre>בנה לי אוטומציה שבודקת כל יום את היומן, ולכל פגישה קרובה
-שולחת הודעה מראש ללקוח ולכל מי שרלוונטי — כולל תזכורת מה
-צריך להביא או להכין, לפי סוג הפגישה.</pre>
-    </div>
-    <div class="foot-note content">כך כל אחד מקבל תזכורת בזמן, בלי שאתם צריכים לזכור לשלוח ידנית.</div>
+    <div class="quote content" style="margin-top:14px;">שואלים את קלוד איך לעשות — ועושים מה שהוא אומר. ברגע שזה מחובר, קלוד קוד יודע איך לעבוד מולו.</div>
   </section>
 
   <!-- PART J DIVIDER -->
-  <section class="slide dark" data-clock="18:33–18:33">
-    <span class="slide-index">44 / 49</span>
-    <span class="slide-track">חלק י'</span>
+  <section class="slide dark" data-clock="18:40–18:40">
+    <span class="slide-index">52 / 57</span>
+    <span class="slide-track">חלק ט'</span>
     <div class="divider-wrap">
-      <div class="divider-num">י'</div>
+      <div class="divider-num">ט'</div>
       <div>
         <span class="eyebrow">סוף הדרך</span>
         <h1 style="margin-top:10px;">סיכום<br><span class="accent" style="font-weight:100;">וסגירה</span></h1>
@@ -1028,28 +1261,28 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
   </section>
 
   <!-- 32 — END OF WORKSHOP OUTPUT / TAKEAWAY (both sessions) -->
-  <section class="slide" data-clock="18:33–18:37">
-    <span class="slide-index">45 / 49</span>
+  <section class="slide" data-clock="18:40–18:44">
+    <span class="slide-index">53 / 57</span>
     <span class="eyebrow">תוצר סוף הסדנה</span>
     <h2>מה לוקחים הביתה</h2>
     <div class="content checklist">
-      <div class="check-item"><span class="check-mark">✓</span> Claude Code מותקן ועובד, כולל RTL ו-Plan Mode מול Bypass</div>
-      <div class="check-item"><span class="check-mark">✓</span> מילון מושגים מלא — API, טוקן, .env, Backend, Frontend, Database, MCP, CLI</div>
-      <div class="check-item"><span class="check-mark">✓</span> חשבונות GitHub · Vercel · Supabase מחוברים ופעילים</div>
-      <div class="check-item"><span class="check-mark">✓</span> כללי אבטחה מוטמעים לתמיד בעוזר האישי — קונטקסט נקי, טוקנים לא בצ'אט</div>
-      <div class="check-item"><span class="check-mark">✓</span> מנהל המשרד האישי בנוי (CLAUDE.md / BRAIN.md / TASKS.md)</div>
-      <div class="check-item"><span class="check-mark">✓</span> מערכת לניהול לקוחות ופניות חיה בענן — לקוחות, פניות, סטטוסים, תאריכי מעקב, היסטוריית שיחות</div>
-      <div class="check-item"><span class="check-mark">✓</span> טופס פנייה ללקוחות שנכנס ישר למערכת + מעקב שלא נותן לאף פנייה ליפול</div>
-      <div class="check-item"><span class="check-mark">✓</span> מייל ויומן מחוברים למערכת</div>
-      <div class="check-item"><span class="check-mark">✓</span> כלי דיבור-לטקסט ו-screenshot לעבודה יומיומית מהירה</div>
-      <div class="check-item"><span class="check-mark">✓</span> דשבורד יומי + אוטומציית תזכורות לפני פגישות</div>
+      <div class="check-item"><span class="check-mark">✓</span> Claude Code מותקן ועובד, כולל RTL, Bypass ו-Plan Mode</div>
+      <div class="check-item"><span class="check-mark">✓</span> מילון מושגים — API, טוקן, .env, Webhook, Backend, Frontend, MCP, CLI</div>
+      <div class="check-item"><span class="check-mark">✓</span> חשבונות GitHub · Vercel · Supabase מחוברים לקלוד קוד — בפרנקפורט, קרוב לארץ</div>
+      <div class="check-item"><span class="check-mark">✓</span> פרויקט דמה שעבר את כל הדרך: GitHub ← Vercel ← Supabase, כולל טוקן ב-Environment Variables</div>
+      <div class="check-item"><span class="check-mark">✓</span> כללי אבטחה מוטמעים בעוזר האישי — טוקנים רק ב-.env, אף פעם לא בצ'אט ולא ב-Frontend</div>
+      <div class="check-item"><span class="check-mark">✓</span> מנהל המשרד האישי (CLAUDE.md / Brain.md)</div>
+      <div class="check-item"><span class="check-mark">✓</span> גרסה ראשונה של המערכת שכל אחד אפיין — חיה בענן</div>
+      <div class="check-item"><span class="check-mark">✓</span> וואטסאפ: רשמי מול לא-רשמי, הכללים של Meta, ומה זה עולה</div>
+      <div class="check-item"><span class="check-mark">✓</span> 3 טיפים לעבודה מהירה: מדברים במקום להקליד, מצלמים מסך, ומדברים איתו כמו מנכ״ל</div>
+      <div class="check-item"><span class="check-mark">✓</span> יודעים לחבר כל מערכת — שואלים את קלוד איך, ועושים מה שהוא אומר</div>
       <div class="check-item"><span class="check-mark">✓</span> ידע לתקן, להרחיב ולבנות עוד לבד — בלי לחכות למפתח</div>
     </div>
   </section>
 
   <!-- 33 — QUESTIONS DIVIDER -->
-  <section class="slide dark" data-clock="18:37–18:52">
-    <span class="slide-index">46 / 49</span>
+  <section class="slide dark" data-clock="18:44–18:59">
+    <span class="slide-index">54 / 57</span>
     <div class="divider-wrap">
       <div class="divider-num">?</div>
       <div>
@@ -1059,16 +1292,16 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
   </section>
 
   <!-- 33 — FEEDBACK -->
-  <section class="slide" data-clock="18:52–18:56">
-    <span class="slide-index">47 / 49</span>
+  <section class="slide" data-clock="18:59–19:03">
+    <span class="slide-index">55 / 57</span>
     <span class="eyebrow">משוב</span>
     <h2>תגידו לי — מה החוויות שלכם?</h2>
     <div class="quote content">נהנתם? איך היה?</div>
   </section>
 
   <!-- 34 — CLOSING -->
-  <section class="slide dark" data-clock="18:56–18:59">
-    <span class="slide-index">48 / 49</span>
+  <section class="slide dark" data-clock="19:03–19:06">
+    <span class="slide-index">56 / 57</span>
     <span class="eyebrow">סגירה</span>
     <h1>לא לפחד —<br><span class="accent" style="font-weight:100;">להמשיך לעבוד</span></h1>
     <div class="quote content">"הכלי הזה לא מושלם. גם אתם לא מושלמים. אבל כל שאלה שתשאלו — תלמדו. כל טעות — תתקנו. ככה זה עובד."</div>
@@ -1083,8 +1316,8 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
   </section>
 
   <!-- 35 — THANK YOU -->
-  <section class="slide" data-clock="18:59–19:00">
-    <span class="slide-index">49 / 49</span>
+  <section class="slide" data-clock="19:06–19:07">
+    <span class="slide-index">57 / 57</span>
     <div style="display:flex;flex-direction:column;align-items:flex-start;gap:24px;">
       <div class="logo"><span class="dot"></span> אל אוטומט · תוכנית הדרכה</div>
       <h1>תודה <span class="accent" style="font-weight:100;">ובהצלחה</span></h1>
@@ -1095,7 +1328,7 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
 
 <div class="navbar">
   <button id="prevBtn" aria-label="הקודם">‹</button>
-  <span class="counter" id="counter">1 / 49</span>
+  <span class="counter" id="counter">1 / 57</span>
   <button id="nextBtn" aria-label="הבא">›</button>
 </div>
 
@@ -1828,6 +2061,20 @@ KEY= (שם המשתנה בלבד, ריק אחרי ה-=), ואני רק מדבי�
   setTimeout(checkRestore,400);
 })();
 
+</script>
+<script>
+function copyPromptBox(btn){
+  var t=btn.closest('.prompt').querySelector('pre').innerText;
+  var done=function(){ var o=btn.textContent; btn.textContent='✅'; setTimeout(function(){btn.textContent=o;},1800); };
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done,fallback); } else fallback();
+  function fallback(){ var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');done();}catch(e){} ta.remove(); }
+}
+function copySecPrompt(btn){
+  var t=document.getElementById('sec-prompt-text').innerText;
+  var done=function(){ var o=btn.textContent; btn.textContent='✅ הועתק'; setTimeout(function(){btn.textContent=o;},1800); };
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t).then(done,function(){fallback();}); } else fallback();
+  function fallback(){ var ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');done();}catch(e){} ta.remove(); }
+}
 </script>
 </body>
 </html>
