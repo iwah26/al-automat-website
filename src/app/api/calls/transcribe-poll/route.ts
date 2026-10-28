@@ -16,6 +16,7 @@ export const maxDuration = 60;
 const MAX_FILES_PER_RUN = 3;
 const MAX_PRIVACY_SYNC_PER_RUN = 5;
 const BLOB_CLEANUP_DELAY_MS = 10 * 60 * 1000;
+const PRIVACY_SYNC_WINDOW_MS = 3 * 24 * 60 * 60 * 1000;
 
 export async function GET(req: NextRequest) {
   const auth = req.headers.get("authorization");
@@ -55,11 +56,15 @@ export async function GET(req: NextRequest) {
   // finished processing them (uploadAudio doesn't return a transcript id,
   // so this has to be matched up afterwards by exact title). Once matched,
   // also pull the full transcript into our own searchable table.
+  // Only recent rows: transcripts get archived and deleted from Fireflies, so
+  // an old unmatched row would never match and would block the queue forever.
   const { data: pendingPrivacy } = await supabase
     .from("call_recordings_processed")
     .select("drive_file_id, fireflies_title")
     .eq("privacy_locked", false)
     .not("fireflies_title", "is", null)
+    .gte("created_at", new Date(Date.now() - PRIVACY_SYNC_WINDOW_MS).toISOString())
+    .order("created_at", { ascending: false })
     .limit(MAX_PRIVACY_SYNC_PER_RUN);
 
   let locked = 0;
@@ -108,9 +113,15 @@ export async function GET(req: NextRequest) {
     (f) => f.id && f.mimeType && !f.mimeType.startsWith("application/vnd.google-apps")
   );
 
-  const { data: processedRows } = await supabase
+  // Look up only the listed files: a full-table select is silently capped at
+  // 1000 rows, which made already-processed files look new again.
+  const { data: processedRows, error: processedErr } = await supabase
     .from("call_recordings_processed")
-    .select("drive_file_id");
+    .select("drive_file_id")
+    .in("drive_file_id", files.map((f) => f.id!));
+  if (processedErr) {
+    return NextResponse.json({ error: `processed lookup: ${processedErr.message}` }, { status: 500 });
+  }
   const processedIds = new Set((processedRows ?? []).map((r) => r.drive_file_id));
 
   const newFiles = files.filter((f) => !processedIds.has(f.id!)).slice(0, MAX_FILES_PER_RUN);
@@ -135,23 +146,31 @@ export async function GET(req: NextRequest) {
 
       const title = (file.name ?? file.id!).replace(/\.[^/.]+$/, "");
 
+      // Claim the file before uploading, so a failed state write can never
+      // lead to the same recording being sent to Fireflies again.
+      const { error: claimErr } = await supabase.from("call_recordings_processed").insert({
+        drive_file_id: file.id,
+        file_name: file.name,
+        blob_pathname: blob.pathname,
+        fireflies_title: title,
+      });
+      if (claimErr) throw new Error(`claim: ${claimErr.message}`);
+
       let skipped = false;
       try {
         await uploadAudioToFireflies(blob.url, title, file.id!);
       } catch (uploadErr) {
         if (String(uploadErr).includes("payload_too_small")) {
           skipped = true;
+          await supabase
+            .from("call_recordings_processed")
+            .update({ fireflies_title: null })
+            .eq("drive_file_id", file.id!);
         } else {
+          await supabase.from("call_recordings_processed").delete().eq("drive_file_id", file.id!);
           throw uploadErr;
         }
       }
-
-      await supabase.from("call_recordings_processed").insert({
-        drive_file_id: file.id,
-        file_name: file.name,
-        blob_pathname: blob.pathname,
-        fireflies_title: skipped ? null : title,
-      });
 
       results.push({ file: file.name!, ok: true, skipped });
     } catch (err) {
