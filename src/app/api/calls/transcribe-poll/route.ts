@@ -7,7 +7,8 @@ import {
   listRecentTranscriptIds,
   lockTranscriptPrivacy,
   fetchTranscriptDetails,
-  parseContactNameFromTitle,
+  deleteTranscript,
+  transcriptRow,
 } from "@/lib/callTranscription";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +19,8 @@ const MAX_PRIVACY_SYNC_PER_RUN = 15;
 const BLOB_CLEANUP_DELAY_MS = 10 * 60 * 1000;
 const BLOB_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 const PRIVACY_SYNC_WINDOW_MS = 3 * 24 * 60 * 60 * 1000;
+const MAX_FINALIZE_PER_RUN = 10;
+const FINALIZE_AFTER_MS = 24 * 60 * 60 * 1000;
 
 export async function GET(req: NextRequest) {
   const auth = req.headers.get("authorization");
@@ -84,19 +87,10 @@ export async function GET(req: NextRequest) {
       await lockTranscriptPrivacy(transcriptId);
 
       const details = await fetchTranscriptDetails(transcriptId);
-      await supabase.from("call_transcripts").upsert({
-        fireflies_id: details.id,
-        drive_file_id: row.drive_file_id,
-        title: details.title,
-        contact_name: parseContactNameFromTitle(details.title),
-        call_date: new Date(details.date).toISOString(),
-        duration_seconds: details.duration,
-        summary: details.summary,
-        keywords: details.keywords,
-        action_items: details.actionItems,
-        transcript_text: details.transcriptText,
-        source: "phone",
-      });
+      const { error: saveErr } = await supabase
+        .from("call_transcripts")
+        .upsert(transcriptRow(details, row.drive_file_id));
+      if (saveErr) throw new Error(`save: ${saveErr.message}`);
 
       await supabase
         .from("call_recordings_processed")
@@ -105,6 +99,44 @@ export async function GET(req: NextRequest) {
       locked++;
     } catch (err) {
       console.error("Privacy lock error:", row.fireflies_title, err);
+    }
+  }
+
+  // Supabase is the permanent home; Fireflies is only a transit point. A day
+  // after a call is saved (by then Fireflies' summary is final), refresh the
+  // row once more and delete the transcript from Fireflies.
+  const { data: toFinalize } = await supabase
+    .from("call_transcripts")
+    .select("fireflies_id, drive_file_id")
+    .eq("kind", "phone_call")
+    .is("fireflies_deleted_at", null)
+    .lt("synced_at", new Date(Date.now() - FINALIZE_AFTER_MS).toISOString())
+    .order("synced_at", { ascending: true })
+    .limit(MAX_FINALIZE_PER_RUN);
+
+  let finalized = 0;
+  for (const row of toFinalize ?? []) {
+    try {
+      let details;
+      try {
+        details = await fetchTranscriptDetails(row.fireflies_id);
+      } catch (err) {
+        if (!/not found/i.test(String(err))) throw err;
+      }
+      if (details) {
+        const { error: saveErr } = await supabase
+          .from("call_transcripts")
+          .upsert(transcriptRow(details, row.drive_file_id));
+        if (saveErr) throw new Error(`save: ${saveErr.message}`);
+        await deleteTranscript(row.fireflies_id);
+      }
+      await supabase
+        .from("call_transcripts")
+        .update({ fireflies_deleted_at: new Date().toISOString() })
+        .eq("fireflies_id", row.fireflies_id);
+      finalized++;
+    } catch (err) {
+      console.error("Finalize error:", row.fireflies_id, err);
     }
   }
 
@@ -188,5 +220,5 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ cleaned, locked, processed: results.length, results });
+  return NextResponse.json({ cleaned, locked, finalized, processed: results.length, results });
 }

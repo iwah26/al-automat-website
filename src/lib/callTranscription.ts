@@ -131,8 +131,55 @@ export async function fetchTranscriptDetails(transcriptId: string): Promise<Tran
   };
 }
 
+export async function deleteTranscript(transcriptId: string) {
+  await firefliesGraphQL(`mutation($id: String!) { deleteTranscript(id: $id) { id } }`, { id: transcriptId });
+}
+
 // Parses "Grabación de llamadas <contact>_<YYMMDD>_<HHMMSS>" style titles
 export function parseContactNameFromTitle(title: string): string | null {
   const match = title.match(/^(?:Grabaci[oó]n de llamadas|Llamada)\s+(.+?)_\d{6}_\d{6}$/);
-  return match ? match[1].trim() : null;
+  return match ? match[1].replace(/[‎‏‪-‮]/g, "").trim() : null;
+}
+
+// When the phone saved no contact, the "name" is the number itself
+export function parseContactPhoneFromTitle(title: string): string | null {
+  const name = parseContactNameFromTitle(title);
+  const digits = name?.replace(/[\s-]/g, "") ?? "";
+  if (!/^0\d{8,9}$/.test(digits)) return null;
+  return `+972${digits.slice(1)}`;
+}
+
+// The call's own start time from the title (local Israel time), as an ISO string
+export function parseStartedAtFromTitle(title: string): string | null {
+  const m = title.match(/_(\d{2})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})$/);
+  if (!m) return null;
+  const [y, mo, d, h, mi, s] = m.slice(1).map(Number);
+  const asUtc = Date.UTC(2000 + y, mo - 1, d, h, mi, s);
+  const offset = new Intl.DateTimeFormat("en-US", { timeZone: "Asia/Jerusalem", timeZoneName: "longOffset" })
+    .formatToParts(new Date(asUtc))
+    .find((p) => p.type === "timeZoneName")?.value.match(/GMT([+-])(\d{2}):(\d{2})/);
+  const offsetMs = offset ? (offset[1] === "-" ? -1 : 1) * (Number(offset[2]) * 60 + Number(offset[3])) * 60000 : 0;
+  return new Date(asUtc - offsetMs).toISOString();
+}
+
+// One call_transcripts row from Fireflies details (duration arrives in minutes)
+export function transcriptRow(details: TranscriptDetails, driveFileId: string) {
+  return {
+    fireflies_id: details.id,
+    drive_file_id: driveFileId,
+    title: details.title,
+    contact_name: parseContactNameFromTitle(details.title),
+    contact_phone: parseContactPhoneFromTitle(details.title),
+    kind: "phone_call",
+    source: "phone",
+    started_at: parseStartedAtFromTitle(details.title),
+    call_date: new Date(details.date).toISOString(),
+    duration_seconds: Math.round(details.duration * 60),
+    summary: details.summary,
+    keywords: details.keywords,
+    action_items: details.actionItems,
+    transcript_text: details.transcriptText,
+    n_words: details.transcriptText ? details.transcriptText.split(/\s+/).length : 0,
+    synced_at: new Date().toISOString(),
+  };
 }
