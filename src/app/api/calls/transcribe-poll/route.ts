@@ -4,7 +4,7 @@ import { getRabanimSupabase } from "@/lib/rabanimSupabase";
 import {
   getDriveClient,
   uploadAudioToFireflies,
-  findTranscriptIdByTitle,
+  listRecentTranscriptIds,
   lockTranscriptPrivacy,
   fetchTranscriptDetails,
   parseContactNameFromTitle,
@@ -13,9 +13,10 @@ import {
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
-const MAX_FILES_PER_RUN = 3;
-const MAX_PRIVACY_SYNC_PER_RUN = 5;
+const MAX_FILES_PER_RUN = 6;
+const MAX_PRIVACY_SYNC_PER_RUN = 15;
 const BLOB_CLEANUP_DELAY_MS = 10 * 60 * 1000;
+const BLOB_MAX_AGE_MS = 24 * 60 * 60 * 1000;
 const PRIVACY_SYNC_WINDOW_MS = 3 * 24 * 60 * 60 * 1000;
 
 export async function GET(req: NextRequest) {
@@ -30,16 +31,20 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "DRIVE_CALLS_FOLDER_ID missing" }, { status: 500 });
   }
 
-  // Clean up blobs from previous runs once Fireflies has had time to fetch them
+  // Clean up blobs only once Fireflies has the transcript (privacy_locked) or
+  // the file was skipped. Under a backlog Fireflies can take well over an hour
+  // to fetch the URL, and a blob deleted before that is silently dropped.
   const { data: pendingCleanup } = await supabase
     .from("call_recordings_processed")
-    .select("drive_file_id, blob_pathname, created_at")
+    .select("drive_file_id, blob_pathname, created_at, privacy_locked, fireflies_title")
     .eq("blob_deleted", false);
 
   let cleaned = 0;
   for (const row of pendingCleanup ?? []) {
     if (!row.blob_pathname) continue;
-    if (Date.now() - new Date(row.created_at).getTime() < BLOB_CLEANUP_DELAY_MS) continue;
+    const age = Date.now() - new Date(row.created_at).getTime();
+    const fetched = row.privacy_locked || row.fireflies_title === null;
+    if (fetched ? age < BLOB_CLEANUP_DELAY_MS : age < BLOB_MAX_AGE_MS) continue;
     try {
       await del(row.blob_pathname, { token: process.env.CALLS_BLOB_TOKEN });
     } catch (err) {
@@ -57,21 +62,25 @@ export async function GET(req: NextRequest) {
   // so this has to be matched up afterwards by exact title). Once matched,
   // also pull the full transcript into our own searchable table.
   // Only recent rows: transcripts get archived and deleted from Fireflies, so
-  // an old unmatched row would never match and would block the queue forever.
+  // an old unmatched row would never match. Rows are matched against one list
+  // of recent transcripts, so rows that never show up can't block the rest.
   const { data: pendingPrivacy } = await supabase
     .from("call_recordings_processed")
     .select("drive_file_id, fireflies_title")
     .eq("privacy_locked", false)
     .not("fireflies_title", "is", null)
     .gte("created_at", new Date(Date.now() - PRIVACY_SYNC_WINDOW_MS).toISOString())
-    .order("created_at", { ascending: false })
-    .limit(MAX_PRIVACY_SYNC_PER_RUN);
+    .order("created_at", { ascending: false });
+
+  const recentIds = pendingPrivacy?.length ? await listRecentTranscriptIds() : new Map<string, string>();
+  const matched = (pendingPrivacy ?? [])
+    .filter((row) => recentIds.has(row.fireflies_title))
+    .slice(0, MAX_PRIVACY_SYNC_PER_RUN);
 
   let locked = 0;
-  for (const row of pendingPrivacy ?? []) {
+  for (const row of matched) {
     try {
-      const transcriptId = await findTranscriptIdByTitle(row.fireflies_title);
-      if (!transcriptId) continue;
+      const transcriptId = recentIds.get(row.fireflies_title)!;
       await lockTranscriptPrivacy(transcriptId);
 
       const details = await fetchTranscriptDetails(transcriptId);

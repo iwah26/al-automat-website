@@ -57,6 +57,22 @@ async function firefliesGraphQL(query: string, variables: Record<string, unknown
 
 // uploadAudio is async on Fireflies' side, so the transcript doesn't exist yet
 // at upload time — find it afterwards by exact title match to lock it down.
+// Title -> id for the most recent transcripts, in one or two calls, so the
+// privacy queue can match many rows at once instead of searching row by row.
+export async function listRecentTranscriptIds(pages = 2): Promise<Map<string, string>> {
+  const byTitle = new Map<string, string>();
+  for (let page = 0; page < pages; page++) {
+    const data = await firefliesGraphQL(
+      `query($skip: Int) { transcripts(limit: 50, skip: $skip) { id title } }`,
+      { skip: page * 50 }
+    );
+    const batch: { id: string; title: string }[] = data.transcripts ?? [];
+    for (const t of batch) if (!byTitle.has(t.title)) byTitle.set(t.title, t.id);
+    if (batch.length < 50) break;
+  }
+  return byTitle;
+}
+
 export async function findTranscriptIdByTitle(title: string): Promise<string | null> {
   const data = await firefliesGraphQL(
     `query($title: String!) { transcripts(title: $title, limit: 1) { id title } }`,
